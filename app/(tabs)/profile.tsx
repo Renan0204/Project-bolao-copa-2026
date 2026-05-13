@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "../../componentes/Button";
 
 export default function ProfileScreen() {
     const router = useRouter();
@@ -12,7 +13,7 @@ export default function ProfileScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.card}>
-                <Image 
+                <Image
                     source={{
                         uri: "https://avatars.githubusercontent.com/u/106830297?v=4"
                     }}
@@ -25,12 +26,12 @@ export default function ProfileScreen() {
                     Eu gosto de react native
                 </Text>
 
-                <TouchableOpacity 
-                    style={styles.botaoSair}
-                    onPress={onSairPress}
-                >
-                    <Text>Sair</Text>
-                </TouchableOpacity>
+                <Button 
+                    texto="Sair"
+                    icon={false}
+                    role="danger" 
+                    quandoClicar={onSairPress}
+                />
             </View>
         </SafeAreaView>
     );
