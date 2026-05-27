@@ -1,12 +1,15 @@
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EventCard from '../../componentes/EventCard';
 import { DADOS_EVENTOS } from '../../mocks/event';
 import { Event } from '../../types/event';
+import { buscarEventos } from '../../services/eventService';
+import {  useEffect, useState } from 'react';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [carregando, setCarregando] = useState(false);
 
   const renderizarEvento = ({ item }: { item: Event }) => (
     <EventCard
@@ -14,6 +17,23 @@ export default function HomeScreen() {
       onPress={() => router.push({ pathname: `/event/[id]`, params: item })}
     />
   );
+
+  async function carregarEventos() {
+    setCarregando(true);
+    
+    const resultadoBusca = await buscarEventos();
+
+    setCarregando(false);
+
+    const resultadoString = JSON.stringify(resultadoBusca)
+
+    Alert.alert("Resultado da busca", resultadoString);
+  }
+
+  // Quando a tela for carregada
+  useEffect(() => {
+    carregarEventos()
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,8 +46,17 @@ export default function HomeScreen() {
         />
       </View>
 
+      {
+        carregando && (
+          <ActivityIndicator 
+            size={"large"}
+            color={"#007ADD"}
+          />
+        )
+      }
+
       <FlatList
-        data={DADOS_EVENTOS}
+        data={[]}
         keyExtractor={(item) => item.id}
         renderItem={renderizarEvento}
         contentContainerStyle={styles.listaContainer}
@@ -66,4 +95,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
   },
+  loading: {
+    marginTop: 60
+  }
 });
