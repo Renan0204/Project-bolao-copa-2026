@@ -1,36 +1,47 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../componentes/Header';
 import { useCart } from '../../hooks/useCart';
 import { Event } from '../../types/event';
+import { buscarEventoPorId } from '../../services/eventService';
 
 export default function EventDetailsScreen() {
   // Resgata os parâmetros passados na navegação
-  const { id, titulo, local, imagem, data, preco } = useLocalSearchParams<Event>();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [event, setEvent] = useState<Event | null>(null);
   const { adicionarItem, estaNoCarrinho } = useCart();
   const router = useRouter();
 
   const primaryColor = '#007AFF';
-  const noCarrinho = estaNoCarrinho(id as string);
+  const noCarrinho = estaNoCarrinho(id);
+
+  async function carregarEvento() {
+    const eventoCarregado = await buscarEventoPorId(id);
+    setEvent(eventoCarregado);
+  }
+
+  useEffect(() => {
+    carregarEvento()
+  }, []);
 
   return (
     // EDGES: Define quais bordas do SafeAreaView devem ser consideradas para o espaçamento
     // Neste caso, estamos considerando apenas as bordas superior, esquerda e direita, permitindo que o conteúdo se estenda até a borda inferior, onde teremos um botão fixo.
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <Header title={titulo || 'Detalhes do Evento'} />
+      <Header title={event?.titulo || 'Detalhes do Evento'} />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Imagem de Capa (Usando um placeholder genérico) */}
         <Image 
-          source={{ uri: imagem || 'https://via.placeholder.com/600x400?text=Imagem+do+Evento' }} 
+          source={{ uri: event?.imagem || 'https://via.placeholder.com/600x400?text=Imagem+do+Evento' }} 
           style={styles.coverImage}
         />
 
         <View style={styles.content}>
           {/* Título do Evento recebido via parâmetro */}
-          <Text style={styles.title}>{titulo || 'Nome do Evento'}</Text>
+          <Text style={styles.title}>{event?.titulo || 'Nome do Evento'}</Text>
 
           {/* Informações Rápidas */}
           <View style={styles.infoBox}>
@@ -40,7 +51,7 @@ export default function EventDetailsScreen() {
               </View>
               <View>
                 <Text style={styles.infoLabel}>Data e Hora</Text>
-                <Text style={styles.infoValue}>{data || 'Não informada'}</Text>
+                <Text style={styles.infoValue}>{event?.data || 'Não informada'}</Text>
               </View>
             </View>
 
@@ -50,7 +61,7 @@ export default function EventDetailsScreen() {
               </View>
               <View>
                 <Text style={styles.infoLabel}>Localização</Text>
-                <Text style={styles.infoValue}>{local || 'Local não definido'}</Text>
+                <Text style={styles.infoValue}>{event?.local || 'Local não definido'}</Text>
               </View>
             </View>
           </View>
@@ -74,13 +85,13 @@ export default function EventDetailsScreen() {
             }
             await adicionarItem({
               id: id as string,
-              titulo: titulo as string,
-              local: local as string,
-              imagem: imagem as string,
-              data: data as string,
-              preco: preco as string,
+              titulo: event?.titulo as string,
+              local: event?.local as string,
+              imagem: event?.imagem as string,
+              data: event?.data as string,
+              preco: event?.preco as string,
             });
-            Alert.alert('Adicionado!', `"${titulo}" foi adicionado ao carrinho.`, [
+            Alert.alert('Adicionado!', `"${event?.titulo}" foi adicionado ao carrinho.`, [
               { text: 'Ver Carrinho', onPress: () => router.push('/(tabs)/cart') },
               { text: 'Continuar', style: 'cancel' },
             ]);

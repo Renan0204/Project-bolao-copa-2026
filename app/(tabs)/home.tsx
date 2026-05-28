@@ -10,11 +10,12 @@ import {  useEffect, useState } from 'react';
 export default function HomeScreen() {
   const router = useRouter();
   const [carregando, setCarregando] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
 
   const renderizarEvento = ({ item }: { item: Event }) => (
     <EventCard
       item={item}
-      onPress={() => router.push({ pathname: `/event/[id]`, params: item })}
+      onPress={() => router.push(`event/${item.id}`)}
     />
   );
 
@@ -25,9 +26,7 @@ export default function HomeScreen() {
 
     setCarregando(false);
 
-    const resultadoString = JSON.stringify(resultadoBusca)
-
-    Alert.alert("Resultado da busca", resultadoString);
+    setEvents(resultadoBusca);
   }
 
   // Quando a tela for carregada
@@ -56,7 +55,7 @@ export default function HomeScreen() {
       }
 
       <FlatList
-        data={[]}
+        data={events}
         keyExtractor={(item) => item.id}
         renderItem={renderizarEvento}
         contentContainerStyle={styles.listaContainer}

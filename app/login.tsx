@@ -3,9 +3,12 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { logar } from "../services/loginService";
 
 export default function LoginScreen() {
     const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [senha, setSenha] = useState("");
 
     const [secureText, setSecureText] = useState(true);
 
@@ -17,7 +20,24 @@ export default function LoginScreen() {
         }
     }
 
-    function logar() {
+    async function clicouEmlogar() {
+        if (!email) {
+            Alert.alert("Atenção!", "Email é obrigatório.");
+            return;
+        }
+
+        if (!senha) {
+            Alert.alert("Atenção!", "Senha é obrigatória.") 
+            return;
+        } 
+
+        const token = await logar(email, senha);
+
+        if (!token) {
+            Alert.alert("Atenção!", "Falha ao realizar login, tente novamente.")
+            return;
+        }
+
         router.replace("/(tabs)/home")
     }
 
@@ -40,6 +60,7 @@ export default function LoginScreen() {
                     style={styles.input}
                     placeholder="email@example.com"
                     keyboardType="email-address"
+                    onChangeText={setEmail}
                 />
 
                 <Text style={styles.label}>Senha</Text>
@@ -48,6 +69,7 @@ export default function LoginScreen() {
                         style={styles.passwordInput}
                         placeholder="*********"
                         secureTextEntry={secureText} 
+                        onChangeText={setSenha}
                     />
                     <TouchableOpacity 
                         onPress={trocarEstadoSenha}
@@ -63,7 +85,7 @@ export default function LoginScreen() {
 
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={logar}
+                    onPress={clicouEmlogar}
                 >
                     <Text style={styles.buttonText}>Entrar</Text>
                 </TouchableOpacity>
