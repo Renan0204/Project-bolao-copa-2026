@@ -1,1 +1,13 @@
-# Project-bolao-copa-2026
+# Bolão Copa do Mundo 2026
+
+Projeto Hackathon - 5º Período  
+Tecnologias: Java, Spring Boot, MySQL, React Native
+
+## Integrantes
+- Backend: Renan Oliveira & Guilherme Vitor
+- Mobile: ...
+- Banco: ...
+- UI/docs: ...
+
+## Como rodar o projeto
+Em desenvolvimento...
