@@ -1,173 +1,162 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { logar } from "../services/loginService";
 
 export default function LoginScreen() {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [senha, setSenha] = useState("");
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
-    const [secureText, setSecureText] = useState(true);
-
-    function trocarEstadoSenha() {
-        if (secureText === true) {
-            setSecureText(false);
-        }else {
-            setSecureText(true);
-        }
+  async function clicouEmlogar() {
+    if (!email) {
+      Alert.alert("Atenção!", "Email é obrigatório.");
+      return;
     }
 
-    async function clicouEmlogar() {
-        if (!email) {
-            Alert.alert("Atenção!", "Email é obrigatório.");
-            return;
-        }
-
-        if (!senha) {
-            Alert.alert("Atenção!", "Senha é obrigatória.") 
-            return;
-        } 
-
-        const token = await logar(email, senha);
-
-        if (!token) {
-            Alert.alert("Atenção!", "Falha ao realizar login, tente novamente.")
-            return;
-        }
-
-        router.replace("/(tabs)/home")
+    if (!senha) {
+      Alert.alert("Atenção!", "Senha é obrigatória.");
+      return;
     }
 
-    return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? 'padding' : 'height'}
-            style={styles.container}
-        >
-            <View style={styles.innerContainer}>
-                <Ionicons 
-                    name="apps-outline" 
-                    size={64} 
-                    color={"#007AFF"}
-                    style={styles.logo} 
-                />
-                <Text style={styles.title}>Acesse sua conta</Text>
+    try {
+      const token = await logar(email, senha);
 
-                <Text style={styles.label}>E-mail</Text>
-                <TextInput 
-                    style={styles.input}
-                    placeholder="email@example.com"
-                    keyboardType="email-address"
-                    onChangeText={setEmail}
-                />
+      if (!token) {
+        Alert.alert("Atenção!", "Falha ao realizar login, tente novamente.");
+        return;
+      }
 
-                <Text style={styles.label}>Senha</Text>
-                <View style={styles.passwordContainer}>
-                    <TextInput 
-                        style={styles.passwordInput}
-                        placeholder="*********"
-                        secureTextEntry={secureText} 
-                        onChangeText={setSenha}
-                    />
-                    <TouchableOpacity 
-                        onPress={trocarEstadoSenha}
-                        style={styles.iconContainer}
-                    >
-                        <Ionicons
-                            name={secureText ? "eye-off-outline" : "eye-outline"}
-                            size={20}
-                            color={"#8e8e93"}
-                        />
-                    </TouchableOpacity>
-                </View>
+      router.replace("/(tabs)/home");
+    } catch (error) {
+      Alert.alert("Erro", "Ocorreu um erro ao tentar logar.");
+      console.error(error);
+    }
+  }
 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={clicouEmlogar}
-                >
-                    <Text style={styles.buttonText}>Entrar</Text>
-                </TouchableOpacity>
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.innerContainer}>
+        <View style={styles.logoContainer}>
+          <Text style={styles.titleLogo}>Mãozinha BET</Text>
+        </View>
 
-            </View>
-        </KeyboardAvoidingView>
-    )
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Seu e-mail"
+            placeholderTextColor="#8e8e93"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            onChangeText={setEmail}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="••••••••••"
+            placeholderTextColor="#8e8e93"
+            secureTextEntry
+            onChangeText={setSenha}
+          />
+
+          <TouchableOpacity style={styles.button} onPress={clicouEmlogar}>
+            <Text style={styles.buttonText}>ENTRAR</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.linkMargin}>
+            <Text style={styles.linkText}>Esqueci minha senha</Text>
+          </TouchableOpacity>
+
+          <Link href="/register" asChild>
+            <TouchableOpacity>
+              <Text style={styles.linkText}>
+                Não tem uma conta? Cadastre-se
+              </Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#FFF"
-    },
-    innerContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingBottom: 40
-    },
-    logo: {
-        marginBottom: 10
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "#1c1c1e",
-        marginBottom: 30 
-    },
-    label: {
-        alignSelf: "flex-start",
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#8e8e93',
-        marginBottom: 5,
-    },
-    input: {
-        width: "100%",
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#e5e5ea",
-        borderRadius: 12,
-        paddingHorizontal: 15,
-        fontSize: 16,
-        color: "#1c1c1e",
-        backgroundColor: "#fbfbfd",
-        marginBottom: 15
-    },
-    passwordContainer: {
-        flexDirection: "row",
-        width: "100%",
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#e5e5ea",
-        borderRadius: 12,
-        backgroundColor: "#fbfbfd",
-        marginBottom: 10,
-        overflow: "hidden"
-    },
-    passwordInput: {
-        flex: 1,
-        paddingHorizontal: 15,
-        fontSize: 16,
-        color: "#1c1c1e"
-    },
-    iconContainer: {
-        justifyContent: "center",
-        paddingHorizontal: 15
-    },
-    button: {
-        width: "100%",
-        height: 50,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 10,
-        backgroundColor: "#007AFF"
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: "#FFF"
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    padding: 10,
+  },
+  innerContainer: {
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    padding: 20,
+    height: "80%",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#B0B0B0",
+    elevation: 5,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  titleLogo: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+    marginTop: 5,
+  },
+  formContainer: {
+    width: "100%",
+  },
+  input: {
+    width: "100%",
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#8e8e93",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    color: "#1c1c1e",
+    backgroundColor: "#F2F2F2",
+    marginBottom: 10,
+  },
+  button: {
+    width: "100%",
+    height: 40,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#007AFF",
+    marginTop: 10,
+    marginBottom: 15,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FFF",
+  },
+  linkMargin: {
+    marginBottom: 15,
+    alignSelf: "center",
+  },
+  linkText: {
+    color: "#007AFF",
+    fontWeight: "600",
+    fontSize: 14,
+    textAlign: "center",
+  },
+});

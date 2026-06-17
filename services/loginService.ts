@@ -1,21 +1,10 @@
-import { api } from "./api";
-
-type LoginResposta = {
-    id: number;
-    name: string;
-    email: string;
-    token: string;
-}
-
+// services/loginService.ts
+// Não precisamos importar a 'api' se não vamos usá-la agora
 export async function logar(email: string, senha: string) {
-    const resposta = await api.post<LoginResposta>("/auth/customer/login", {
-        email: email,
-        password: senha
-    })
+  // 1. Simula um atraso de 1 segundo (opcional, para parecer real)
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (resposta.status === 200) {
-        return resposta.data.token;
-    }
-
-    throw new Error("Status desconhecido:" + resposta.status)
+  // 2. Retorna um token falso imediatamente
+  // Isso fará o seu login.tsx acreditar que o login foi bem-sucedido
+  return "token-de-teste-acesso-liberado";
 }
