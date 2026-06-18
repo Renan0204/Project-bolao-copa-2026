@@ -1,5 +1,3 @@
-// app/register.tsx
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -10,10 +8,16 @@ export default function RegisterScreen() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+    const [confirmSenha, setConfirmSenha] = useState("");
 
     async function clicouEmCadastrar() {
-        if (!name || !email || !senha) {
+        if (!name || !email || !senha || !confirmSenha) {
             Alert.alert("Atenção!", "Todos os campos são obrigatórios.");
+            return;
+        }
+
+        if (senha !== confirmSenha) {
+            Alert.alert("Atenção!", "As senhas não coincidem.");
             return;
         }
 
@@ -22,35 +26,30 @@ export default function RegisterScreen() {
             Alert.alert("Sucesso", "Conta criada com sucesso!");
             router.replace("/login");
         } catch (error) {
-            Alert.alert("Erro", "Não foi possível realizar o cadastro. Tente novamente.");
+            Alert.alert("Erro", "Não foi possível realizar o cadastro.");
             console.error(error);
         }
     }
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? 'padding' : 'height'}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.container}
         >
             <View style={styles.innerContainer}>
-                <Ionicons name="person-add-outline" size={64} color={"#007AFF"} style={styles.logo} />
-                <Text style={styles.title}>Crie sua conta</Text>
+                <Text style={styles.title}>Cadastro</Text>
 
-                <Text style={styles.label}>Nome</Text>
-                <TextInput style={styles.input} placeholder="Seu nome" onChangeText={setName} />
-
-                <Text style={styles.label}>E-mail</Text>
-                <TextInput style={styles.input} placeholder="email@example.com" keyboardType="email-address" onChangeText={setEmail} autoCapitalize="none" />
-
-                <Text style={styles.label}>Senha</Text>
-                <TextInput style={styles.input} placeholder="*********" secureTextEntry onChangeText={setSenha} />
+                <TextInput style={styles.input} placeholder="Nome" onChangeText={setName} />
+                <TextInput style={styles.input} placeholder="E-mail" keyboardType="email-address" autoCapitalize="none" onChangeText={setEmail} />
+                <TextInput style={styles.input} placeholder="Senha" secureTextEntry onChangeText={setSenha} />
+                <TextInput style={styles.input} placeholder="Confirmar Senha" secureTextEntry onChangeText={setConfirmSenha} />
 
                 <TouchableOpacity style={styles.button} onPress={clicouEmCadastrar}>
-                    <Text style={styles.buttonText}>Cadastrar</Text>
+                    <Text style={styles.buttonText}>CADASTRAR</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{ marginTop: 20 }} onPress={() => router.back()}>
-                    <Text style={{ color: "#8e8e93" }}>Já tem uma conta? Voltar</Text>
+                <TouchableOpacity onPress={() => router.back()}>
+                    <Text style={styles.linkText}>Já tem uma conta? Voltar</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -58,12 +57,60 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#FFF" },
-    innerContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20, paddingBottom: 40 },
-    logo: { marginBottom: 10 },
-    title: { fontSize: 24, fontWeight: "bold", color: "#1c1c1e", marginBottom: 30 },
-    label: { alignSelf: "flex-start", fontSize: 14, fontWeight: '600', color: '#8e8e93', marginBottom: 5 },
-    input: { width: "100%", height: 50, borderWidth: 1, borderColor: "#e5e5ea", borderRadius: 12, paddingHorizontal: 15, fontSize: 16, color: "#1c1c1e", backgroundColor: "#fbfbfd", marginBottom: 15 },
-    button: { width: "100%", height: 50, borderRadius: 12, justifyContent: 'center', alignItems: 'center', marginTop: 10, backgroundColor: "#007AFF" },
-    buttonText: { fontSize: 16, fontWeight: 'bold', color: "#FFF" }
+    container: {
+        flex: 1,
+        backgroundColor: "#E0E0E0",
+        justifyContent: "center",
+        padding: 10,
+    },
+    innerContainer: {
+        backgroundColor: "#FFF",
+        borderRadius: 20,
+        padding: 20,
+        // Mantive a altura ajustável, mas se preferir travada use height: "80%"
+        justifyContent: "center",
+        borderWidth: 1,
+        borderColor: "#B0B0B0",
+        elevation: 5,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#000",
+        marginBottom: 30,
+        alignSelf: 'center',
+    },
+    input: {
+        width: "100%",
+        height: 40,
+        borderWidth: 1,
+        borderColor: "#8e8e93",
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        fontSize: 16,
+        color: "#1c1c1e",
+        backgroundColor: "#F2F2F2",
+        marginBottom: 10,
+    },
+    button: {
+        width: "100%",
+        height: 40,
+        borderRadius: 5,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#007AFF",
+        marginTop: 10,
+        marginBottom: 15,
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#FFF",
+    },
+    linkText: {
+        color: "#007AFF",
+        fontWeight: "600",
+        fontSize: 14,
+        textAlign: "center",
+    },
 });
