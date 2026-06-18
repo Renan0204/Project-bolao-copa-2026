@@ -28,7 +28,7 @@ export default function LoginScreen() {
       return;
     }
 
-    try {
+        try {
       const token = await logar(email, senha);
 
       if (!token) {
@@ -36,12 +36,13 @@ export default function LoginScreen() {
         return;
       }
 
-      router.replace("/(tabs)/home");
-    } catch (error) {
-      Alert.alert("Erro", "Ocorreu um erro ao tentar logar.");
-      console.error(error);
-    }
-  }
+      router.replace("/(drawer)/home");
+} catch (error) {
+  Alert.alert("Erro", "Ocorreu um erro ao tentar logar.");
+  console.error(error);
+}
+}
+
 
   return (
     <KeyboardAvoidingView
