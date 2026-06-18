@@ -31,3 +31,19 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# IntelliJ
+.idea/
+
+# Arquivos de projeto IntelliJ
+*.iml
+
+# Maven
+target/
+
+# Logs
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
