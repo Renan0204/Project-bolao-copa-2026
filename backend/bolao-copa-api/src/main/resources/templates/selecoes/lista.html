@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Seleções</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <h1>Lista de Seleções</h1>
+
+    <table class="table table-striped">
+
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Código FIFA</th>
+            <th>Grupo</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="selecao : ${selecoes}"> <!-- Significa que para cada seleção da lista vamos criar uma linha na tabela -->
+            <td th:text="${selecao.id}"></td>
+            <td th:text="${selecao.nome}"></td>
+            <td th:text="${selecao.codigoFifa}"></td>
+            <td th:text="${selecao.grupo}"></td> <!-- Estamos mostrando os valores dos atributos -->
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+</html>
+
+Quando acessarmos /selecoes o Spring vai fazer esse caminho: Controller -> listarTodas() -> Repository -> Banco -> lista.html
+e preencher a tabela, mas vai dar erro porque não temos o banco ainda...
