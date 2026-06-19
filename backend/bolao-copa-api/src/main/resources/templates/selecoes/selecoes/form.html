@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Seleção</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <h1>Cadastro de Seleção</h1>
+
+    <form th:action="@{/selecoes/salvar}" th:object="${selecao}" method="post">
+
+        <input type="hidden" th:field="*{id}">
+
+        <div class="mb-3">
+            <label class="form-label">Nome da Seleção</label>
+            <input type="text" class="form-control" th:field="*{nome}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Código FIFA</label>
+            <input type="text" class="form-control" th:field="*{codigoFifa}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Grupo</label>
+            <input type="text" class="form-control" th:field="*{grupo}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">URL da Bandeira</label>
+            <input type="text" class="form-control" th:field="*{bandeiraUrl}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="/selecoes" class="btn btn-secondary">Voltar</a>
+
+    </form>
+
+</div>
+
+</body>
+</html>
