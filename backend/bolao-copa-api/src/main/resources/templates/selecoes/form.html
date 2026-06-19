@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Seleção</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .topo {
+            background: linear-gradient(135deg, #538a95, #67b79e);
+            color: white;
+            padding: 35px 0;
+            margin-bottom: 30px;
+        }
+
+        .card-principal {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-salvar {
+            background: #67b79e;
+            border: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-salvar:hover {
+            background: #579c87;
+            color: white;
+        }
+
+        .btn-voltar {
+            background: #ffb727;
+            border: none;
+            color: #222;
+            font-weight: bold;
+        }
+
+        .btn-voltar:hover {
+            background: #f2a600;
+            color: #222;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topo">
+    <div class="container">
+        <h1 class="mb-1">Bolão Copa 2026</h1>
+        <p class="mb-0">Cadastro de seleção participante</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card card-principal">
+                <div class="card-body p-4">
+
+                    <h2 class="mb-1">Cadastro de Seleção</h2>
+                    <p class="text-muted mb-4">Preencha os dados da seleção abaixo</p>
+
+                    <form th:action="@{/selecoes/salvar}" th:object="${selecao}" method="post">
+
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Nome da Seleção</label>
+                            <input type="text" class="form-control" th:field="*{nome}" placeholder="Ex: Brasil">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Código FIFA</label>
+                            <input type="text" class="form-control" th:field="*{codigoFifa}" placeholder="Ex: BRA">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Grupo</label>
+                            <input type="text" class="form-control" th:field="*{grupo}" placeholder="Ex: Grupo C">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">URL da Bandeira</label>
+                            <input type="text" class="form-control" th:field="*{bandeiraUrl}" placeholder="Cole aqui o link da imagem da bandeira">
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-salvar">
+                                Salvar Seleção
+                            </button>
+
+                            <a href="/selecoes" class="btn btn-voltar">
+                                Voltar
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
