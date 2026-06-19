@@ -1,6 +1,7 @@
 package br.com.bolao.copa.controller;
 
 import br.com.bolao.copa.model.Usuario;
+import br.com.bolao.copa.service.TokenService;
 import br.com.bolao.copa.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,9 @@ public class AuthController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/cadastrar")
     public ResponseEntity<Map<String, Object>> cadastrar(@RequestBody Usuario usuario) {
@@ -78,7 +82,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
         }
 
-        String token = gerarTokenSimples(usuarioLogado);
+        String token = tokenService.gerarToken(usuarioLogado);
 
         Map<String, Object> dadosUsuario = new HashMap<>();
         dadosUsuario.put("id", usuarioLogado.getId());
@@ -94,9 +98,5 @@ public class AuthController {
         resposta.put("usuario", dadosUsuario);
 
         return ResponseEntity.ok(resposta);
-    }
-
-    private String gerarTokenSimples(Usuario usuario) {
-        return "TOKEN-" + usuario.getId() + "-" + System.currentTimeMillis();
     }
 }
