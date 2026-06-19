@@ -1,32 +1,23 @@
-// app/(drawer)/_layout.tsx
-import { Drawer } from 'expo-router/drawer';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-export default function DrawerLayout() {
+// Importando suas telas (estão na mesma pasta app/(drawer))
+import HomeScreen from './home';
+import PerfilScreen from './profile';
+import PalpitesScreen from './palpites';
+import FazerPalpiteScreen from './fazerPalpite';
+import EditarPalpiteScreen from './editarPalpite';
+
+const Drawer = createDrawerNavigator();
+
+export default function Layout() {
   return (
-    <Drawer
-      screenOptions={{
-        headerTitle: "Bolão Copa 2026",
-        headerTitleAlign: 'center',
-        drawerActiveTintColor: '#007AFF',
-      }}
-    >
-      <Drawer.Screen
-        name="home"
-        options={{
-          title: 'Início',
-          drawerLabel: 'Início',
-          drawerIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="profile"
-        options={{
-          title: 'Perfil',
-          drawerLabel: 'Perfil',
-          drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
-        }}
-      />
-    </Drawer>
+    <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen name="Home" component={HomeScreen} />
+      <Drawer.Screen name="Perfil" component={PerfilScreen} />
+      <Drawer.Screen name="Palpites" component={PalpitesScreen} />
+      <Drawer.Screen name="Fazer Palpite" component={FazerPalpiteScreen} />
+      <Drawer.Screen name="Editar Palpite" component={EditarPalpiteScreen} />
+    </Drawer.Navigator>
   );
 }
