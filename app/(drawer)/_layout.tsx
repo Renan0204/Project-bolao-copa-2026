@@ -1,12 +1,14 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-// Importando suas telas (estão na mesma pasta app/(drawer))
+// Importando suas telas (todas estão dentro de app/(drawer))
 import HomeScreen from './home';
 import PerfilScreen from './profile';
 import PalpitesScreen from './palpites';
 import FazerPalpiteScreen from './fazerPalpite';
 import EditarPalpiteScreen from './editarPalpite';
+import PartidasScreen from './partidas';
+import RankingScreen from './ranking';
 
 const Drawer = createDrawerNavigator();
 
@@ -18,6 +20,8 @@ export default function Layout() {
       <Drawer.Screen name="Palpites" component={PalpitesScreen} />
       <Drawer.Screen name="Fazer Palpite" component={FazerPalpiteScreen} />
       <Drawer.Screen name="Editar Palpite" component={EditarPalpiteScreen} />
+      <Drawer.Screen name="Partidas" component={PartidasScreen} />
+      <Drawer.Screen name="Ranking" component={RankingScreen} />
     </Drawer.Navigator>
   );
 }
