@@ -78,11 +78,6 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        {/* Botão extra só para testar o AlertHelper */}
-        <TouchableOpacity style={styles.buttonPrimary} onPress={() => AlertHelper.success("Teste de alerta funcionando!")}>
-          <Text style={styles.buttonText}>Testar AlertHelper</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={styles.link} onPress={() => router.push('/register')}>
           <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
         </TouchableOpacity>

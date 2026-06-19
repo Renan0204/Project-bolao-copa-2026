@@ -1,5 +1,5 @@
 // app/(drawer)/home.tsx
-import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router"; // Adicionado para fazer a navegação funcionar
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,8 @@ import {
 } from "react-native";
 
 export default function HomeScreen() {
+  const router = useRouter(); // Inicializando o roteador
+
   return (
     <ScrollView style={styles.container}>
       {/* O cabeçalho (com as 3 barrinhas) é injetado automaticamente pelo _layout.tsx do Drawer */}
@@ -29,7 +31,10 @@ export default function HomeScreen() {
 
       <View style={styles.featuredCard}>
         <Text style={styles.matchText}>Brasil x Haiti</Text>
-        <TouchableOpacity style={styles.palpitarButton}>
+        <TouchableOpacity 
+          style={styles.palpitarButton}
+          onPress={() => router.push('/(drawer)/detalhesPartida')} // Rota conectada!
+        >
           <Text style={styles.palpitarText}>palpitar</Text>
         </TouchableOpacity>
       </View>
@@ -38,14 +43,20 @@ export default function HomeScreen() {
 
       <View style={styles.gridRow}>
         <View style={styles.smallCard}>
-          <Text style={styles.smallMatchText}>México x Africa</Text>
-          <TouchableOpacity style={styles.palpitarButton}>
+          <Text style={styles.smallMatchText}>México x África</Text>
+          <TouchableOpacity 
+            style={styles.palpitarButton}
+            onPress={() => router.push('/(drawer)/detalhesPartida')} // Rota conectada!
+          >
             <Text style={styles.palpitarText}>palpitar</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.smallCard}>
-          <Text style={styles.smallMatchText}>Japão x Eua</Text>
-          <TouchableOpacity style={styles.palpitarButton}>
+          <Text style={styles.smallMatchText}>Japão x EUA</Text>
+          <TouchableOpacity 
+            style={styles.palpitarButton}
+            onPress={() => router.push('/(drawer)/detalhesPartida')} // Rota conectada!
+          >
             <Text style={styles.palpitarText}>palpitar</Text>
           </TouchableOpacity>
         </View>
