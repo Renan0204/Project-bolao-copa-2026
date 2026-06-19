@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { useRouter } from 'expo-router';
 
 type Partida = {
   id: string;
@@ -15,10 +16,16 @@ const partidas: Partida[] = [
 ];
 
 export default function PartidasScreen() {
+  const router = useRouter();
+
   const renderItem = ({ item }: { item: Partida }) => (
     <View style={styles.card}>
       <Text style={styles.match}>{item.timeA} x {item.timeB}</Text>
-      <TouchableOpacity style={styles.button}>
+      
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => router.push('/(drawer)/detalhesPartida')}
+      >
         <Text style={styles.buttonText}>detalhes</Text>
       </TouchableOpacity>
     </View>
@@ -53,14 +60,14 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
   },
-  match: { fontSize: 16, fontWeight: '600' },
+  match: { fontSize: 18, fontWeight: 'bold' },
   button: {
     backgroundColor: '#007AFF',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
     borderRadius: 5,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
+  buttonText: { color: '#fff', fontWeight: 'bold' }
 });
