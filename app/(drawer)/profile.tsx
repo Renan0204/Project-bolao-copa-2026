@@ -1,3 +1,4 @@
+// app/(drawer)/profile.tsx
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,19 +9,22 @@ export default function ProfileScreen() {
 
   function onSairPress() {
     AlertHelper.warning("Deseja sair de sua conta?");
-    router.replace("/login");
+    setTimeout(() => {
+      router.replace("/login");
+    }, 1500); // espera 1,5s para mostrar o alerta
   }
 
   function onExcluirContaPress() {
     AlertHelper.warning("Tem certeza que deseja excluir sua conta permanentemente?");
-    // simulação de exclusão
-    const excluido = true;
-    if (excluido) {
-      AlertHelper.error("Conta excluída.");
-      router.replace("/login");
-    } else {
-      AlertHelper.error("Erro ao excluir conta.");
-    }
+    const excluido = true; // simulação
+    setTimeout(() => {
+      if (excluido) {
+        AlertHelper.error("Conta excluída.");
+        router.replace("/login");
+      } else {
+        AlertHelper.error("Erro ao excluir conta.");
+      }
+    }, 1500); // espera 1,5s para mostrar o alerta
   }
 
   return (
@@ -36,17 +40,11 @@ export default function ProfileScreen() {
         <Text style={styles.textName}>João Grande</Text>
         <Text style={styles.textBio}>Eu gosto de react native</Text>
 
-        <TouchableOpacity 
-          style={styles.buttonSair} 
-          onPress={onSairPress}
-        >
+        <TouchableOpacity style={styles.buttonSair} onPress={onSairPress}>
           <Text style={styles.buttonText}>Sair</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.buttonExcluir} 
-          onPress={onExcluirContaPress}
-        >
+        <TouchableOpacity style={styles.buttonExcluir} onPress={onExcluirContaPress}>
           <Text style={styles.buttonText}>Excluir Conta</Text>
         </TouchableOpacity>
       </View>
