@@ -11,6 +11,9 @@ import PartidasScreen from './partidas';
 import RankingScreen from './ranking';
 import UsuarioScreen from './usuario';
 import EditarUsuarioScreen from './editarUsuario';
+import LoginScreen from './login';
+import CriarContaScreen from './criarConta';
+import RecuperarContaScreen from './recuperarConta';
 
 const Drawer = createDrawerNavigator();
 
@@ -26,6 +29,9 @@ export default function Layout() {
       <Drawer.Screen name="Ranking" component={RankingScreen} />
       <Drawer.Screen name="Usuário" component={UsuarioScreen} />
       <Drawer.Screen name="Editar Usuário" component={EditarUsuarioScreen} />
+      <Drawer.Screen name="Login" component={LoginScreen} />
+      <Drawer.Screen name="Criar Conta" component={CriarContaScreen} />
+      <Drawer.Screen name="Recuperar Conta" component={RecuperarContaScreen} />
     </Drawer.Navigator>
   );
 }
