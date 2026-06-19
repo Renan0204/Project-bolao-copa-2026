@@ -14,6 +14,7 @@ import EditarUsuarioScreen from './editarUsuario';
 import LoginScreen from './login';
 import CriarContaScreen from './criarConta';
 import RecuperarContaScreen from './recuperarConta';
+import DetalhesPartidaScreen from './detalhesPartida';
 
 const Drawer = createDrawerNavigator();
 
@@ -32,6 +33,7 @@ export default function Layout() {
       <Drawer.Screen name="Login" component={LoginScreen} />
       <Drawer.Screen name="Criar Conta" component={CriarContaScreen} />
       <Drawer.Screen name="Recuperar Conta" component={RecuperarContaScreen} />
+      <Drawer.Screen name="Detalhes da Partida" component={DetalhesPartidaScreen} />
     </Drawer.Navigator>
   );
 }
