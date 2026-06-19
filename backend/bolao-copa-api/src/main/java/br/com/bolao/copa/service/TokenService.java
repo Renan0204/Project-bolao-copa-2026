@@ -3,6 +3,7 @@ package br.com.bolao.copa.service;
 import br.com.bolao.copa.model.Usuario;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,33 @@ public class TokenService {
                 .withClaim("tipo", usuario.getTipo())
                 .withExpiresAt(gerarDataExpiracao())
                 .sign(algorithm);
+    }
+
+    public String validarToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(SEGREDO);
+
+            DecodedJWT jwt = JWT.require(algorithm)
+                    .withIssuer(EMISSOR)
+                    .build()
+                    .verify(token);
+
+            return jwt.getSubject();
+        } catch (Exception erro) {
+            return null;
+        }
+    }
+
+    public String extrairTokenDoHeader(String authorizationHeader) {
+        if (authorizationHeader == null) {
+            return null;
+        }
+
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            return null;
+        }
+
+        return authorizationHeader.replace("Bearer ", "");
     }
 
     private Date gerarDataExpiracao() {
