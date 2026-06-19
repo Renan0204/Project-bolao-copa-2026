@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { logar } from '../services/loginService';
-import { AlertHelper } from './utils/AlertHelper'; // caminho correto
+import { AlertHelper } from './utils/AlertHelper';
 
 export default function LoginScreen() {
   const router = useRouter();

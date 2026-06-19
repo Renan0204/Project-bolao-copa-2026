@@ -1,7 +1,8 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { registrar } from "../services/registerService";
+import { AlertHelper } from "./utils/AlertHelper"; // importa o helper
 
 export default function RegisterScreen() {
     const router = useRouter();
@@ -12,21 +13,21 @@ export default function RegisterScreen() {
 
     async function clicouEmCadastrar() {
         if (!name || !email || !senha || !confirmSenha) {
-            Alert.alert("Atenção!", "Todos os campos são obrigatórios.");
+            AlertHelper.warning("Todos os campos são obrigatórios.");
             return;
         }
 
         if (senha !== confirmSenha) {
-            Alert.alert("Atenção!", "As senhas não coincidem.");
+            AlertHelper.warning("As senhas não coincidem.");
             return;
         }
 
         try {
             await registrar(name, email, senha);
-            Alert.alert("Sucesso", "Conta criada com sucesso!");
+            AlertHelper.success("Conta criada com sucesso!");
             router.replace("/login");
         } catch (error) {
-            Alert.alert("Erro", "Não foi possível realizar o cadastro.");
+            AlertHelper.error("Não foi possível realizar o cadastro.");
             console.error(error);
         }
     }
@@ -67,7 +68,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFF",
         borderRadius: 20,
         padding: 20,
-        // Mantive a altura ajustável, mas se preferir travada use height: "80%"
         justifyContent: "center",
         borderWidth: 1,
         borderColor: "#B0B0B0",

@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { AlertHelper } from './utils/AlertHelper'; // importa o helper
 
 export default function RecuperarContaScreen() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+
+  async function enviarCodigo() {
+    if (!email) {
+      AlertHelper.warning("Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    try {
+      // aqui você chamaria seu serviço de recuperação, ex: await recuperarConta(email)
+      const enviado = true; // simulação
+
+      if (!enviado) {
+        AlertHelper.error("E-mail inválido, tente novamente.");
+        return;
+      }
+
+      AlertHelper.success("Código de verificação enviado!");
+    } catch (error) {
+      AlertHelper.error("Erro ao enviar código de verificação.");
+      console.error(error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -13,9 +37,15 @@ export default function RecuperarContaScreen() {
         <Text style={styles.uploadText}>📤 Upload</Text>
       </View>
 
-      <TextInput style={styles.input} placeholder="E-mail" keyboardType="email-address" />
+      <TextInput
+        style={styles.input}
+        placeholder="E-mail"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
 
-      <TouchableOpacity style={styles.buttonPrimary}>
+      <TouchableOpacity style={styles.buttonPrimary} onPress={enviarCodigo}>
         <Text style={styles.buttonText}>Enviar código</Text>
       </TouchableOpacity>
 
