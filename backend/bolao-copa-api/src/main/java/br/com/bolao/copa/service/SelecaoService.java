@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service //Dizemos que é uma classe com regras de negócio
+@Service
 public class SelecaoService {
 
     private final SelecaoRepository selecaoRepository;
@@ -17,8 +17,17 @@ public class SelecaoService {
 
     public List<Selecao> listarTodas() {
         return selecaoRepository.findAll();
-    } //Metodo para listar as seleções
+    }
 
+    public void salvar(Selecao selecao) {
+        selecaoRepository.save(selecao);
+    }
 
-    //O service recebe o Repository para poder acessar os dados do banco.
+    public Selecao buscarPorId(Long id) {
+        return selecaoRepository.findById(id).orElse(null);
+    }
+
+    public void excluir(Long id) {
+        selecaoRepository.deleteById(id);
+    }
 }
