@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     color: "#333",
+    textAlign: "center",
   },
   drawnRow: {
     flexDirection: "row",
