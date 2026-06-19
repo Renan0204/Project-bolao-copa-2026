@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function DetalhesPartidaScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Detalhes da Partida</Text>
@@ -39,7 +42,10 @@ export default function DetalhesPartidaScreen() {
         <Text style={styles.value}>Agendado</Text>
       </View>
 
-      <TouchableOpacity style={styles.buttonPrimary}>
+      <TouchableOpacity 
+        style={styles.buttonPrimary}
+        onPress={() => router.push('/(drawer)/fazerPalpite')}
+      >
         <Text style={styles.buttonText}>Fazer Palpite</Text>
       </TouchableOpacity>
     </View>
@@ -75,10 +81,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#eee',
   },
-  label: { fontSize: 16, fontWeight: '600' },
-  value: { fontSize: 16 },
+  label: { fontSize: 16, fontWeight: '600', color: '#555' },
+  value: { fontSize: 16, color: '#333' },
   buttonPrimary: {
     backgroundColor: '#007AFF',
     padding: 15,
@@ -86,5 +92,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' }
 });
