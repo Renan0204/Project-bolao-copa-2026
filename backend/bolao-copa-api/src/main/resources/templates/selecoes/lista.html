@@ -12,6 +12,8 @@
 
     <h1>Lista de Seleções</h1>
 
+    <a href="/selecoes/novo" class="btn btn-primary mb-3">Nova Seleção</a>
+
     <table class="table table-striped">
 
         <thead>
@@ -20,16 +22,26 @@
             <th>Nome</th>
             <th>Código FIFA</th>
             <th>Grupo</th>
+            <th>Ações</th>
         </tr>
         </thead>
 
         <tbody>
 
-        <tr th:each="selecao : ${selecoes}"> <!-- Significa que para cada seleção da lista vamos criar uma linha na tabela -->
+        <tr th:each="selecao : ${selecoes}">
             <td th:text="${selecao.id}"></td>
             <td th:text="${selecao.nome}"></td>
             <td th:text="${selecao.codigoFifa}"></td>
-            <td th:text="${selecao.grupo}"></td> <!-- Estamos mostrando os valores dos atributos -->
+            <td th:text="${selecao.grupo}"></td>
+            <td>
+                <a th:href="@{/selecoes/editar/{id}(id=${selecao.id})}" class="btn btn-warning btn-sm">
+                    Editar
+                </a>
+
+                <a th:href="@{/selecoes/excluir/{id}(id=${selecao.id})}" class="btn btn-danger btn-sm">
+                    Excluir
+                </a>
+            </td>
         </tr>
 
         </tbody>
@@ -40,6 +52,3 @@
 
 </body>
 </html>
-
-Quando acessarmos /selecoes o Spring vai fazer esse caminho: Controller -> listarTodas() -> Repository -> Banco -> lista.html
-e preencher a tabela, mas vai dar erro porque não temos o banco ainda...
