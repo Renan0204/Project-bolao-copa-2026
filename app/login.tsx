@@ -5,12 +5,12 @@ import {
   StyleSheet, 
   TextInput, 
   TouchableOpacity, 
-  Alert, 
   KeyboardAvoidingView, 
   Platform 
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { logar } from '../services/loginService'; // Garante a ligação com o teu serviço de autenticação
+import { logar } from '../services/loginService';
+import { AlertHelper } from './utils/AlertHelper'; // caminho correto
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -19,28 +19,28 @@ export default function LoginScreen() {
 
   async function clicouEmLogar() {
     if (!email) {
-      Alert.alert("Atenção!", "E-mail é obrigatório.");
+      AlertHelper.warning("E-mail é obrigatório.");
       return;
     }
 
     if (!senha) {
-      Alert.alert("Atenção!", "Senha é obrigatória.");
+      AlertHelper.warning("Senha é obrigatória.");
       return;
     }
 
     try {
-      // Executa a lógica de login com o backend
       const token = await logar(email, senha);
 
       if (!token) {
-        Alert.alert("Atenção!", "Falha ao realizar login, tente novamente.");
+        AlertHelper.error("Falha ao realizar login, tente novamente.");
         return;
       }
 
-      // Redireciona para o esqueleto do Drawer corrigido
+      // sucesso no login
+      AlertHelper.success("Login realizado com sucesso!");
       router.replace("/(drawer)/home");
     } catch (error) {
-      Alert.alert("Erro", "Ocorreu um erro ao tentar logar.");
+      AlertHelper.error("Ocorreu um erro ao tentar logar.");
       console.error(error);
     }
   }
@@ -53,7 +53,6 @@ export default function LoginScreen() {
       <View style={styles.innerContainer}>
         <Text style={styles.title}>Login</Text>
 
-        {/* Caixa visual para a logo do projeto */}
         <View style={styles.uploadBox}>
           <Text style={styles.uploadText}> Logo / Upload</Text>
         </View>
@@ -79,7 +78,11 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        {/* Links de navegação utilizando o roteamento do Expo Router */}
+        {/* Botão extra só para testar o AlertHelper */}
+        <TouchableOpacity style={styles.buttonPrimary} onPress={() => AlertHelper.success("Teste de alerta funcionando!")}>
+          <Text style={styles.buttonText}>Testar AlertHelper</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.link} onPress={() => router.push('/register')}>
           <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
         </TouchableOpacity>
