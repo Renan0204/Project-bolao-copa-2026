@@ -1,39 +1,90 @@
-import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Drawer } from 'expo-router/drawer';
+import { Ionicons } from '@expo/vector-icons';
 
-// Importando telas
-import HomeScreen from './home';
-import PerfilScreen from './profile';
-import PalpitesScreen from './palpites';
-import FazerPalpiteScreen from './fazerPalpite';
-import EditarPalpiteScreen from './editarPalpite';
-import PartidasScreen from './partidas';
-import RankingScreen from './ranking';
-import UsuarioScreen from './usuario';
-import EditarUsuarioScreen from './editarUsuario';
-import LoginScreen from './login';
-import CriarContaScreen from './criarConta';
-import RecuperarContaScreen from './recuperarConta';
-import DetalhesPartidaScreen from './detalhesPartida';
-
-const Drawer = createDrawerNavigator();
-
-export default function Layout() {
+export default function DrawerLayout() {
   return (
-    <Drawer.Navigator initialRouteName="Home">
-      <Drawer.Screen name="Home" component={HomeScreen} />
-      <Drawer.Screen name="Perfil" component={PerfilScreen} />
-      <Drawer.Screen name="Palpites" component={PalpitesScreen} />
-      <Drawer.Screen name="Fazer Palpite" component={FazerPalpiteScreen} />
-      <Drawer.Screen name="Editar Palpite" component={EditarPalpiteScreen} />
-      <Drawer.Screen name="Partidas" component={PartidasScreen} />
-      <Drawer.Screen name="Ranking" component={RankingScreen} />
-      <Drawer.Screen name="Usuário" component={UsuarioScreen} />
-      <Drawer.Screen name="Editar Usuário" component={EditarUsuarioScreen} />
-      <Drawer.Screen name="Login" component={LoginScreen} />
-      <Drawer.Screen name="Criar Conta" component={CriarContaScreen} />
-      <Drawer.Screen name="Recuperar Conta" component={RecuperarContaScreen} />
-      <Drawer.Screen name="Detalhes da Partida" component={DetalhesPartidaScreen} />
-    </Drawer.Navigator>
+    <Drawer
+      screenOptions={{
+        headerTitle: "Bolão Copa 2026",
+        headerTitleAlign: 'center',
+        drawerActiveTintColor: '#007AFF',
+      }}
+    >
+      <Drawer.Screen
+        name="home" // Tem que ser exatamente o nome do arquivo (home.tsx)
+        options={{
+          drawerLabel: 'Início',
+          title: 'Início',
+          drawerIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="partidas"
+        options={{
+          drawerLabel: 'Partidas',
+          title: 'Partidas',
+          drawerIcon: ({ color, size }) => <Ionicons name="football-outline" size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="palpites"
+        options={{
+          drawerLabel: 'Meus Palpites',
+          title: 'Meus Palpites',
+          drawerIcon: ({ color, size }) => <Ionicons name="list-outline" size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="ranking"
+        options={{
+          drawerLabel: 'Ranking',
+          title: 'Ranking',
+          drawerIcon: ({ color, size }) => <Ionicons name="trophy-outline" size={size} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="usuario"
+        options={{
+          drawerLabel: 'Minha Conta',
+          title: 'Minha Conta',
+          drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+        }}
+      />
+
+      <Drawer.Screen
+        name="fazerPalpite"
+        options={{
+          title: 'Fazer Palpite',
+          drawerItemStyle: { display: 'none' } // Isso esconde a tela do menu lateral
+        }}
+      />
+      <Drawer.Screen
+        name="editarPalpite"
+        options={{
+          title: 'Editar Palpite',
+          drawerItemStyle: { display: 'none' }
+        }}
+      />
+      <Drawer.Screen
+        name="editarUsuario"
+        options={{
+          title: 'Editar Perfil',
+          drawerItemStyle: { display: 'none' }
+        }}
+      />
+      <Drawer.Screen
+        name="detalhesPartida"
+        options={{
+          title: 'Detalhes da Partida',
+          drawerItemStyle: { display: 'none' }
+        }}
+      />
+      <Drawer.Screen
+        name="profile"
+        options={{
+          drawerItemStyle: { display: 'none' } // Ocultando o profile antigo caso ainda esteja lá
+        }}
+      />
+    </Drawer>
   );
 }

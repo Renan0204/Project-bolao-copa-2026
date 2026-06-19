@@ -6,7 +6,7 @@ export default function RootLayout() {
     <CartProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="login" />
-        <Stack.Screen name="(drawn)" />
+        <Stack.Screen name="(drawer)" />
         <Stack.Screen name="event/[id]" />
       </Stack>
     </CartProvider>

@@ -1,25 +1,25 @@
-import { Link, useRouter } from "expo-router";
-import { useState } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { logar } from "../services/loginService";
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity, 
+  Alert, 
+  KeyboardAvoidingView, 
+  Platform 
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { logar } from '../services/loginService'; // Garante a ligação com o teu serviço de autenticação
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
-  async function clicouEmlogar() {
+  async function clicouEmLogar() {
     if (!email) {
-      Alert.alert("Atenção!", "Email é obrigatório.");
+      Alert.alert("Atenção!", "E-mail é obrigatório.");
       return;
     }
 
@@ -28,7 +28,8 @@ export default function LoginScreen() {
       return;
     }
 
-        try {
+    try {
+      // Executa a lógica de login com o backend
       const token = await logar(email, senha);
 
       if (!token) {
@@ -36,13 +37,13 @@ export default function LoginScreen() {
         return;
       }
 
+      // Redireciona para o esqueleto do Drawer corrigido
       router.replace("/(drawer)/home");
-} catch (error) {
-  Alert.alert("Erro", "Ocorreu um erro ao tentar logar.");
-  console.error(error);
-}
-}
-
+    } catch (error) {
+      Alert.alert("Erro", "Ocorreu um erro ao tentar logar.");
+      console.error(error);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -50,44 +51,42 @@ export default function LoginScreen() {
       style={styles.container}
     >
       <View style={styles.innerContainer}>
-        <View style={styles.logoContainer}>
-          <Text style={styles.titleLogo}>Mãozinha BET</Text>
+        <Text style={styles.title}>Login</Text>
+
+        {/* Caixa visual para a logo do projeto */}
+        <View style={styles.uploadBox}>
+          <Text style={styles.uploadText}> Logo / Upload</Text>
         </View>
 
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Seu e-mail"
-            placeholderTextColor="#8e8e93"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            onChangeText={setEmail}
-          />
+        <TextInput
+          style={styles.input}
+          placeholder="E-mail"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-          <TextInput
-            style={styles.input}
-            placeholder="••••••••••"
-            placeholderTextColor="#8e8e93"
-            secureTextEntry
-            onChangeText={setSenha}
-          />
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          secureTextEntry
+          value={senha}
+          onChangeText={setSenha}
+        />
 
-          <TouchableOpacity style={styles.button} onPress={clicouEmlogar}>
-            <Text style={styles.buttonText}>ENTRAR</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonPrimary} onPress={clicouEmLogar}>
+          <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity style={styles.linkMargin}>
-            <Text style={styles.linkText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
+        {/* Links de navegação utilizando o roteamento do Expo Router */}
+        <TouchableOpacity style={styles.link} onPress={() => router.push('/register')}>
+          <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
+        </TouchableOpacity>
 
-          <Link href="/register" asChild>
-            <TouchableOpacity>
-              <Text style={styles.linkText}>
-                Não tem uma conta? Cadastre-se
-              </Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
+        <TouchableOpacity style={styles.link} onPress={() => router.push('/recuperarConta')}>
+          <Text style={styles.linkText}>Esqueceu a senha?</Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
@@ -98,66 +97,74 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#E0E0E0",
     justifyContent: "center",
-    padding: 10,
+    padding: 15,
   },
   innerContainer: {
     backgroundColor: "#FFF",
     borderRadius: 20,
     padding: 20,
-    height: "80%",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "#B0B0B0",
     elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  titleLogo: {
+  title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#000",
-    marginTop: 5,
+    marginBottom: 20,
+    textAlign: "center",
   },
-  formContainer: {
-    width: "100%",
+  uploadBox: {
+    backgroundColor: "#f2f2f2",
+    padding: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  uploadText: {
+    fontSize: 16,
+    color: "#555",
   },
   input: {
     width: "100%",
-    height: 40,
+    height: 45,
     borderWidth: 1,
     borderColor: "#8e8e93",
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    borderRadius: 8,
+    paddingHorizontal: 12,
     fontSize: 16,
     color: "#1c1c1e",
     backgroundColor: "#F2F2F2",
-    marginBottom: 10,
+    marginBottom: 15,
   },
-  button: {
+  buttonPrimary: {
+    backgroundColor: "#007AFF",
     width: "100%",
-    height: 40,
-    borderRadius: 5,
+    height: 45,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#007AFF",
     marginTop: 10,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   buttonText: {
+    color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFF",
   },
-  linkMargin: {
-    marginBottom: 15,
-    alignSelf: "center",
+  link: {
+    marginTop: 12,
+    alignItems: "center",
   },
   linkText: {
     color: "#007AFF",
-    fontWeight: "600",
     fontSize: 14,
-    textAlign: "center",
   },
 });
