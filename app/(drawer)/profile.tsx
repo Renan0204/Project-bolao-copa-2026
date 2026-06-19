@@ -1,15 +1,12 @@
 // app/(drawer)/profile.tsx
 import { useRouter } from "expo-router";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// IMPORTANTE: Verifique se o caminho abaixo está correto para a sua pasta componentes
-import { Button } from "../../componentes/Button";
 
 export default function ProfileScreen() {
   const router = useRouter();
 
   function onSairPress() {
-    // Redireciona para o login e remove o histórico da navegação
     router.replace("/login");
   }
 
@@ -27,12 +24,13 @@ export default function ProfileScreen() {
 
         <Text style={styles.textBio}>Eu gosto de react native</Text>
 
-        <Button
-          texto="Sair"
-          icon={false}
-          role="danger"
-          quandoClicar={onSairPress}
-        />
+        {/* Botão reconstruído nativamente para remover a dependência do componente antigo */}
+        <TouchableOpacity 
+          style={styles.buttonSair} 
+          onPress={onSairPress}
+        >
+          <Text style={styles.buttonText}>Sair</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -63,7 +61,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     width: "100%",
-    maxWidth: 300, // Aumentei levemente para ficar mais confortável
+    maxWidth: 300,
   },
   textName: {
     fontSize: 24,
@@ -76,6 +74,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#666",
     lineHeight: 22,
-    marginBottom: 20, // Adicionei margem para separar do botão
+    marginBottom: 20,
+  },
+  buttonSair: {
+    backgroundColor: "red", // Cor de erro/danger que você usava
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    width: "100%",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
