@@ -23,7 +23,9 @@ public class UsuarioController {
     private TokenService tokenService;
 
     @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> meuPerfil(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<Map<String, Object>> meuPerfil(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
         Map<String, Object> resposta = new HashMap<>();
 
         Usuario usuario = buscarUsuarioPeloToken(authorizationHeader);
@@ -88,6 +90,15 @@ public class UsuarioController {
         return ResponseEntity.ok(resposta);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout() {
+        Map<String, Object> resposta = new HashMap<>();
+
+        resposta.put("mensagem", "Logout realizado com sucesso.");
+
+        return ResponseEntity.ok(resposta);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> buscarUsuario(@PathVariable Long id) {
         Map<String, Object> resposta = new HashMap<>();
@@ -102,15 +113,6 @@ public class UsuarioController {
             resposta.put("erro", "Usuário não encontrado.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resposta);
         }
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Map<String, Object>> logout() {
-        Map<String, Object> resposta = new HashMap<>();
-
-        resposta.put("mensagem", "Logout realizado com sucesso.");
-
-        return ResponseEntity.ok(resposta);
     }
 
     private Usuario buscarUsuarioPeloToken(String authorizationHeader) {
