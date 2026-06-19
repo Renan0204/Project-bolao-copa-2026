@@ -1,13 +1,26 @@
-// app/(drawer)/profile.tsx
 import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AlertHelper } from "../utils/AlertHelper"; // caminho corrigido
 
 export default function ProfileScreen() {
   const router = useRouter();
 
   function onSairPress() {
+    AlertHelper.warning("Deseja sair de sua conta?");
     router.replace("/login");
+  }
+
+  function onExcluirContaPress() {
+    AlertHelper.warning("Tem certeza que deseja excluir sua conta permanentemente?");
+    // simulação de exclusão
+    const excluido = true;
+    if (excluido) {
+      AlertHelper.error("Conta excluída.");
+      router.replace("/login");
+    } else {
+      AlertHelper.error("Erro ao excluir conta.");
+    }
   }
 
   return (
@@ -21,15 +34,20 @@ export default function ProfileScreen() {
         />
 
         <Text style={styles.textName}>João Grande</Text>
-
         <Text style={styles.textBio}>Eu gosto de react native</Text>
 
-        {/* Botão reconstruído nativamente para remover a dependência do componente antigo */}
         <TouchableOpacity 
           style={styles.buttonSair} 
           onPress={onSairPress}
         >
           <Text style={styles.buttonText}>Sair</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.buttonExcluir} 
+          onPress={onExcluirContaPress}
+        >
+          <Text style={styles.buttonText}>Excluir Conta</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -77,7 +95,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonSair: {
-    backgroundColor: "red", // Cor de erro/danger que você usava
+    backgroundColor: "red",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  buttonExcluir: {
+    backgroundColor: "#333",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,

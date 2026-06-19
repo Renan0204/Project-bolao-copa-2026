@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { AlertHelper } from '../utils/AlertHelper'; // importa o helper
 
 export default function EditarUsuarioScreen() {
   const router = useRouter();
@@ -9,16 +10,29 @@ export default function EditarUsuarioScreen() {
 
   const handleSalvar = () => {
     if (!nome || !email) {
-      Alert.alert("Atenção", "Todos os campos devem ser preenchidos.");
+      AlertHelper.warning("Todos os campos devem ser preenchidos.");
       return;
     }
 
-    Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-    router.back(); // Volta para a tela de Usuário refletindo a intenção de fechar
+    try {
+      // aqui você chamaria o serviço de atualização de perfil
+      const atualizado = true; // simulação
+
+      if (!atualizado) {
+        AlertHelper.error("Erro ao salvar alterações.");
+        return;
+      }
+
+      AlertHelper.success("Perfil atualizado com sucesso!");
+      router.back(); // volta para a tela anterior
+    } catch (error) {
+      AlertHelper.error("Erro inesperado ao salvar perfil.");
+      console.error(error);
+    }
   };
 
   const handleCancelar = () => {
-    router.back(); // Apenas volta para o ecrã anterior sem alterar nada
+    router.back(); // apenas volta sem alterar nada
   };
 
   return (
