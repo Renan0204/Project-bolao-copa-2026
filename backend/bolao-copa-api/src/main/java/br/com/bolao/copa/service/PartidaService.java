@@ -30,4 +30,16 @@ public class PartidaService {
     public void excluir(Long id) {
         partidaRepository.deleteById(id);
     }
+
+    public void lancarResultado(Long id, Integer golsSelecaoA, Integer golsSelecaoB) {
+        Partida partida = buscarPorId(id);
+
+        if (partida != null) {
+            partida.setGolsSelecaoA(golsSelecaoA);
+            partida.setGolsSelecaoB(golsSelecaoB);
+            partida.setStatus("Finalizada");
+
+            partidaRepository.save(partida);
+        }
+    }
 }
