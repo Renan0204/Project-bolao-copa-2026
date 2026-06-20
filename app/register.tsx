@@ -1,8 +1,16 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { registrar } from "../services/registerService";
-import { AlertHelper } from "./utils/AlertHelper"; // importa o helper
+import { AlertHelper } from "./utils/AlertHelper";
 
 export default function RegisterScreen() {
     const router = useRouter();
@@ -10,6 +18,7 @@ export default function RegisterScreen() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmSenha, setConfirmSenha] = useState("");
+    const [carregando, setCarregando] = useState(false);
 
     async function clicouEmCadastrar() {
         if (!name || !email || !senha || !confirmSenha) {
@@ -23,12 +32,24 @@ export default function RegisterScreen() {
         }
 
         try {
+            setCarregando(true);
+
             await registrar(name, email, senha);
+
             AlertHelper.success("Conta criada com sucesso!");
             router.replace("/login");
-        } catch (error) {
-            AlertHelper.error("Não foi possível realizar o cadastro.");
-            console.error(error);
+        } catch (error: any) {
+            console.error("Erro ao cadastrar usuário:", error);
+
+            const mensagem =
+                error?.response?.data?.erro ||
+                error?.response?.data?.mensagem ||
+                error?.response?.data ||
+                "Não foi possível realizar o cadastro.";
+
+            AlertHelper.error(String(mensagem));
+        } finally {
+            setCarregando(false);
         }
     }
 
@@ -40,13 +61,46 @@ export default function RegisterScreen() {
             <View style={styles.innerContainer}>
                 <Text style={styles.title}>Cadastro</Text>
 
-                <TextInput style={styles.input} placeholder="Nome" onChangeText={setName} />
-                <TextInput style={styles.input} placeholder="E-mail" keyboardType="email-address" autoCapitalize="none" onChangeText={setEmail} />
-                <TextInput style={styles.input} placeholder="Senha" secureTextEntry onChangeText={setSenha} />
-                <TextInput style={styles.input} placeholder="Confirmar Senha" secureTextEntry onChangeText={setConfirmSenha} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nome"
+                    value={name}
+                    onChangeText={setName}
+                />
 
-                <TouchableOpacity style={styles.button} onPress={clicouEmCadastrar}>
-                    <Text style={styles.buttonText}>CADASTRAR</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="E-mail"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="Senha"
+                    secureTextEntry
+                    value={senha}
+                    onChangeText={setSenha}
+                />
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="Confirmar Senha"
+                    secureTextEntry
+                    value={confirmSenha}
+                    onChangeText={setConfirmSenha}
+                />
+
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={clicouEmCadastrar}
+                    disabled={carregando}
+                >
+                    <Text style={styles.buttonText}>
+                        {carregando ? "CADASTRANDO..." : "CADASTRAR"}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => router.back()}>
@@ -78,7 +132,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#000",
         marginBottom: 30,
-        alignSelf: 'center',
+        alignSelf: "center",
     },
     input: {
         width: "100%",
