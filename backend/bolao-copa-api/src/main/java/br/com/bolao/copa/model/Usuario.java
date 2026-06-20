@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Usuario {
@@ -19,9 +22,61 @@ public class Usuario {
     private Integer placaresExatos = 0;
     private Boolean bloqueado = false;
     private String tipo;
+    private LocalDateTime criadoEm;
+
+    @PrePersist
+    public void antesDeSalvar() {
+        if (pontuacaoTotal == null) {
+            pontuacaoTotal = 0;
+        }
+
+        if (placaresExatos == null) {
+            placaresExatos = 0;
+        }
+
+        if (bloqueado == null) {
+            bloqueado = false;
+        }
+
+        if (criadoEm == null) {
+            criadoEm = LocalDateTime.now();
+        }
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public Integer getPontuacaoTotal() {
+        return pontuacaoTotal;
+    }
+
+    public Integer getPlacaresExatos() {
+        return placaresExatos;
+    }
+
+    public Boolean getBloqueado() {
+        return bloqueado;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
     }
 
     public void setId(Long id) {
@@ -40,10 +95,6 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
     public void setPontuacaoTotal(Integer pontuacaoTotal) {
         this.pontuacaoTotal = pontuacaoTotal;
     }
@@ -54,5 +105,13 @@ public class Usuario {
 
     public void setBloqueado(Boolean bloqueado) {
         this.bloqueado = bloqueado;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
     }
 }
