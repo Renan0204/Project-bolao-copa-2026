@@ -22,14 +22,20 @@ public class Partida {
     @ManyToOne
     private Selecao selecaoB;
 
+    @ManyToOne
+    private Estadio estadio;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime dataHora;
 
     private String fase;
-    private String estadio;
+
     private String grupo;
-    private String status;
+
+    private String status = "Agendada";
+
     private Integer golsSelecaoA;
+
     private Integer golsSelecaoB;
 
     public Long getId() {
@@ -44,16 +50,16 @@ public class Partida {
         return selecaoB;
     }
 
+    public Estadio getEstadio() {
+        return estadio;
+    }
+
     public LocalDateTime getDataHora() {
         return dataHora;
     }
 
     public String getFase() {
         return fase;
-    }
-
-    public String getEstadio() {
-        return estadio;
     }
 
     public String getGrupo() {
@@ -84,16 +90,16 @@ public class Partida {
         this.selecaoB = selecaoB;
     }
 
+    public void setEstadio(Estadio estadio) {
+        this.estadio = estadio;
+    }
+
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
 
     public void setFase(String fase) {
         this.fase = fase;
-    }
-
-    public void setEstadio(String estadio) {
-        this.estadio = estadio;
     }
 
     public void setGrupo(String grupo) {

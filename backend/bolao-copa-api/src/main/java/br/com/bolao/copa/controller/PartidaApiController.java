@@ -2,7 +2,11 @@ package br.com.bolao.copa.controller;
 
 import br.com.bolao.copa.model.Partida;
 import br.com.bolao.copa.service.PartidaService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +55,7 @@ public class PartidaApiController {
         dados.put("id", partida.getId());
         dados.put("dataHora", partida.getDataHora());
         dados.put("fase", partida.getFase());
-        dados.put("estadio", partida.getEstadio());
+        dados.put("estadio", partida.getEstadio() != null ? partida.getEstadio().getNome() : null);
         dados.put("grupo", partida.getGrupo());
         dados.put("status", partida.getStatus());
         dados.put("golsSelecaoA", partida.getGolsSelecaoA());
@@ -59,10 +63,12 @@ public class PartidaApiController {
 
         if (partida.getSelecaoA() != null) {
             dados.put("selecaoA", partida.getSelecaoA().getNome());
+            dados.put("selecaoAId", partida.getSelecaoA().getId());
         }
 
         if (partida.getSelecaoB() != null) {
             dados.put("selecaoB", partida.getSelecaoB().getNome());
+            dados.put("selecaoBId", partida.getSelecaoB().getId());
         }
 
         return dados;

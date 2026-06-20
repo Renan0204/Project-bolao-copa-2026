@@ -5,7 +5,6 @@
     <title>Partidas</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
@@ -19,13 +18,18 @@
 
 <div class="container">
 
+    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
     <div class="card card-principal">
         <div class="card-body p-4">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="mb-0">Partidas</h2>
-                    <small class="text-muted">Cadastre jogos, horários e resultados</small>
+                    <small class="text-muted">
+                        Cadastre jogos, inicie partidas, lance gols e finalize resultados
+                    </small>
                 </div>
 
                 <div class="d-flex gap-2">
@@ -48,6 +52,7 @@
                     <th>Data e Hora</th>
                     <th>Fase</th>
                     <th>Grupo</th>
+                    <th>Estádio</th>
                     <th>Placar</th>
                     <th>Status</th>
                     <th class="text-end">Ações</th>
@@ -60,16 +65,18 @@
                     <td th:text="${partida.id}"></td>
 
                     <td>
-                        <strong th:text="${partida.selecaoA.nome}"></strong>
+                        <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
                         <span> x </span>
-                        <strong th:text="${partida.selecaoB.nome}"></strong>
+                        <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
                     </td>
 
-                    <td th:text="${#temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm') : '-'}"></td>
 
                     <td th:text="${partida.fase}"></td>
 
                     <td th:text="${partida.grupo}"></td>
+
+                    <td th:text="${partida.estadio != null ? partida.estadio.nome : '-'}"></td>
 
                     <td class="placar">
                         <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
@@ -78,26 +85,53 @@
                     </td>
 
                     <td>
-                        <span class="badge badge-status" th:text="${partida.status}"></span>
+                        <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
+                              class="badge-status"
+                              th:text="${partida.status}">
+                        </span>
                     </td>
 
                     <td class="text-end">
-                        <a th:href="@{/resultados/lancar/{id}(id=${partida.id})}" class="btn btn-success btn-sm">
-                            Resultado
-                        </a>
+                        <div class="d-flex gap-1 justify-content-end flex-wrap">
 
-                        <a th:href="@{/partidas/editar/{id}(id=${partida.id})}" class="btn btn-warning btn-sm">
-                            Editar
-                        </a>
+                            <a th:if="${partida.status == 'Agendada'}"
+                               th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
+                               class="btn btn-success btn-sm"
+                               onclick="return confirm('Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites.');">
+                                Iniciar
+                            </a>
 
-                        <a th:href="@{/partidas/excluir/{id}(id=${partida.id})}" class="btn btn-danger btn-sm">
-                            Excluir
-                        </a>
+                            <a th:if="${partida.status == 'Em andamento'}"
+                               th:href="@{/resultados/lancar/{id}(id=${partida.id})}"
+                               class="btn btn-success btn-sm">
+                                Lançar Gols
+                            </a>
+
+                            <a th:if="${partida.status == 'Em andamento'}"
+                               th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
+                               class="btn btn-novo btn-sm"
+                               onclick="return confirm('Deseja finalizar esta partida? Após finalizar, o placar não poderá mais ser alterado e os pontos serão calculados.');">
+                                Finalizar
+                            </a>
+
+                            <a th:if="${partida.status == 'Agendada'}"
+                               th:href="@{/partidas/editar/{id}(id=${partida.id})}"
+                               class="btn btn-warning btn-sm">
+                                Editar
+                            </a>
+
+                            <a th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Tem certeza que deseja excluir essa partida?');">
+                                Excluir
+                            </a>
+
+                        </div>
                     </td>
                 </tr>
 
                 <tr th:if="${#lists.isEmpty(partidas)}">
-                    <td colspan="8" class="text-center text-muted py-4">
+                    <td colspan="9" class="text-center text-muted py-4">
                         Nenhuma partida cadastrada ainda.
                     </td>
                 </tr>
