@@ -43,6 +43,20 @@
             background: #f2a600;
             color: #222;
         }
+
+        .table thead {
+            background: #538a95;
+            color: white;
+        }
+
+        .placar {
+            font-weight: bold;
+            color: #538a95;
+        }
+
+        .badge-status {
+            background: #67b79e;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +110,7 @@
 
     </div>
 
-    <div class="card card-resumo">
+    <div class="card card-resumo mb-4">
         <div class="card-body p-4">
 
             <h2 class="mb-3">Menu rápido</h2>
@@ -107,6 +121,60 @@
                 <a href="/partidas" class="btn btn-menu">Gerenciar Partidas</a>
                 <a href="/partidas/novo" class="btn btn-menu">Nova Partida</a>
             </div>
+
+        </div>
+    </div>
+
+    <div class="card card-resumo">
+        <div class="card-body p-4">
+
+            <h2 class="mb-3">Partidas cadastradas</h2>
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Partida</th>
+                    <th>Data e Hora</th>
+                    <th>Placar</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="partida : ${partidas}">
+                    <td th:text="${partida.id}"></td>
+
+                    <td>
+                        <strong th:text="${partida.selecaoA.nome}"></strong>
+                        <span> x </span>
+                        <strong th:text="${partida.selecaoB.nome}"></strong>
+                    </td>
+
+                    <td th:text="${#temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+
+                    <td class="placar">
+                        <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
+                        <span> x </span>
+                        <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
+                    </td>
+
+                    <td>
+                        <span class="badge badge-status" th:text="${partida.status}"></span>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(partidas)}">
+                    <td colspan="5" class="text-center text-muted py-4">
+                        Nenhuma partida cadastrada ainda.
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
 
         </div>
     </div>

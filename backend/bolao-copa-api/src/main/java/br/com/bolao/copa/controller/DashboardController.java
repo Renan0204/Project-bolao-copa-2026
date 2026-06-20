@@ -38,6 +38,7 @@ public class DashboardController {
         model.addAttribute("totalPartidas", totalPartidas);
         model.addAttribute("partidasFinalizadas", partidasFinalizadas);
         model.addAttribute("partidasPendentes", partidasPendentes);
+        model.addAttribute("partidas", partidaService.listarTodas());
 
         return "dashboard/index";
     }
