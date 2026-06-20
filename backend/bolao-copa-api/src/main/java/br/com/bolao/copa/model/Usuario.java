@@ -23,6 +23,7 @@ public class Usuario {
     private Boolean bloqueado = false;
     private String tipo;
     private LocalDateTime criadoEm;
+    private LocalDateTime ultimoAcessoEm;
 
     @PrePersist
     public void antesDeSalvar() {
@@ -79,6 +80,10 @@ public class Usuario {
         return criadoEm;
     }
 
+    public LocalDateTime getUltimoAcessoEm() {
+        return ultimoAcessoEm;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -113,5 +118,9 @@ public class Usuario {
 
     public void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
+    }
+
+    public void setUltimoAcessoEm(LocalDateTime ultimoAcessoEm) {
+        this.ultimoAcessoEm = ultimoAcessoEm;
     }
 }
