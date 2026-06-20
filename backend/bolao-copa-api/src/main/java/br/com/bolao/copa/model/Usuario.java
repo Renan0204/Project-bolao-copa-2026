@@ -1,5 +1,6 @@
 package br.com.bolao.copa.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,12 +17,15 @@ public class Usuario {
     private Long id;
 
     private String nome;
+
+    @Column(unique = true)
     private String email;
+
     private String senha;
+    private String tipo = "USER";
     private Integer pontuacaoTotal = 0;
     private Integer placaresExatos = 0;
     private Boolean bloqueado = false;
-    private String tipo;
     private String avatarUrl;
     private LocalDateTime criadoEm;
     private LocalDateTime ultimoAcessoEm;
@@ -38,6 +42,10 @@ public class Usuario {
 
         if (bloqueado == null) {
             bloqueado = false;
+        }
+
+        if (tipo == null || tipo.isBlank()) {
+            tipo = "USER";
         }
 
         if (criadoEm == null) {
@@ -61,6 +69,10 @@ public class Usuario {
         return senha;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
     public Integer getPontuacaoTotal() {
         return pontuacaoTotal;
     }
@@ -71,10 +83,6 @@ public class Usuario {
 
     public Boolean getBloqueado() {
         return bloqueado;
-    }
-
-    public String getTipo() {
-        return tipo;
     }
 
     public String getAvatarUrl() {
@@ -105,6 +113,10 @@ public class Usuario {
         this.senha = senha;
     }
 
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     public void setPontuacaoTotal(Integer pontuacaoTotal) {
         this.pontuacaoTotal = pontuacaoTotal;
     }
@@ -115,10 +127,6 @@ public class Usuario {
 
     public void setBloqueado(Boolean bloqueado) {
         this.bloqueado = bloqueado;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     public void setAvatarUrl(String avatarUrl) {
