@@ -10,7 +10,10 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { buscarPartidaPorId } from "../../services/partidaService";
-import { registrarPalpite } from "../../services/palpiteService";
+import {
+  registrarPalpite,
+  listarMeusPalpites,
+} from "../../services/palpiteService";
 
 type Partida = {
   id: number;
@@ -23,6 +26,15 @@ type Partida = {
   status: string;
 };
 
+type Palpite = {
+  id: number;
+  golsSelecaoA: number;
+  golsSelecaoB: number;
+  partida?: {
+    id?: number;
+  };
+};
+
 export default function FazerPalpiteScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -30,16 +42,17 @@ export default function FazerPalpiteScreen() {
   const partidaId = Number(params.partidaId);
 
   const [partida, setPartida] = useState<Partida | null>(null);
+  const [palpiteExistente, setPalpiteExistente] = useState<Palpite | null>(null);
   const [golsSelecaoA, setGolsSelecaoA] = useState("");
   const [golsSelecaoB, setGolsSelecaoB] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
-    carregarPartida();
+    carregarDados();
   }, []);
 
-  async function carregarPartida() {
+  async function carregarDados() {
     try {
       setCarregando(true);
 
@@ -49,11 +62,31 @@ export default function FazerPalpiteScreen() {
         return;
       }
 
-      const dados = await buscarPartidaPorId(partidaId);
-      setPartida(dados);
+      const dadosPartida = await buscarPartidaPorId(partidaId);
+      setPartida(dadosPartida);
+
+      const dadosPalpites = await listarMeusPalpites();
+
+      let listaPalpites: Palpite[] = [];
+
+      if (Array.isArray(dadosPalpites)) {
+        listaPalpites = dadosPalpites;
+      } else if (dadosPalpites?.palpites && Array.isArray(dadosPalpites.palpites)) {
+        listaPalpites = dadosPalpites.palpites;
+      }
+
+      const palpiteDaPartida = listaPalpites.find(
+        (palpite) => Number(palpite.partida?.id) === partidaId
+      );
+
+      if (palpiteDaPartida) {
+        setPalpiteExistente(palpiteDaPartida);
+        setGolsSelecaoA(String(palpiteDaPartida.golsSelecaoA));
+        setGolsSelecaoB(String(palpiteDaPartida.golsSelecaoB));
+      }
     } catch (error) {
-      console.error("Erro ao carregar partida:", error);
-      Alert.alert("Erro", "Não foi possível carregar a partida.");
+      console.error("Erro ao carregar dados do palpite:", error);
+      Alert.alert("Erro", "Não foi possível carregar os dados do palpite.");
     } finally {
       setCarregando(false);
     }
@@ -88,17 +121,22 @@ export default function FazerPalpiteScreen() {
 
       const resposta = await registrarPalpite(partida.id, golsA, golsB);
 
-      console.log("PALPITE REGISTRADO:", resposta);
+      console.log("PALPITE SALVO:", resposta);
 
-      Alert.alert("Sucesso", "Palpite registrado com sucesso!");
+      if (palpiteExistente) {
+        Alert.alert("Sucesso", "Palpite atualizado com sucesso!");
+      } else {
+        Alert.alert("Sucesso", "Palpite registrado com sucesso!");
+      }
 
       router.replace("/(drawer)/palpites");
     } catch (error: any) {
-      console.error("Erro ao registrar palpite:", error);
+      console.error("Erro ao salvar palpite:", error);
 
       const mensagem =
         error?.response?.data?.erro ||
-        "Não foi possível registrar o palpite.";
+        error?.response?.data?.mensagem ||
+        "Não foi possível salvar o palpite.";
 
       Alert.alert("Erro", mensagem);
     } finally {
@@ -126,7 +164,7 @@ export default function FazerPalpiteScreen() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
-        <Text style={styles.loadingText}>Carregando partida...</Text>
+        <Text style={styles.loadingText}>Carregando palpite...</Text>
       </View>
     );
   }
@@ -141,7 +179,9 @@ export default function FazerPalpiteScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Fazer Palpite</Text>
+      <Text style={styles.title}>
+        {palpiteExistente ? "Editar Palpite" : "Fazer Palpite"}
+      </Text>
 
       <View style={styles.card}>
         <Text style={styles.matchTitle}>
@@ -154,6 +194,14 @@ export default function FazerPalpiteScreen() {
         <Text style={styles.infoText}>{formatarData(partida.dataHora)}</Text>
         <Text style={styles.statusText}>Status: {partida.status}</Text>
       </View>
+
+      {palpiteExistente && (
+        <View style={styles.noticeCard}>
+          <Text style={styles.noticeText}>
+            Você já palpitou nessa partida. Altere o placar abaixo para editar.
+          </Text>
+        </View>
+      )}
 
       <View style={styles.palpiteRow}>
         <View style={styles.inputBox}>
@@ -187,7 +235,11 @@ export default function FazerPalpiteScreen() {
         disabled={salvando}
       >
         <Text style={styles.buttonText}>
-          {salvando ? "Salvando..." : "Registrar Palpite"}
+          {salvando
+            ? "Salvando..."
+            : palpiteExistente
+              ? "Atualizar Palpite"
+              : "Registrar Palpite"}
         </Text>
       </TouchableOpacity>
     </View>
@@ -220,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
     padding: 20,
     borderRadius: 10,
-    marginBottom: 25,
+    marginBottom: 15,
     borderWidth: 1,
     borderColor: "#ddd",
     alignItems: "center",
@@ -242,6 +294,19 @@ const styles = StyleSheet.create({
     color: "#333",
     fontWeight: "bold",
     marginTop: 8,
+    textAlign: "center",
+  },
+  noticeCard: {
+    backgroundColor: "#FFF8E1",
+    borderWidth: 1,
+    borderColor: "#F0D98C",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 20,
+  },
+  noticeText: {
+    color: "#6D5600",
+    fontSize: 14,
     textAlign: "center",
   },
   palpiteRow: {
