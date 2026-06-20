@@ -15,41 +15,13 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
-    private String tipo;
     private Integer pontuacaoTotal = 0;
     private Integer placaresExatos = 0;
     private Boolean bloqueado = false;
+    private String tipo;
 
     public Long getId() {
         return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public Integer getPontuacaoTotal() {
-        return pontuacaoTotal;
-    }
-
-    public Integer getPlacaresExatos() {
-        return placaresExatos;
-    }
-
-    public Boolean getBloqueado() {
-        return bloqueado;
     }
 
     public void setId(Long id) {
