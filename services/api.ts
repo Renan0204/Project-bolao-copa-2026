@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://eazy-ticket-backend.infra.bytework.app.br";
+const BASE_URL = "http://localhost:8080";
 
 const api = axios.create({
     baseURL: BASE_URL,

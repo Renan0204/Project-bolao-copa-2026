@@ -1,5 +1,5 @@
-// app/(drawer)/home.tsx
-import { useRouter } from "expo-router"; // Adicionado para fazer a navegação funcionar
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,15 +7,44 @@ import {
   View,
   ScrollView,
 } from "react-native";
+import { buscarUsuarioLogado } from "../../services/usuarioService";
 
 export default function HomeScreen() {
-  const router = useRouter(); // Inicializando o roteador
+  const router = useRouter();
+  const [nomeUsuario, setNomeUsuario] = useState("Usuário");
+
+  useEffect(() => {
+    carregarUsuario();
+  }, []);
+
+  async function carregarUsuario() {
+    try {
+      console.log("CHAMANDO buscarUsuarioLogado...");
+
+      const dados = await buscarUsuarioLogado();
+
+      console.log("DADOS RECEBIDOS NA HOME:", dados);
+
+      if (dados?.nome) {
+        setNomeUsuario(dados.nome);
+        return;
+      }
+
+      if (dados?.usuario?.nome) {
+        setNomeUsuario(dados.usuario.nome);
+        return;
+      }
+
+      console.log("Nome do usuário não encontrado na resposta:", dados);
+    } catch (error) {
+      console.error("Erro ao buscar usuário logado:", error);
+      router.replace("/login");
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
-      {/* O cabeçalho (com as 3 barrinhas) é injetado automaticamente pelo _layout.tsx do Drawer */}
-
-      <Text style={styles.greeting}>Olá, Usuário</Text>
+      <Text style={styles.greeting}>Olá, {nomeUsuario}</Text>
 
       <View style={styles.drawnRow}>
         <TouchableOpacity style={styles.tabButton}>
@@ -31,9 +60,9 @@ export default function HomeScreen() {
 
       <View style={styles.featuredCard}>
         <Text style={styles.matchText}>Brasil x Haiti</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.palpitarButton}
-          onPress={() => router.push('/(drawer)/detalhesPartida')} // Rota conectada!
+          onPress={() => router.push("/(drawer)/detalhesPartida")}
         >
           <Text style={styles.palpitarText}>palpitar</Text>
         </TouchableOpacity>
@@ -44,18 +73,19 @@ export default function HomeScreen() {
       <View style={styles.gridRow}>
         <View style={styles.smallCard}>
           <Text style={styles.smallMatchText}>México x África</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.palpitarButton}
-            onPress={() => router.push('/(drawer)/detalhesPartida')} // Rota conectada!
+            onPress={() => router.push("/(drawer)/detalhesPartida")}
           >
             <Text style={styles.palpitarText}>palpitar</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.smallCard}>
           <Text style={styles.smallMatchText}>Japão x EUA</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.palpitarButton}
-            onPress={() => router.push('/(drawer)/detalhesPartida')} // Rota conectada!
+            onPress={() => router.push("/(drawer)/detalhesPartida")}
           >
             <Text style={styles.palpitarText}>palpitar</Text>
           </TouchableOpacity>

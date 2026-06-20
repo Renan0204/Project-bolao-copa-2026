@@ -1,10 +1,17 @@
-// services/loginService.ts
-// Não precisamos importar a 'api' se não vamos usá-la agora
-export async function logar(email: string, senha: string) {
-  // 1. Simula um atraso de 1 segundo (opcional, para parecer real)
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from "./api";
 
-  // 2. Retorna um token falso imediatamente
-  // Isso fará o seu login.tsx acreditar que o login foi bem-sucedido
-  return "token-de-teste-acesso-liberado";
+export async function logar(email: string, senha: string) {
+  const response = await api.post("/api/auth/login", {
+    email,
+    senha,
+  });
+
+  const token = response.data.token;
+
+  if (token) {
+    await AsyncStorage.setItem("token", token);
+  }
+
+  return token;
 }
