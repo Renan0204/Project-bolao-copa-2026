@@ -45,11 +45,6 @@ public class PalpiteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
         }
 
-        if (dadosPalpite.getGolsSelecaoA() == null || dadosPalpite.getGolsSelecaoB() == null) {
-            resposta.put("erro", "Informe os gols das duas seleções.");
-            return ResponseEntity.badRequest().body(resposta);
-        }
-
         try {
             Palpite palpite = palpiteService.salvar(usuario, partidaId, dadosPalpite);
 
@@ -76,11 +71,6 @@ public class PalpiteController {
         if (usuario == null) {
             resposta.put("erro", "Token inválido ou expirado.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resposta);
-        }
-
-        if (dadosPalpite.getGolsSelecaoA() == null || dadosPalpite.getGolsSelecaoB() == null) {
-            resposta.put("erro", "Informe os gols das duas seleções.");
-            return ResponseEntity.badRequest().body(resposta);
         }
 
         try {
@@ -193,7 +183,7 @@ public class PalpiteController {
         dados.put("id", partida.getId());
         dados.put("dataHora", partida.getDataHora());
         dados.put("fase", partida.getFase());
-        dados.put("estadio", partida.getEstadio());
+        dados.put("estadio", partida.getEstadio() != null ? partida.getEstadio().getNome() : null);
         dados.put("grupo", partida.getGrupo());
         dados.put("status", partida.getStatus());
         dados.put("golsSelecaoA", partida.getGolsSelecaoA());
@@ -201,10 +191,12 @@ public class PalpiteController {
 
         if (partida.getSelecaoA() != null) {
             dados.put("selecaoA", partida.getSelecaoA().getNome());
+            dados.put("selecaoAId", partida.getSelecaoA().getId());
         }
 
         if (partida.getSelecaoB() != null) {
             dados.put("selecaoB", partida.getSelecaoB().getNome());
+            dados.put("selecaoBId", partida.getSelecaoB().getId());
         }
 
         return dados;

@@ -24,6 +24,7 @@ public class PalpiteService {
         Partida partida = partidaRepository.findById(partidaId)
                 .orElseThrow(() -> new RuntimeException("Partida não encontrada."));
 
+        validarUsuario(usuario);
         validarDadosDoPalpite(dadosPalpite);
         validarPartidaParaPalpite(partida);
 
@@ -32,12 +33,15 @@ public class PalpiteService {
         if (palpiteExistente != null) {
             palpiteExistente.setGolsSelecaoA(dadosPalpite.getGolsSelecaoA());
             palpiteExistente.setGolsSelecaoB(dadosPalpite.getGolsSelecaoB());
+            palpiteExistente.setPontos(0);
+            palpiteExistente.setCriterioPontuacao("Aguardando resultado");
             palpiteExistente.setAtualizadoEm(LocalDateTime.now());
 
             return palpiteRepository.save(palpiteExistente);
         }
 
         Palpite novoPalpite = new Palpite();
+
         novoPalpite.setUsuario(usuario);
         novoPalpite.setPartida(partida);
         novoPalpite.setGolsSelecaoA(dadosPalpite.getGolsSelecaoA());
@@ -52,6 +56,8 @@ public class PalpiteService {
     public Palpite editar(Usuario usuario, Long palpiteId, Palpite dadosPalpite) {
         Palpite palpite = listar(palpiteId);
 
+        validarUsuario(usuario);
+
         if (!palpite.getUsuario().getId().equals(usuario.getId())) {
             throw new RuntimeException("Você não pode editar um palpite de outro usuário.");
         }
@@ -61,6 +67,8 @@ public class PalpiteService {
 
         palpite.setGolsSelecaoA(dadosPalpite.getGolsSelecaoA());
         palpite.setGolsSelecaoB(dadosPalpite.getGolsSelecaoB());
+        palpite.setPontos(0);
+        palpite.setCriterioPontuacao("Aguardando resultado");
         palpite.setAtualizadoEm(LocalDateTime.now());
 
         return palpiteRepository.save(palpite);
@@ -72,11 +80,23 @@ public class PalpiteService {
     }
 
     public List<Palpite> listarMeusPalpites(Usuario usuario) {
+        validarUsuario(usuario);
+
         return palpiteRepository.findByUsuarioOrderByCriadoEmDesc(usuario);
     }
 
     public List<Palpite> listarPorPartida(Partida partida) {
         return palpiteRepository.findByPartida(partida);
+    }
+
+    private void validarUsuario(Usuario usuario) {
+        if (usuario == null || usuario.getId() == null) {
+            throw new RuntimeException("Usuário inválido.");
+        }
+
+        if (Boolean.TRUE.equals(usuario.getBloqueado())) {
+            throw new RuntimeException("Usuário bloqueado.");
+        }
     }
 
     private void validarDadosDoPalpite(Palpite dadosPalpite) {
@@ -102,16 +122,12 @@ public class PalpiteService {
             throw new RuntimeException("A partida não possui data e hora cadastrada.");
         }
 
-        if ("Em andamento".equalsIgnoreCase(partida.getStatus())) {
-            throw new RuntimeException("Não é possível registrar ou editar palpite em uma partida em andamento.");
-        }
-
-        if ("Finalizada".equalsIgnoreCase(partida.getStatus())) {
-            throw new RuntimeException("Não é possível registrar ou editar palpite em uma partida finalizada.");
+        if (!PartidaService.STATUS_AGENDADA.equalsIgnoreCase(partida.getStatus())) {
+            throw new RuntimeException("Não é mais possível registrar ou editar palpites para essa partida.");
         }
 
         if (!LocalDateTime.now().isBefore(partida.getDataHora())) {
-            throw new RuntimeException("Não é possível registrar ou editar palpite após o início da partida.");
+            throw new RuntimeException("Não é mais possível registrar ou editar palpites para essa partida.");
         }
     }
 }
