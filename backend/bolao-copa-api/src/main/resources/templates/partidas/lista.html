@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Partidas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .topo {
+            background: linear-gradient(135deg, #538a95, #67b79e);
+            color: white;
+            padding: 35px 0;
+            margin-bottom: 30px;
+        }
+
+        .card-principal {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-novo {
+            background: #ffb727;
+            border: none;
+            color: #222;
+            font-weight: bold;
+        }
+
+        .btn-novo:hover {
+            background: #f2a600;
+            color: #222;
+        }
+
+        .table thead {
+            background: #538a95;
+            color: white;
+        }
+
+        .badge-status {
+            background: #67b79e;
+            font-size: 13px;
+        }
+
+        .placar {
+            font-weight: bold;
+            color: #538a95;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topo">
+    <div class="container">
+        <h1 class="mb-1">Bolão Copa 2026</h1>
+        <p class="mb-0">Gerenciamento de partidas da competição</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card card-principal">
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">Partidas</h2>
+                    <small class="text-muted">Cadastre jogos, horários e resultados</small>
+                </div>
+
+                <a href="/partidas/novo" class="btn btn-novo">
+                    Nova Partida
+                </a>
+            </div>
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Partida</th>
+                    <th>Data e Hora</th>
+                    <th>Fase</th>
+                    <th>Grupo</th>
+                    <th>Placar</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="partida : ${partidas}">
+                    <td th:text="${partida.id}"></td>
+
+                    <td>
+                        <strong th:text="${partida.selecaoA.nome}"></strong>
+                        <span> x </span>
+                        <strong th:text="${partida.selecaoB.nome}"></strong>
+                    </td>
+
+                    <td th:text="${#temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+
+                    <td th:text="${partida.fase}"></td>
+
+                    <td th:text="${partida.grupo}"></td>
+
+                    <td class="placar">
+                        <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
+                        <span> x </span>
+                        <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
+                    </td>
+
+                    <td>
+                        <span class="badge badge-status" th:text="${partida.status}"></span>
+                    </td>
+
+                    <td class="text-end">
+                        <a th:href="@{/partidas/editar/{id}(id=${partida.id})}" class="btn btn-warning btn-sm">
+                            Editar
+                        </a>
+
+                        <a th:href="@{/partidas/excluir/{id}(id=${partida.id})}" class="btn btn-danger btn-sm">
+                            Excluir
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(partidas)}">
+                    <td colspan="8" class="text-center text-muted py-4">
+                        Nenhuma partida cadastrada ainda.
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
