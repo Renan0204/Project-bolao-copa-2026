@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 
 @Entity //Significa que vamos transformar isso em tabela no banco
 public class Selecao {
@@ -14,6 +15,8 @@ public class Selecao {
     private String nome;
     private String codigoFifa;
     private String grupo;
+
+    @Column(length = 1000)
     private String bandeiraUrl;
 
     public Long getId() {
