@@ -24,6 +24,7 @@ public class PalpiteService {
         Partida partida = partidaRepository.findById(partidaId)
                 .orElseThrow(() -> new RuntimeException("Partida não encontrada."));
 
+        validarDadosDoPalpite(dadosPalpite);
         validarPartidaParaPalpite(partida);
 
         Palpite palpiteExistente = palpiteRepository.findByUsuarioAndPartida(usuario, partida);
@@ -55,6 +56,7 @@ public class PalpiteService {
             throw new RuntimeException("Você não pode editar um palpite de outro usuário.");
         }
 
+        validarDadosDoPalpite(dadosPalpite);
         validarPartidaParaPalpite(palpite.getPartida());
 
         palpite.setGolsSelecaoA(dadosPalpite.getGolsSelecaoA());
@@ -77,6 +79,20 @@ public class PalpiteService {
         return palpiteRepository.findByPartida(partida);
     }
 
+    private void validarDadosDoPalpite(Palpite dadosPalpite) {
+        if (dadosPalpite == null) {
+            throw new RuntimeException("Informe os dados do palpite.");
+        }
+
+        if (dadosPalpite.getGolsSelecaoA() == null || dadosPalpite.getGolsSelecaoB() == null) {
+            throw new RuntimeException("Informe os gols das duas seleções.");
+        }
+
+        if (dadosPalpite.getGolsSelecaoA() < 0 || dadosPalpite.getGolsSelecaoB() < 0) {
+            throw new RuntimeException("Os gols do palpite não podem ser negativos.");
+        }
+    }
+
     private void validarPartidaParaPalpite(Partida partida) {
         if (partida == null) {
             throw new RuntimeException("Partida não encontrada.");
@@ -86,12 +102,16 @@ public class PalpiteService {
             throw new RuntimeException("A partida não possui data e hora cadastrada.");
         }
 
-        if (!LocalDateTime.now().isBefore(partida.getDataHora())) {
-            throw new RuntimeException("Não é possível registrar ou editar palpite após o início da partida.");
+        if ("Em andamento".equalsIgnoreCase(partida.getStatus())) {
+            throw new RuntimeException("Não é possível registrar ou editar palpite em uma partida em andamento.");
         }
 
         if ("Finalizada".equalsIgnoreCase(partida.getStatus())) {
-            throw new RuntimeException("Não é possível palpitar em uma partida finalizada.");
+            throw new RuntimeException("Não é possível registrar ou editar palpite em uma partida finalizada.");
+        }
+
+        if (!LocalDateTime.now().isBefore(partida.getDataHora())) {
+            throw new RuntimeException("Não é possível registrar ou editar palpite após o início da partida.");
         }
     }
 }
