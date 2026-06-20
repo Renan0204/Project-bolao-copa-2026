@@ -39,11 +39,27 @@ public class PontuacaoService {
     }
 
     public void calcularPontuacaoDoPalpite(Palpite palpite, Partida partida) {
+        if (palpite == null || partida == null) {
+            throw new RuntimeException("Palpite ou partida inválida.");
+        }
+
         Integer golsPalpiteA = palpite.getGolsSelecaoA();
         Integer golsPalpiteB = palpite.getGolsSelecaoB();
 
         Integer golsRealA = partida.getGolsSelecaoA();
         Integer golsRealB = partida.getGolsSelecaoB();
+
+        if (golsPalpiteA == null || golsPalpiteB == null) {
+            palpite.setPontos(0);
+            palpite.setCriterioPontuacao("Palpite incompleto");
+            return;
+        }
+
+        if (golsRealA == null || golsRealB == null) {
+            palpite.setPontos(0);
+            palpite.setCriterioPontuacao("Aguardando resultado");
+            return;
+        }
 
         if (golsPalpiteA.equals(golsRealA) && golsPalpiteB.equals(golsRealB)) {
             palpite.setPontos(10);

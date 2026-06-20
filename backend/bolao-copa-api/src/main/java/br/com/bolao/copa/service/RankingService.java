@@ -19,6 +19,10 @@ public class RankingService {
     private UsuarioRepository usuarioRepository;
 
     public Map<String, Object> listarRanking(int pagina, int tamanho) {
+        if (pagina < 0) {
+            pagina = 0;
+        }
+
         if (tamanho < 50) {
             tamanho = 50;
         }
@@ -35,17 +39,13 @@ public class RankingService {
         for (int i = 0; i < usuarios.getContent().size(); i++) {
             Usuario usuario = usuarios.getContent().get(i);
 
-            Map<String, Object> item = new HashMap<>();
-            item.put("posicao", posicaoInicial + i + 1);
-            item.put("id", usuario.getId());
-            item.put("nome", usuario.getNome());
-            item.put("pontuacaoTotal", usuario.getPontuacaoTotal());
-            item.put("placaresExatos", usuario.getPlacaresExatos());
+            Map<String, Object> item = montarItemRanking(usuario, posicaoInicial + i + 1);
 
             ranking.add(item);
         }
 
         Map<String, Object> resposta = new HashMap<>();
+
         resposta.put("pagina", pagina);
         resposta.put("tamanho", tamanho);
         resposta.put("totalElementos", usuarios.getTotalElements());
@@ -56,6 +56,10 @@ public class RankingService {
     }
 
     public Map<String, Object> buscarPosicaoUsuario(Usuario usuarioLogado) {
+        if (usuarioLogado == null || usuarioLogado.getId() == null) {
+            return null;
+        }
+
         List<Usuario> usuarios = usuarioRepository
                 .findAllByOrderByPontuacaoTotalDescPlacaresExatosDescCriadoEmAsc();
 
@@ -63,18 +67,23 @@ public class RankingService {
             Usuario usuario = usuarios.get(i);
 
             if (usuario.getId().equals(usuarioLogado.getId())) {
-                Map<String, Object> resposta = new HashMap<>();
-
-                resposta.put("posicao", i + 1);
-                resposta.put("id", usuario.getId());
-                resposta.put("nome", usuario.getNome());
-                resposta.put("pontuacaoTotal", usuario.getPontuacaoTotal());
-                resposta.put("placaresExatos", usuario.getPlacaresExatos());
-
-                return resposta;
+                return montarItemRanking(usuario, i + 1);
             }
         }
 
         return null;
+    }
+
+    private Map<String, Object> montarItemRanking(Usuario usuario, int posicao) {
+        Map<String, Object> item = new HashMap<>();
+
+        item.put("posicao", posicao);
+        item.put("id", usuario.getId());
+        item.put("nome", usuario.getNome());
+        item.put("avatarUrl", usuario.getAvatarUrl());
+        item.put("pontuacaoTotal", usuario.getPontuacaoTotal() != null ? usuario.getPontuacaoTotal() : 0);
+        item.put("placaresExatos", usuario.getPlacaresExatos() != null ? usuario.getPlacaresExatos() : 0);
+
+        return item;
     }
 }
