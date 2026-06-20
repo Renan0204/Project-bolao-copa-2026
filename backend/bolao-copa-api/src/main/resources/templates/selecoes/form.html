@@ -28,28 +28,51 @@
                     <h2 class="mb-1">Cadastro de Seleção</h2>
                     <p class="text-muted mb-4">Preencha os dados da seleção abaixo</p>
 
-                    <form th:action="@{/selecoes/salvar}" th:object="${selecao}" method="post">
+                    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
+                    <form th:action="@{/selecoes/salvar}"
+                          th:object="${selecao}"
+                          method="post"
+                          onsubmit="return confirm('Você confirma o cadastro desta seleção? Verifique se o nome, código FIFA e imagem estão corretos antes de prosseguir.');">
 
                         <input type="hidden" th:field="*{id}">
 
                         <div class="mb-3">
                             <label class="form-label">Nome da Seleção</label>
-                            <input type="text" class="form-control" th:field="*{nome}" placeholder="Ex: Brasil">
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{nome}"
+                                   placeholder="Ex: Brasil"
+                                   required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Código FIFA</label>
-                            <input type="text" class="form-control" th:field="*{codigoFifa}" placeholder="Ex: BRA">
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{codigoFifa}"
+                                   placeholder="Ex: BRA"
+                                   maxlength="3"
+                                   required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Grupo</label>
-                            <input type="text" class="form-control" th:field="*{grupo}" placeholder="Ex: Grupo C">
+                            <select class="form-select" th:field="*{grupo}" required>
+                                <option value="">Selecione o grupo</option>
+                                <option th:each="grupo : ${grupos}"
+                                        th:value="${grupo}"
+                                        th:text="${grupo}">
+                                </option>
+                            </select>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">URL da Bandeira</label>
-                            <input type="text" class="form-control" th:field="*{bandeiraUrl}" placeholder="Cole aqui o link da imagem da bandeira">
+                            <input type="text"
+                                   class="form-control"
+                                   th:field="*{bandeiraUrl}"
+                                   placeholder="Cole aqui o link da imagem da bandeira">
                         </div>
 
                         <div class="d-flex gap-2">
