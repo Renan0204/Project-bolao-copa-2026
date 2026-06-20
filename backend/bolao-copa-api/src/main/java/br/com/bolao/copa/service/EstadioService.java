@@ -34,10 +34,17 @@ public class EstadioService {
 
         estadio.setNome(estadio.getNome().trim());
 
-        boolean nomeJaExiste = estadioRepository.existsByNomeIgnoreCase(estadio.getNome());
+        Estadio estadioComMesmoNome = estadioRepository.findByNomeIgnoreCase(estadio.getNome());
 
-        if (estadio.getId() == null && nomeJaExiste) {
-            throw new RuntimeException("Já existe um estádio cadastrado com esse nome.");
+        if (estadioComMesmoNome != null) {
+            boolean criandoNovoEstadio = estadio.getId() == null;
+
+            boolean editandoOutroEstadio = estadio.getId() != null
+                    && !estadioComMesmoNome.getId().equals(estadio.getId());
+
+            if (criandoNovoEstadio || editandoOutroEstadio) {
+                throw new RuntimeException("Já existe um estádio cadastrado com esse nome.");
+            }
         }
 
         estadioRepository.save(estadio);

@@ -18,6 +18,9 @@
 
 <div class="container">
 
+  <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+  <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
   <div class="card card-principal">
     <div class="card-body p-4">
 
@@ -64,7 +67,7 @@
 
             <a th:href="@{/estadios/excluir/{id}(id=${estadio.id})}"
                class="btn btn-danger btn-sm"
-               onclick="return confirm('Deseja realmente excluir este estádio?');">
+               onclick="return confirm('Tem certeza que deseja excluir este estádio?');">
               Excluir
             </a>
           </td>
