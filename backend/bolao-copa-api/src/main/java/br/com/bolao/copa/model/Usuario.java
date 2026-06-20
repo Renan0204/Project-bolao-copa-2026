@@ -22,6 +22,7 @@ public class Usuario {
     private Integer placaresExatos = 0;
     private Boolean bloqueado = false;
     private String tipo;
+    private String avatarUrl;
     private LocalDateTime criadoEm;
     private LocalDateTime ultimoAcessoEm;
 
@@ -76,6 +77,10 @@ public class Usuario {
         return tipo;
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
     public LocalDateTime getCriadoEm() {
         return criadoEm;
     }
@@ -114,6 +119,10 @@ public class Usuario {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public void setCriadoEm(LocalDateTime criadoEm) {
