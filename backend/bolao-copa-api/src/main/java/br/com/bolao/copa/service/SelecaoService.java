@@ -20,6 +20,18 @@ public class SelecaoService {
         return selecaoRepository.findAll();
     }
 
+    public List<Selecao> listarPorGrupo(String grupo) {
+        if (!OpcoesAdmin.grupoValido(grupo)) {
+            return List.of();
+        }
+
+        return selecaoRepository.findByGrupoOrderByNomeAsc(grupo);
+    }
+
+    public long contarPorGrupo(String grupo) {
+        return selecaoRepository.countByGrupo(grupo);
+    }
+
     public Selecao buscarPorId(Long id) {
         return selecaoRepository.findById(id).orElse(null);
     }
@@ -53,17 +65,37 @@ public class SelecaoService {
         selecao.setNome(selecao.getNome().trim());
         selecao.setCodigoFifa(selecao.getCodigoFifa().trim().toUpperCase());
 
+        if (selecao.getBandeiraUrl() != null) {
+            selecao.setBandeiraUrl(selecao.getBandeiraUrl().trim());
+        }
+
         validarDuplicidade(selecao);
         validarQuantidadePorGrupo(selecao);
     }
 
     private void validarDuplicidade(Selecao selecao) {
-        if (selecao.getId() == null) {
-            if (selecaoRepository.existsByNomeIgnoreCase(selecao.getNome())) {
+        Selecao selecaoComMesmoNome = selecaoRepository.findByNomeIgnoreCase(selecao.getNome());
+
+        if (selecaoComMesmoNome != null) {
+            boolean criandoNovaSelecao = selecao.getId() == null;
+
+            boolean editandoOutraSelecao = selecao.getId() != null
+                    && !selecaoComMesmoNome.getId().equals(selecao.getId());
+
+            if (criandoNovaSelecao || editandoOutraSelecao) {
                 throw new RuntimeException("Já existe uma seleção cadastrada com esse nome.");
             }
+        }
 
-            if (selecaoRepository.existsByCodigoFifaIgnoreCase(selecao.getCodigoFifa())) {
+        Selecao selecaoComMesmoCodigo = selecaoRepository.findByCodigoFifaIgnoreCase(selecao.getCodigoFifa());
+
+        if (selecaoComMesmoCodigo != null) {
+            boolean criandoNovaSelecao = selecao.getId() == null;
+
+            boolean editandoOutraSelecao = selecao.getId() != null
+                    && !selecaoComMesmoCodigo.getId().equals(selecao.getId());
+
+            if (criandoNovaSelecao || editandoOutraSelecao) {
                 throw new RuntimeException("Já existe uma seleção cadastrada com esse código FIFA.");
             }
         }

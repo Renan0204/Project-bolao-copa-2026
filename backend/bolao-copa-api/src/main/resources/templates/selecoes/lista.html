@@ -19,6 +19,9 @@
 
 <div class="container">
 
+    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+
     <div class="card card-principal">
         <div class="card-body p-4">
 
@@ -83,7 +86,9 @@
                             Editar
                         </a>
 
-                        <a th:href="@{/selecoes/excluir/{id}(id=${selecao.id})}" class="btn btn-danger btn-sm">
+                        <a th:href="@{/selecoes/excluir/{id}(id=${selecao.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Tem certeza que deseja excluir essa seleção?');">
                             Excluir
                         </a>
                     </td>

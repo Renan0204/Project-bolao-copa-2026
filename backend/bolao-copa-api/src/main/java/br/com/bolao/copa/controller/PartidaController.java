@@ -36,7 +36,10 @@ public class PartidaController {
     }
 
     @PostMapping("/partidas/salvar")
-    public String salvarPartida(Partida partida, @RequestParam Long selecaoAId, @RequestParam Long selecaoBId) {
+    public String salvarPartida(Partida partida,
+                                @RequestParam Long selecaoAId,
+                                @RequestParam Long selecaoBId) {
+
         Selecao selecaoA = selecaoService.buscarPorId(selecaoAId);
         Selecao selecaoB = selecaoService.buscarPorId(selecaoBId);
 
