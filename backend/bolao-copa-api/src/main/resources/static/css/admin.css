@@ -885,3 +885,202 @@ body {
 .modal-confirmacao-acoes .btn {
     min-width: 120px;
 }
+
+/* ===============================
+   LOGIN ADMINISTRATIVO
+   =============================== */
+
+.login-admin-body {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, rgba(22, 163, 74, 0.16), transparent 34%),
+        linear-gradient(135deg, #f8faf9 0%, #eef7f1 45%, #ffffff 100%);
+    color: #071226;
+}
+
+.login-admin-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.login-admin-container {
+    width: 100%;
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 36px;
+    align-items: center;
+}
+
+.login-admin-brand {
+    padding: 32px;
+}
+
+.login-admin-logo-area {
+    width: 88px;
+    height: 88px;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid #d9e1e8;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.login-admin-logo {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+}
+
+.login-admin-brand h1 {
+    color: #087a38;
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 14px;
+    letter-spacing: -0.04em;
+}
+
+.login-admin-brand p {
+    max-width: 560px;
+    color: #475569;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+.login-admin-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.login-admin-info-card {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid #d9e1e8;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
+}
+
+.login-admin-info-card strong {
+    display: block;
+    color: #087a38;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.login-admin-info-card span {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.login-admin-card {
+    background: #ffffff;
+    border: 1px solid #d9e1e8;
+    border-radius: 24px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+    padding: 34px;
+}
+
+.login-admin-card-header {
+    margin-bottom: 26px;
+}
+
+.login-admin-card-header h2 {
+    color: #071226;
+    font-weight: 900;
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.login-admin-card-header p {
+    color: #64748b;
+    margin: 0;
+}
+
+.login-admin-card .form-label {
+    font-weight: 700;
+    color: #334155;
+}
+
+.login-admin-card .form-control {
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px solid #d9e1e8;
+}
+
+.login-admin-card .form-control:focus {
+    border-color: #16a34a;
+    box-shadow: 0 0 0 0.2rem rgba(22, 163, 74, 0.12);
+}
+
+.login-admin-links {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.login-admin-links a {
+    color: #087a38;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-admin-links a:hover {
+    text-decoration: underline;
+}
+
+.login-admin-footer {
+    border-top: 1px solid #edf2f7;
+    margin-top: 26px;
+    padding-top: 18px;
+    text-align: center;
+    color: #64748b;
+}
+
+@media (max-width: 992px) {
+    .login-admin-container {
+        grid-template-columns: 1fr;
+        max-width: 640px;
+    }
+
+    .login-admin-brand {
+        text-align: center;
+        padding: 12px;
+    }
+
+    .login-admin-logo-area {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-admin-brand p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-admin-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .login-admin-page {
+        padding: 24px 14px;
+    }
+
+    .login-admin-brand h1 {
+        font-size: 2.2rem;
+    }
+
+    .login-admin-card {
+        padding: 24px;
+        border-radius: 20px;
+    }
+}
