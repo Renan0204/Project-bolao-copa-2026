@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Partida</title>
+    <title th:text="${partida.id != null ? 'Editar Partida' : 'Cadastro de Partida'}">Cadastro de Partida</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
@@ -13,16 +13,29 @@
 
 <main class="container admin-pagina">
 
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
+
     <div class="row justify-content-center">
         <div class="col-lg-9">
 
             <div class="card card-principal">
                 <div class="card-body p-4">
 
-                    <h2 class="mb-1">Cadastro de Partida</h2>
-                    <p class="text-muted mb-4">
+                    <h2 class="mb-1"
+                        th:text="${partida.id != null ? 'Editar Partida' : 'Cadastro de Partida'}">
+                        Cadastro de Partida
+                    </h2>
+
+                    <p class="text-muted mb-4"
+                       th:if="${partida.id == null}">
                         Na fase de grupos, as seleções são filtradas pelo grupo.
                         Nas demais fases, qualquer seleção pode enfrentar qualquer seleção.
+                    </p>
+
+                    <p class="text-muted mb-4"
+                       th:if="${partida.id != null}">
+                        Altere os dados da partida selecionada.
+                        Partidas só podem ser editadas enquanto estiverem agendadas.
                     </p>
 
                     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
@@ -64,14 +77,14 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Seleção A</label>
                                 <select id="selecaoASelect" name="selecaoAId" class="form-control" required>
-                                    <option value="">Selecione a fase primeiro</option>
+                                    <option value="">Carregando seleções...</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Seleção B</label>
                                 <select id="selecaoBSelect" name="selecaoBId" class="form-control" required>
-                                    <option value="">Selecione a fase primeiro</option>
+                                    <option value="">Carregando seleções...</option>
                                 </select>
                             </div>
 
@@ -101,7 +114,7 @@
                                     <option th:each="estadio : ${estadios}"
                                             th:value="${estadio.id}"
                                             th:text="${estadio.nome}"
-                                            th:selected="${estadioId != null && estadioId == estadio.id}">
+                                            th:selected="${estadioId != null && estadio.id != null && estadioId == estadio.id}">
                                     </option>
                                 </select>
 
@@ -119,7 +132,8 @@
                         </div>
 
                         <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-salvar">
+                            <button type="submit" class="btn btn-salvar"
+                                    th:text="${partida.id != null ? 'Salvar Alterações' : 'Salvar Partida'}">
                                 Salvar Partida
                             </button>
 
@@ -145,8 +159,10 @@
     const selecaoBSelect = document.getElementById("selecaoBSelect");
     const grupoAjuda = document.getElementById("grupoAjuda");
 
-    const selecaoASelecionada = /*[[${selecaoAId}]]*/ null;
-    const selecaoBSelecionada = /*[[${selecaoBId}]]*/ null;
+    const selecaoASelecionadaInicial = /*[[${selecaoAId}]]*/ null;
+    const selecaoBSelecionadaInicial = /*[[${selecaoBId}]]*/ null;
+
+    let primeiroCarregamento = true;
 
     function temTexto(valor) {
         return valor !== null && valor !== undefined && valor.trim() !== "";
@@ -174,9 +190,14 @@
             const option = document.createElement("option");
 
             option.value = selecao.id;
-            option.textContent = `${selecao.nome} (${selecao.codigoFifa})`;
 
-            if (valorSelecionado !== null && String(valorSelecionado) === String(selecao.id)) {
+            if (selecao.codigoFifa) {
+                option.textContent = `${selecao.nome} (${selecao.codigoFifa})`;
+            } else {
+                option.textContent = selecao.nome;
+            }
+
+            if (valorSelecionado !== null && valorSelecionado !== undefined && String(valorSelecionado) === String(selecao.id)) {
                 option.selected = true;
             }
 
@@ -213,7 +234,6 @@
         }
 
         const params = new URLSearchParams();
-
         params.append("fase", fase);
 
         if (temTexto(grupo)) {
@@ -223,16 +243,28 @@
         fetch(`/partidas/selecoes-por-grupo?${params.toString()}`)
             .then(response => response.json())
             .then(selecoes => {
+                const selecaoASelecionada = primeiroCarregamento ? selecaoASelecionadaInicial : null;
+                const selecaoBSelecionada = primeiroCarregamento ? selecaoBSelecionadaInicial : null;
+
                 preencherSelect(selecaoASelect, selecoes, selecaoASelecionada, "Selecione a seleção A");
                 preencherSelect(selecaoBSelect, selecoes, selecaoBSelecionada, "Selecione a seleção B");
+
+                primeiroCarregamento = false;
             })
             .catch(() => {
                 limparSelecoes("Erro ao carregar seleções");
             });
     }
 
-    faseSelect.addEventListener("change", carregarSelecoes);
-    grupoSelect.addEventListener("change", carregarSelecoes);
+    faseSelect.addEventListener("change", function () {
+        primeiroCarregamento = false;
+        carregarSelecoes();
+    });
+
+    grupoSelect.addEventListener("change", function () {
+        primeiroCarregamento = false;
+        carregarSelecoes();
+    });
 
     carregarSelecoes();
 </script>
