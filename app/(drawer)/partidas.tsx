@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { buscarPartidas } from "../../services/partidaService";
+import { buscarPartidas } from '../../services/partidaService';
 
 type Partida = {
   id: number;

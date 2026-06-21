@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AlertHelper } from "../utils/AlertHelper";
+import { AlertHelper } from "../../utils/AlertHelper";
 import {
   buscarUsuarioLogado,
   excluirUsuarioLogado,
@@ -70,21 +70,17 @@ export default function ProfileScreen() {
   }
 
   function confirmarLogout() {
-    Alert.alert(
-      "Sair da conta",
-      "Deseja realmente sair da sua conta?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Sair",
-          style: "destructive",
-          onPress: onSairPress,
-        },
-      ]
-    );
+    Alert.alert("Sair da conta", "Deseja realmente sair da sua conta?", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Sair",
+        style: "destructive",
+        onPress: onSairPress,
+      },
+    ]);
   }
 
   function confirmarExcluirConta() {
@@ -101,7 +97,7 @@ export default function ProfileScreen() {
           style: "destructive",
           onPress: onExcluirContaPress,
         },
-      ]
+      ],
     );
   }
 
@@ -154,7 +150,9 @@ export default function ProfileScreen() {
 
         <View style={styles.infoBox}>
           <Text style={styles.infoLabel}>Pontuação</Text>
-          <Text style={styles.infoValue}>{usuario?.pontuacaoTotal ?? 0} pts</Text>
+          <Text style={styles.infoValue}>
+            {usuario?.pontuacaoTotal ?? 0} pts
+          </Text>
         </View>
 
         <View style={styles.infoBox}>
@@ -162,7 +160,10 @@ export default function ProfileScreen() {
           <Text style={styles.infoValue}>{usuario?.placaresExatos ?? 0}</Text>
         </View>
 
-        <TouchableOpacity style={styles.buttonEditar} onPress={irParaEditarPerfil}>
+        <TouchableOpacity
+          style={styles.buttonEditar}
+          onPress={irParaEditarPerfil}
+        >
           <Text style={styles.buttonText}>Editar Perfil</Text>
         </TouchableOpacity>
 

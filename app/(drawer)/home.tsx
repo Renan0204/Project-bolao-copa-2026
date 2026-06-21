@@ -34,7 +34,7 @@ export default function HomeScreen() {
     carregarDados();
   }, []);
 
-  async function carregarDados() {
+async function carregarDados() {
     try {
       setCarregando(true);
 
@@ -49,7 +49,7 @@ export default function HomeScreen() {
 
       setPartidas(partidasApi ?? []);
     } catch (error) {
-      console.error("Erro ao carregar dados da Home:", error);
+      console.log("Usuário sem token, redirecionando para login..."); 
       router.replace("/login");
     } finally {
       setCarregando(false);

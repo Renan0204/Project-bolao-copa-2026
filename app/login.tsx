@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TextInput, 
-  TouchableOpacity, 
-  KeyboardAvoidingView, 
-  Platform 
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { logar } from '../services/loginService';
-import { AlertHelper } from './utils/AlertHelper';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { logar } from "../services/loginService";
+import { AlertHelper } from "../utils/AlertHelper";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
   async function clicouEmLogar() {
     if (!email) {
@@ -78,11 +78,17 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.link} onPress={() => router.push('/register')}>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => router.push("/register")}
+        >
           <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.link} onPress={() => router.push('/recuperarConta')}>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => router.push("/recuperarConta")}
+        >
           <Text style={styles.linkText}>Esqueceu a senha?</Text>
         </TouchableOpacity>
       </View>

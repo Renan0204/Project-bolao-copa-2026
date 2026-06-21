@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { AlertHelper } from "../utils/AlertHelper";
+import { AlertHelper } from "../../utils/AlertHelper";
 import {
   buscarUsuarioLogado,
   atualizarUsuarioLogado,
@@ -143,7 +143,10 @@ export default function EditarUsuarioScreen() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buttonSecondary} onPress={handleCancelar}>
+        <TouchableOpacity
+          style={styles.buttonSecondary}
+          onPress={handleCancelar}
+        >
           <Text style={styles.buttonTextSecondary}>Cancelar</Text>
         </TouchableOpacity>
       </View>
@@ -152,10 +155,10 @@ export default function EditarUsuarioScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20, 
-    backgroundColor: "#fff" 
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
   },
   loadingContainer: {
     flex: 1,
@@ -167,21 +170,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
   },
-  title: { 
-    fontSize: 24, 
-    fontWeight: "bold", 
-    marginBottom: 30, 
-    textAlign: "center" 
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 30,
+    textAlign: "center",
   },
-  form: { 
-    flex: 1, 
-    justifyContent: "flex-start" 
+  form: {
+    flex: 1,
+    justifyContent: "flex-start",
   },
-  label: { 
-    fontSize: 16, 
-    fontWeight: "600", 
-    color: "#555", 
-    marginBottom: 5 
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#555",
+    marginBottom: 5,
   },
   input: {
     borderWidth: 1,
@@ -199,10 +202,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  buttonText: { 
-    color: "#fff", 
-    fontSize: 16, 
-    fontWeight: "bold" 
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   buttonSecondary: {
     backgroundColor: "transparent",
@@ -213,9 +216,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#666",
   },
-  buttonTextSecondary: { 
-    color: "#666", 
-    fontSize: 16, 
-    fontWeight: "bold" 
+  buttonTextSecondary: {
+    color: "#666",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
