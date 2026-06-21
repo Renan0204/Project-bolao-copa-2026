@@ -131,6 +131,26 @@ public class PartidaService {
         finalizarPartida(id);
     }
 
+    @Transactional
+    public Partida corrigirResultado(Long id, Integer golsSelecaoA, Integer golsSelecaoB) {
+        Partida partida = buscarObrigatoria(id);
+
+        if (!STATUS_FINALIZADA.equalsIgnoreCase(partida.getStatus())) {
+            throw new RuntimeException("Somente partidas finalizadas podem ter resultado corrigido.");
+        }
+
+        validarGols(golsSelecaoA, golsSelecaoB);
+
+        partida.setGolsSelecaoA(golsSelecaoA);
+        partida.setGolsSelecaoB(golsSelecaoB);
+
+        Partida partidaSalva = partidaRepository.save(partida);
+
+        pontuacaoService.recalcularPontuacaoDaPartida(partidaSalva);
+
+        return partidaSalva;
+    }
+
     private Partida buscarObrigatoria(Long id) {
         Partida partida = buscarPorId(id);
 

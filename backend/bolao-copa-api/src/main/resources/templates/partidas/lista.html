@@ -11,8 +11,21 @@
 
 <div class="topo">
     <div class="container">
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Gerenciamento de partidas da competição</p>
+        <div class="painel-cabecalho">
+            <div>
+                <h1 class="mb-1">Bolão Copa 2026</h1>
+                <p class="mb-0">Gerenciamento de partidas da competição</p>
+            </div>
+
+            <div class="menu-superior">
+                <a href="/dashboard" class="menu-link">Dashboard</a>
+                <a href="/selecoes" class="menu-link">Seleções</a>
+                <a href="/estadios" class="menu-link">Estádios</a>
+                <a href="/partidas" class="menu-link ativo">Partidas</a>
+                <a href="/usuarios-admin" class="menu-link">Usuários</a>
+                <a href="/admin/logout" class="menu-link">Sair</a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -28,7 +41,7 @@
                 <div>
                     <h2 class="mb-0">Partidas</h2>
                     <small class="text-muted">
-                        Cadastre jogos, inicie partidas, lance gols e finalize resultados
+                        Cadastre jogos, inicie partidas, lance gols, finalize e corrija resultados
                     </small>
                 </div>
 
@@ -43,102 +56,111 @@
                 </div>
             </div>
 
-            <table class="table table-hover align-middle">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
 
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Partida</th>
-                    <th>Data e Hora</th>
-                    <th>Fase</th>
-                    <th>Grupo</th>
-                    <th>Estádio</th>
-                    <th>Placar</th>
-                    <th>Status</th>
-                    <th class="text-end">Ações</th>
-                </tr>
-                </thead>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Partida</th>
+                        <th>Data e Hora</th>
+                        <th>Fase</th>
+                        <th>Grupo</th>
+                        <th>Estádio</th>
+                        <th>Placar</th>
+                        <th>Status</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                    </thead>
 
-                <tbody>
+                    <tbody>
 
-                <tr th:each="partida : ${partidas}">
-                    <td th:text="${partida.id}"></td>
+                    <tr th:each="partida : ${partidas}">
+                        <td th:text="${partida.id}"></td>
 
-                    <td>
-                        <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
-                        <span> x </span>
-                        <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
-                    </td>
+                        <td>
+                            <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
+                            <span> x </span>
+                            <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
+                        </td>
 
-                    <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+                        <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm') : '-'}"></td>
 
-                    <td th:text="${partida.fase}"></td>
+                        <td th:text="${partida.fase}"></td>
 
-                    <td th:text="${partida.grupo}"></td>
+                        <td th:text="${partida.grupo}"></td>
 
-                    <td th:text="${partida.estadio != null ? partida.estadio.nome : '-'}"></td>
+                        <td th:text="${partida.estadio != null ? partida.estadio.nome : '-'}"></td>
 
-                    <td class="placar">
-                        <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
-                        <span> x </span>
-                        <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
-                    </td>
+                        <td class="placar">
+                            <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
+                            <span> x </span>
+                            <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
+                        </td>
 
-                    <td>
-                        <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
-                              class="badge-status"
-                              th:text="${partida.status}">
-                        </span>
-                    </td>
+                        <td>
+                            <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
+                                  class="badge-status"
+                                  th:text="${partida.status}">
+                            </span>
+                        </td>
 
-                    <td class="text-end">
-                        <div class="d-flex gap-1 justify-content-end flex-wrap">
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end flex-wrap">
 
-                            <a th:if="${partida.status == 'Agendada'}"
-                               th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
-                               class="btn btn-success btn-sm"
-                               onclick="return confirm('Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites.');">
-                                Iniciar
-                            </a>
+                                <a th:if="${partida.status == 'Agendada'}"
+                                   th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
+                                   class="btn btn-success btn-sm"
+                                   onclick="return confirm('Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites.');">
+                                    Iniciar
+                                </a>
 
-                            <a th:if="${partida.status == 'Em andamento'}"
-                               th:href="@{/resultados/lancar/{id}(id=${partida.id})}"
-                               class="btn btn-success btn-sm">
-                                Lançar Gols
-                            </a>
+                                <a th:if="${partida.status == 'Em andamento'}"
+                                   th:href="@{/resultados/lancar/{id}(id=${partida.id})}"
+                                   class="btn btn-success btn-sm">
+                                    Lançar Gols
+                                </a>
 
-                            <a th:if="${partida.status == 'Em andamento'}"
-                               th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
-                               class="btn btn-novo btn-sm"
-                               onclick="return confirm('Deseja finalizar esta partida? Após finalizar, o placar não poderá mais ser alterado e os pontos serão calculados.');">
-                                Finalizar
-                            </a>
+                                <a th:if="${partida.status == 'Em andamento'}"
+                                   th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
+                                   class="btn btn-novo btn-sm"
+                                   onclick="return confirm('Deseja finalizar esta partida? A pontuação dos usuários será calculada automaticamente.');">
+                                    Finalizar
+                                </a>
 
-                            <a th:if="${partida.status == 'Agendada'}"
-                               th:href="@{/partidas/editar/{id}(id=${partida.id})}"
-                               class="btn btn-warning btn-sm">
-                                Editar
-                            </a>
+                                <a th:if="${partida.status == 'Finalizada'}"
+                                   th:href="@{/resultados/editar/{id}(id=${partida.id})}"
+                                   class="btn btn-warning btn-sm">
+                                    Corrigir Resultado
+                                </a>
 
-                            <a th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Tem certeza que deseja excluir essa partida?');">
-                                Excluir
-                            </a>
+                                <a th:if="${partida.status == 'Agendada'}"
+                                   th:href="@{/partidas/editar/{id}(id=${partida.id})}"
+                                   class="btn btn-warning btn-sm">
+                                    Editar
+                                </a>
 
-                        </div>
-                    </td>
-                </tr>
+                                <a th:if="${partida.status == 'Agendada'}"
+                                   th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Tem certeza que deseja excluir essa partida?');">
+                                    Excluir
+                                </a>
 
-                <tr th:if="${#lists.isEmpty(partidas)}">
-                    <td colspan="9" class="text-center text-muted py-4">
-                        Nenhuma partida cadastrada ainda.
-                    </td>
-                </tr>
+                            </div>
+                        </td>
+                    </tr>
 
-                </tbody>
+                    <tr th:if="${#lists.isEmpty(partidas)}">
+                        <td colspan="9" class="text-center text-muted py-4">
+                            Nenhuma partida cadastrada ainda.
+                        </td>
+                    </tr>
 
-            </table>
+                    </tbody>
+
+                </table>
+            </div>
 
         </div>
     </div>

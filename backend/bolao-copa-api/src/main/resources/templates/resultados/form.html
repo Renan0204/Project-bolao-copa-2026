@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lançar Gols</title>
+    <title th:text="${modoEdicao == true ? 'Corrigir Resultado' : 'Lançar Gols'}">Resultado</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
@@ -11,8 +11,24 @@
 
 <div class="topo">
     <div class="container">
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Lançamento de gols da partida em andamento</p>
+        <div class="painel-cabecalho">
+            <div>
+                <h1 class="mb-1">Bolão Copa 2026</h1>
+                <p class="mb-0"
+                   th:text="${modoEdicao == true ? 'Correção de resultado finalizado' : 'Lançamento de gols da partida em andamento'}">
+                    Resultado da partida
+                </p>
+            </div>
+
+            <div class="menu-superior">
+                <a href="/dashboard" class="menu-link">Dashboard</a>
+                <a href="/selecoes" class="menu-link">Seleções</a>
+                <a href="/estadios" class="menu-link">Estádios</a>
+                <a href="/partidas" class="menu-link ativo">Partidas</a>
+                <a href="/usuarios-admin" class="menu-link">Usuários</a>
+                <a href="/admin/logout" class="menu-link">Sair</a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -24,9 +40,17 @@
             <div class="card card-principal">
                 <div class="card-body p-4">
 
-                    <h2 class="mb-3">Lançar Gols</h2>
+                    <h2 class="mb-3"
+                        th:text="${modoEdicao == true ? 'Corrigir Resultado' : 'Lançar Gols'}">
+                        Resultado
+                    </h2>
 
-                    <div class="alert alert-warning">
+                    <div th:if="${modoEdicao == true}" class="alert alert-warning">
+                        Ao corrigir o resultado, o sistema recalculará automaticamente todos os palpites desta partida
+                        e atualizará a pontuação dos usuários no ranking.
+                    </div>
+
+                    <div th:if="${modoEdicao != true}" class="alert alert-warning">
                         Esta tela apenas salva o placar enquanto a partida está em andamento.
                         Para calcular a pontuação, finalize a partida na tela de partidas.
                     </div>
@@ -37,7 +61,8 @@
                         <span class="nome-selecao" th:text="${partida.selecaoB.nome}"></span>
                     </div>
 
-                    <form th:action="@{/resultados/salvar}" method="post">
+                    <form th:action="${modoEdicao == true} ? @{/resultados/corrigir} : @{/resultados/salvar}"
+                          method="post">
 
                         <input type="hidden" name="id" th:value="${partida.id}">
 
@@ -66,8 +91,10 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-salvar">
-                                Salvar Gols
+                            <button type="submit"
+                                    class="btn btn-salvar"
+                                    th:text="${modoEdicao == true ? 'Corrigir e Recalcular' : 'Salvar Gols'}">
+                                Salvar
                             </button>
 
                             <a href="/partidas" class="btn btn-voltar">
