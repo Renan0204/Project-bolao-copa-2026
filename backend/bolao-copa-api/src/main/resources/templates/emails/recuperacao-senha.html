@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperação de senha - Bolão Copa 2026</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#eef2f7; font-family:Arial, Helvetica, sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#eef2f7; padding:34px 12px;">
+    <tr>
+        <td align="center">
+
+            <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                   style="max-width:640px; background-color:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(15, 23, 42, 0.16);">
+
+                <tr>
+                    <td style="padding:0; background-color:#052e16;">
+                        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                            <tr>
+                                <td style="padding:34px 34px 32px; text-align:center; background:linear-gradient(135deg, #052e16 0%, #065f46 48%, #22c55e 100%);">
+
+                                    <div style="display:inline-block; background-color:#ffffff; padding:14px 20px; border-radius:20px; margin-bottom:20px; box-shadow:0 12px 28px rgba(0, 0, 0, 0.22);">
+                                        <img src="cid:logoBolao"
+                                             alt="Bolão Copa 2026"
+                                             style="display:block; max-width:160px; height:auto; border:0;">
+                                    </div>
+
+                                    <p style="margin:0 0 8px; color:#bbf7d0; font-size:13px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase;">
+                                        Segurança da conta
+                                    </p>
+
+                                    <h1 style="margin:0; color:#ffffff; font-size:28px; line-height:1.25; font-weight:800; letter-spacing:-0.4px;">
+                                        Redefinição de senha
+                                    </h1>
+
+                                    <p style="margin:12px 0 0; color:#dcfce7; font-size:15px; line-height:1.5;">
+                                        Recebemos uma solicitação para proteger o acesso à sua conta.
+                                    </p>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:38px 40px 30px;">
+
+                        <p style="margin:0 0 18px; color:#111827; font-size:18px; line-height:1.5;">
+                            Olá, <strong th:text="${nomeUsuario}">usuário</strong>!
+                        </p>
+
+                        <p style="margin:0 0 18px; color:#374151; font-size:15px; line-height:1.7;">
+                            Foi solicitada uma redefinição de senha para sua conta no
+                            <strong>Bolão Copa 2026</strong>.
+                        </p>
+
+                        <p style="margin:0 0 28px; color:#374151; font-size:15px; line-height:1.7;">
+                            Para continuar, clique no botão abaixo e cadastre uma nova senha de acesso.
+                        </p>
+
+                        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                            <tr>
+                                <td align="center" style="padding:6px 0 32px;">
+                                    <a th:href="${linkRecuperacao}"
+                                       href="#"
+                                       style="display:inline-block; background-color:#16a34a; color:#ffffff; text-decoration:none; padding:15px 34px; border-radius:999px; font-size:15px; font-weight:800; letter-spacing:0.2px; box-shadow:0 12px 24px rgba(22, 163, 74, 0.34);">
+                                        Redefinir minha senha
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                               style="background-color:#f0fdf4; border:1px solid #bbf7d0; border-radius:18px;">
+                            <tr>
+                                <td style="padding:18px 20px;">
+                                    <p style="margin:0; color:#166534; font-size:14px; line-height:1.6;">
+                                        <strong>Importante:</strong> este link expira em
+                                        <strong th:text="${minutosExpiracao}">30</strong> minutos.
+                                        Depois desse prazo, será necessário solicitar uma nova recuperação de senha.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="margin:24px 0 0; color:#6b7280; font-size:13px; line-height:1.7;">
+                            Se você não solicitou essa alteração, ignore este e-mail. Sua senha atual continuará a mesma.
+                        </p>
+
+                        <div style="height:1px; background-color:#e5e7eb; margin:30px 0;"></div>
+
+                        <p style="margin:0 0 8px; color:#6b7280; font-size:12px; line-height:1.6;">
+                            Caso o botão não funcione, copie e cole este link no navegador:
+                        </p>
+
+                        <p style="margin:0; color:#4b5563; font-size:12px; line-height:1.6; word-break:break-all;"
+                           th:text="${linkRecuperacao}">
+                            http://localhost:8080/redefinir-senha?token=...
+                        </p>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="background-color:#f9fafb; padding:24px 38px; text-align:center; border-top:1px solid #e5e7eb;">
+                        <p style="margin:0 0 6px; color:#111827; font-size:13px; font-weight:700;">
+                            Equipe Bolão Copa 2026
+                        </p>
+                        <p style="margin:0; color:#6b7280; font-size:12px; line-height:1.5;">
+                            Este é um e-mail automático. Não é necessário responder.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+
+            <p style="margin:18px 0 0; color:#9ca3af; font-size:11px; line-height:1.5;">
+                Bolão Copa 2026 • Segurança, palpites e emoção em cada jogo
+            </p>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
