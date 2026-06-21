@@ -9,12 +9,7 @@
 </head>
 <body>
 
-<div class="topo">
-  <div class="container">
-    <h1 class="mb-1">Bolão Copa 2026</h1>
-    <p class="mb-0">Gerenciamento de estádios</p>
-  </div>
-</div>
+<div th:replace="~{fragments/admin-header :: header('estadios')}"></div>
 
 <div class="container">
 
@@ -27,14 +22,12 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 class="mb-0">Estádios</h2>
-          <small class="text-muted">Cadastre os estádios disponíveis para partidas</small>
+          <small class="text-muted">
+            Cadastre os estádios disponíveis para partidas.
+          </small>
         </div>
 
         <div class="d-flex gap-2">
-          <a href="/dashboard" class="btn btn-secondary">
-            Dashboard
-          </a>
-
           <a href="/estadios/novo" class="btn btn-novo">
             Novo Estádio
           </a>

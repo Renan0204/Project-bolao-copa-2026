@@ -10,12 +10,7 @@
 </head>
 <body>
 
-<div class="topo">
-    <div class="container">
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Gerenciamento de seleções participantes</p>
-    </div>
-</div>
+<div th:replace="~{fragments/admin-header :: header('selecoes')}"></div>
 
 <div class="container">
 
@@ -28,14 +23,12 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="mb-0">Seleções</h2>
-                    <small class="text-muted">Cadastre e organize as seleções da Copa</small>
+                    <small class="text-muted">
+                        Cadastre e organize as seleções da Copa.
+                    </small>
                 </div>
 
                 <div class="d-flex gap-2">
-                    <a href="/dashboard" class="btn btn-secondary">
-                        Dashboard
-                    </a>
-
                     <a href="/selecoes/novo" class="btn btn-novo">
                         Nova Seleção
                     </a>

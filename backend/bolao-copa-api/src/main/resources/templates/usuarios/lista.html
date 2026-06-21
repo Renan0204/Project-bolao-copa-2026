@@ -9,27 +9,9 @@
 </head>
 <body>
 
-<div class="topo">
-  <div class="container">
-    <div class="painel-cabecalho">
-      <div>
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Gerenciamento de usuários cadastrados</p>
-      </div>
+<div th:replace="~{fragments/admin-header :: header('usuarios')}"></div>
 
-      <div class="menu-superior">
-        <a href="/dashboard" class="menu-link">Dashboard</a>
-        <a href="/selecoes" class="menu-link">Seleções</a>
-        <a href="/estadios" class="menu-link">Estádios</a>
-        <a href="/partidas" class="menu-link">Partidas</a>
-        <a href="/usuarios-admin" class="menu-link ativo">Usuários</a>
-        <a href="/admin/logout" class="menu-link">Sair</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container">
+<main class="container admin-pagina">
 
   <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
   <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
@@ -37,13 +19,11 @@
   <div class="card card-principal">
     <div class="card-body p-4">
 
-      <div class="secao-titulo mb-4">
-        <div>
-          <h2 class="mb-1">Usuários</h2>
-          <p class="text-muted mb-0">
-            Liste, busque, visualize detalhes e bloqueie usuários do sistema.
-          </p>
-        </div>
+      <div class="mb-4">
+        <h2 class="mb-1">Usuários</h2>
+        <p class="text-muted mb-0">
+          Liste, busque, visualize detalhes e bloqueie usuários do sistema.
+        </p>
       </div>
 
       <form th:action="@{/usuarios-admin}" method="get" class="row mb-4">
@@ -140,7 +120,7 @@
     </div>
   </div>
 
-</div>
+</main>
 
 </body>
 </html>

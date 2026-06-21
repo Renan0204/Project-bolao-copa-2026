@@ -9,308 +9,95 @@
 </head>
 <body>
 
-<div class="topo">
-    <div class="container">
-        <div class="painel-cabecalho">
-            <div>
-                <h1 class="mb-1">Bolão Copa 2026</h1>
-                <p class="mb-0">Painel administrativo do sistema</p>
-            </div>
+<div th:replace="~{fragments/admin-header :: header('dashboard')}"></div>
 
-            <div class="menu-superior">
-                <a href="/dashboard" class="menu-link ativo">Dashboard</a>
-                <a href="/selecoes" class="menu-link">Seleções</a>
-                <a href="/estadios" class="menu-link">Estádios</a>
-                <a href="/partidas" class="menu-link">Partidas</a>
-                <a href="/usuarios-admin" class="menu-link">Usuários</a>
-                <a href="/admin/logout" class="menu-link">Sair</a>
-            </div>
-        </div>
-    </div>
-</div>
+<main class="container admin-pagina">
 
-<div class="container">
+    <section class="admin-titulo-pagina">
+        <h2>Dashboard</h2>
+        <p>Resumo dos indicadores solicitados para acompanhamento do bolão.</p>
+    </section>
 
-    <div class="mb-4">
-        <h2 class="mb-1">Visão geral</h2>
-        <p class="text-muted mb-0">
-            Acompanhe os principais números do bolão e acesse rapidamente as áreas administrativas.
-        </p>
-    </div>
+    <section class="row mb-4">
 
-    <div class="row mb-4">
-
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card card-indicador">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="dashboard-card">
                 <div class="card-body">
-                    <span class="indicador-label">Usuários</span>
-                    <div class="numero" th:text="${totalUsuarios}"></div>
-                    <small>Total cadastrado</small>
+                    <span class="dashboard-card-label">Total de usuários</span>
+                    <div class="dashboard-card-numero" th:text="${totalUsuarios}"></div>
+                    <p class="dashboard-card-descricao">Usuários cadastrados no sistema.</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card card-indicador">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="dashboard-card">
                 <div class="card-body">
-                    <span class="indicador-label">Palpites</span>
-                    <div class="numero" th:text="${totalPalpites}"></div>
-                    <small>Total registrado</small>
+                    <span class="dashboard-card-label">Total de palpites</span>
+                    <div class="dashboard-card-numero" th:text="${totalPalpites}"></div>
+                    <p class="dashboard-card-descricao">Palpites registrados pelos usuários.</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card card-indicador">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="dashboard-card">
                 <div class="card-body">
-                    <span class="indicador-label">Pendentes</span>
-                    <div class="numero" th:text="${partidasPendentesResultado}"></div>
-                    <small>Partidas pendentes de resultado</small>
+                    <span class="dashboard-card-label">Pendentes de resultado</span>
+                    <div class="dashboard-card-numero" th:text="${partidasPendentesResultado}"></div>
+                    <p class="dashboard-card-descricao">Partidas que precisam de resultado.</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card card-indicador">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="dashboard-card">
                 <div class="card-body">
-                    <span class="indicador-label">Ativos 24h</span>
-                    <div class="numero" th:text="${usuariosAtivosUltimas24h}"></div>
-                    <small>Usuários com login recente</small>
+                    <span class="dashboard-card-label">Ativos nas últimas 24h</span>
+                    <div class="dashboard-card-numero" th:text="${usuariosAtivosUltimas24h}"></div>
+                    <p class="dashboard-card-descricao">Usuários com login recente.</p>
                 </div>
             </div>
         </div>
 
-    </div>
+    </section>
 
-    <div class="row mb-4">
-
-        <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <span class="indicador-label">Seleções</span>
-                    <div class="numero menor" th:text="${totalSelecoes}"></div>
-                    <small>Classificadas</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <span class="indicador-label">Estádios</span>
-                    <div class="numero menor" th:text="${totalEstadios}"></div>
-                    <small>Cadastrados</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <span class="indicador-label">Partidas</span>
-                    <div class="numero menor" th:text="${totalPartidas}"></div>
-                    <small>Total criado</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <span class="indicador-label">Agendadas</span>
-                    <div class="numero menor" th:text="${partidasAgendadas}"></div>
-                    <small>Aguardando início</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <span class="indicador-label">Em andamento</span>
-                    <div class="numero menor" th:text="${partidasEmAndamento}"></div>
-                    <small>Recebem gols</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <span class="indicador-label">Finalizadas</span>
-                    <div class="numero menor" th:text="${partidasFinalizadas}"></div>
-                    <small>Com pontuação</small>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="row mb-4">
-
-        <div class="col-md-6 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="indicador-label">Usuários liberados</span>
-                            <div class="numero menor" th:text="${usuariosAtivos}"></div>
-                        </div>
-
-                        <span class="badge-status status-usuario-ativo">Ativos</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="indicador-label">Usuários bloqueados</span>
-                            <div class="numero menor" th:text="${usuariosBloqueados}"></div>
-                        </div>
-
-                        <span class="badge-status status-usuario-bloqueado">Bloqueados</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="card card-principal mb-4">
+    <section class="card card-principal">
         <div class="card-body p-4">
 
-            <div class="secao-titulo">
-                <div>
-                    <h2 class="mb-1">Menu rápido</h2>
-                    <p class="text-muted mb-0">
-                        Atalhos para as principais rotinas administrativas.
-                    </p>
-                </div>
+            <div class="admin-titulo-pagina mb-4">
+                <h2>Rotinas administrativas</h2>
+                <p>Acesse rapidamente as principais áreas de gestão do sistema.</p>
             </div>
 
-            <div class="row mt-4">
+            <div class="admin-acoes-grid">
 
-                <div class="col-md-3 mb-3">
-                    <a href="/selecoes" class="acao-rapida">
-                        <strong>Gerenciar Seleções</strong>
-                        <span>Cadastrar, editar e organizar grupos</span>
-                    </a>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <a href="/estadios" class="acao-rapida">
-                        <strong>Gerenciar Estádios</strong>
-                        <span>Cadastrar locais das partidas</span>
-                    </a>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <a href="/partidas" class="acao-rapida">
-                        <strong>Gerenciar Partidas</strong>
-                        <span>Iniciar, lançar gols e finalizar</span>
-                    </a>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <a href="/usuarios-admin" class="acao-rapida">
-                        <strong>Gerenciar Usuários</strong>
-                        <span>Listar, buscar e bloquear acessos</span>
-                    </a>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <a href="/partidas/novo" class="acao-rapida destaque">
-                        <strong>Nova Partida</strong>
-                        <span>Criar uma partida agendada</span>
-                    </a>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-
-    <div class="card card-principal">
-        <div class="card-body p-4">
-
-            <div class="secao-titulo mb-4">
-                <div>
-                    <h2 class="mb-1">Partidas cadastradas</h2>
-                    <p class="text-muted mb-0">
-                        Resumo das partidas em ordem de data e hora.
-                    </p>
-                </div>
-
-                <a href="/partidas" class="btn btn-secondary">
-                    Ver todas
+                <a th:href="@{/selecoes}" class="admin-acao-card">
+                    <strong>Seleções</strong>
+                    <span>Cadastrar, editar e remover seleções.</span>
                 </a>
-            </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <a th:href="@{/estadios}" class="admin-acao-card">
+                    <strong>Estádios</strong>
+                    <span>Cadastrar, editar e remover estádios.</span>
+                </a>
 
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Partida</th>
-                        <th>Data e Hora</th>
-                        <th>Fase</th>
-                        <th>Grupo</th>
-                        <th>Placar</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
+                <a th:href="@{/partidas}" class="admin-acao-card">
+                    <strong>Partidas</strong>
+                    <span>Gerenciar jogos, resultados e correções.</span>
+                </a>
 
-                    <tbody>
+                <a th:href="@{/usuarios-admin}" class="admin-acao-card">
+                    <strong>Usuários</strong>
+                    <span>Listar, buscar e bloquear usuários.</span>
+                </a>
 
-                    <tr th:each="partida : ${partidas}">
-                        <td th:text="${partida.id}"></td>
-
-                        <td>
-                            <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
-                            <span> x </span>
-                            <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
-                        </td>
-
-                        <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-
-                        <td th:text="${partida.fase != null ? partida.fase : '-'}"></td>
-
-                        <td th:text="${partida.grupo != null ? partida.grupo : '-'}"></td>
-
-                        <td class="placar">
-                            <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
-                            <span> x </span>
-                            <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
-                        </td>
-
-                        <td>
-                            <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
-                                  class="badge-status"
-                                  th:text="${partida.status}">
-                            </span>
-                        </td>
-                    </tr>
-
-                    <tr th:if="${#lists.isEmpty(partidas)}">
-                        <td colspan="7" class="text-center text-muted py-4">
-                            Nenhuma partida cadastrada ainda.
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
             </div>
 
         </div>
-    </div>
+    </section>
 
-</div>
+</main>
 
 </body>
 </html>
