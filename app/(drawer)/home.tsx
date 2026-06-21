@@ -128,7 +128,7 @@ export default function HomeScreen() {
           style={styles.tabButton}
           onPress={() => router.push("/(drawer)/ranking")}
         >
-          <Text style={styles.tabText}>Ranking {"\n"}resumido</Text>
+          <Text style={styles.tabText}>Ranking</Text>
         </TouchableOpacity>
       </View>
 
