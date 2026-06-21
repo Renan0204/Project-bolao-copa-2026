@@ -173,10 +173,21 @@ public class PartidaController {
 
     @GetMapping("/partidas/selecoes-por-grupo")
     @ResponseBody
-    public List<Map<String, Object>> selecoesPorGrupo(@RequestParam String grupo) {
+    public List<Map<String, Object>> selecoesPorGrupo(@RequestParam(required = false) String grupo,
+                                                      @RequestParam(required = false) String fase) {
         List<Map<String, Object>> resposta = new ArrayList<>();
+        List<Selecao> selecoes;
 
-        for (Selecao selecao : selecaoService.listarPorGrupo(grupo)) {
+        boolean deveFiltrarPorGrupo = temTexto(grupo)
+                && (!temTexto(fase) || ehFaseDeGrupos(fase));
+
+        if (deveFiltrarPorGrupo) {
+            selecoes = selecaoService.listarPorGrupo(grupo);
+        } else {
+            selecoes = selecaoService.listarTodas();
+        }
+
+        for (Selecao selecao : selecoes) {
             Map<String, Object> item = new HashMap<>();
 
             item.put("id", selecao.getId());
@@ -255,18 +266,6 @@ public class PartidaController {
         }
     }
 
-    private boolean textoIgual(String valor, String filtro) {
-        if (valor == null || filtro == null) {
-            return false;
-        }
-
-        return valor.trim().equalsIgnoreCase(filtro.trim());
-    }
-
-    private boolean temTexto(String valor) {
-        return valor != null && !valor.isBlank();
-    }
-
     private void prepararFormulario(Model model, Partida partida) {
         model.addAttribute("partida", partida);
         model.addAttribute("selecoes", selecaoService.listarTodas());
@@ -278,5 +277,33 @@ public class PartidaController {
             model.addAttribute("dataPartida", partida.getDataHora().toLocalDate());
             model.addAttribute("horaPartida", partida.getDataHora().toLocalTime());
         }
+
+        if (partida.getSelecaoA() != null) {
+            model.addAttribute("selecaoAId", partida.getSelecaoA().getId());
+        }
+
+        if (partida.getSelecaoB() != null) {
+            model.addAttribute("selecaoBId", partida.getSelecaoB().getId());
+        }
+
+        if (partida.getEstadio() != null) {
+            model.addAttribute("estadioId", partida.getEstadio().getId());
+        }
+    }
+
+    private boolean ehFaseDeGrupos(String fase) {
+        return fase != null && fase.toLowerCase().contains("grupo");
+    }
+
+    private boolean textoIgual(String valor, String filtro) {
+        if (valor == null || filtro == null) {
+            return false;
+        }
+
+        return valor.trim().equalsIgnoreCase(filtro.trim());
+    }
+
+    private boolean temTexto(String valor) {
+        return valor != null && !valor.isBlank();
     }
 }

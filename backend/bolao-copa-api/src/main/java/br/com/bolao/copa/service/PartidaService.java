@@ -166,10 +166,6 @@ public class PartidaService {
             throw new RuntimeException("Informe os dados da partida.");
         }
 
-        if (!OpcoesAdmin.grupoValido(partida.getGrupo())) {
-            throw new RuntimeException("Selecione um grupo válido para a partida.");
-        }
-
         if (!OpcoesAdmin.faseValida(partida.getFase())) {
             throw new RuntimeException("Selecione uma fase válida para a partida.");
         }
@@ -182,14 +178,26 @@ public class PartidaService {
             throw new RuntimeException("Selecione um estádio cadastrado.");
         }
 
-        if (selecaoService.contarPorGrupo(partida.getGrupo()) < 2) {
-            throw new RuntimeException("O grupo precisa ter pelo menos 2 seleções para criar partidas.");
+        boolean faseDeGrupos = ehFaseDeGrupos(partida.getFase());
+
+        if (faseDeGrupos) {
+            if (!OpcoesAdmin.grupoValido(partida.getGrupo())) {
+                throw new RuntimeException("Selecione um grupo válido para a partida da fase de grupos.");
+            }
+
+            if (selecaoService.contarPorGrupo(partida.getGrupo()) < 2) {
+                throw new RuntimeException("O grupo precisa ter pelo menos 2 seleções para criar partidas.");
+            }
+        } else {
+            if (!temTexto(partida.getGrupo())) {
+                partida.setGrupo(null);
+            }
         }
 
-        validarSelecoesDaPartida(partida);
+        validarSelecoesDaPartida(partida, faseDeGrupos);
     }
 
-    private void validarSelecoesDaPartida(Partida partida) {
+    private void validarSelecoesDaPartida(Partida partida, boolean faseDeGrupos) {
         Selecao selecaoA = partida.getSelecaoA();
         Selecao selecaoB = partida.getSelecaoB();
 
@@ -201,8 +209,13 @@ public class PartidaService {
             throw new RuntimeException("Seleção A e Seleção B não podem ser iguais.");
         }
 
-        if (!partida.getGrupo().equals(selecaoA.getGrupo()) || !partida.getGrupo().equals(selecaoB.getGrupo())) {
-            throw new RuntimeException("As duas seleções precisam pertencer ao grupo selecionado.");
+        if (faseDeGrupos) {
+            boolean selecaoAPertenceAoGrupo = textoIgual(partida.getGrupo(), selecaoA.getGrupo());
+            boolean selecaoBPertenceAoGrupo = textoIgual(partida.getGrupo(), selecaoB.getGrupo());
+
+            if (!selecaoAPertenceAoGrupo || !selecaoBPertenceAoGrupo) {
+                throw new RuntimeException("Na fase de grupos, as duas seleções precisam pertencer ao grupo selecionado.");
+            }
         }
     }
 
@@ -214,5 +227,21 @@ public class PartidaService {
         if (golsSelecaoA < 0 || golsSelecaoB < 0) {
             throw new RuntimeException("Os gols não podem ser negativos.");
         }
+    }
+
+    private boolean ehFaseDeGrupos(String fase) {
+        return fase != null && fase.toLowerCase().contains("grupo");
+    }
+
+    private boolean temTexto(String valor) {
+        return valor != null && !valor.isBlank();
+    }
+
+    private boolean textoIgual(String valor, String filtro) {
+        if (valor == null || filtro == null) {
+            return false;
+        }
+
+        return valor.trim().equalsIgnoreCase(filtro.trim());
     }
 }

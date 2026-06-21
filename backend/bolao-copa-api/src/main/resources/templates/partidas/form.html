@@ -9,24 +9,20 @@
 </head>
 <body>
 
-<div class="topo">
-    <div class="container">
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Cadastro de partida da competição</p>
-    </div>
-</div>
+<div th:replace="~{fragments/admin-header :: header('partidas')}"></div>
 
-<div class="container">
+<main class="container admin-pagina">
 
     <div class="row justify-content-center">
-        <div class="col-md-9">
+        <div class="col-lg-9">
 
             <div class="card card-principal">
                 <div class="card-body p-4">
 
                     <h2 class="mb-1">Cadastro de Partida</h2>
                     <p class="text-muted mb-4">
-                        Selecione o grupo primeiro. O sistema exibirá apenas seleções do grupo escolhido.
+                        Na fase de grupos, as seleções são filtradas pelo grupo.
+                        Nas demais fases, qualquer seleção pode enfrentar qualquer seleção.
                     </p>
 
                     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
@@ -38,20 +34,10 @@
                         <div class="row">
 
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Grupo</label>
-                                <select id="grupo" class="form-select" th:field="*{grupo}" required>
-                                    <option value="">Selecione o grupo</option>
-                                    <option th:each="grupo : ${grupos}"
-                                            th:value="${grupo}"
-                                            th:text="${grupo}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Fase</label>
-                                <select class="form-select" th:field="*{fase}" required>
+                                <select id="faseSelect" th:field="*{fase}" class="form-control" required>
                                     <option value="">Selecione a fase</option>
+
                                     <option th:each="fase : ${fases}"
                                             th:value="${fase}"
                                             th:text="${fase}">
@@ -59,45 +45,41 @@
                                 </select>
                             </div>
 
-                        </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Grupo</label>
+                                <select id="grupoSelect" th:field="*{grupo}" class="form-control">
+                                    <option value="">Selecione o grupo</option>
 
-                        <div class="row">
+                                    <option th:each="grupo : ${grupos}"
+                                            th:value="${grupo}"
+                                            th:text="${grupo}">
+                                    </option>
+                                </select>
+
+                                <small id="grupoAjuda" class="text-muted">
+                                    Obrigatório apenas para partidas da fase de grupos.
+                                </small>
+                            </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Seleção A</label>
-                                <select id="selecaoAId" class="form-select" name="selecaoAId" required>
-                                    <option value="">Selecione o grupo primeiro</option>
-                                    <option th:each="selecao : ${selecoes}"
-                                            th:value="${selecao.id}"
-                                            th:text="${selecao.nome}"
-                                            th:data-grupo="${selecao.grupo}"
-                                            th:selected="${(selecaoAId != null and selecaoAId == selecao.id) or (partida.selecaoA != null and partida.selecaoA.id == selecao.id)}">
-                                    </option>
+                                <select id="selecaoASelect" name="selecaoAId" class="form-control" required>
+                                    <option value="">Selecione a fase primeiro</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Seleção B</label>
-                                <select id="selecaoBId" class="form-select" name="selecaoBId" required>
-                                    <option value="">Selecione o grupo primeiro</option>
-                                    <option th:each="selecao : ${selecoes}"
-                                            th:value="${selecao.id}"
-                                            th:text="${selecao.nome}"
-                                            th:data-grupo="${selecao.grupo}"
-                                            th:selected="${(selecaoBId != null and selecaoBId == selecao.id) or (partida.selecaoB != null and partida.selecaoB.id == selecao.id)}">
-                                    </option>
+                                <select id="selecaoBSelect" name="selecaoBId" class="form-control" required>
+                                    <option value="">Selecione a fase primeiro</option>
                                 </select>
                             </div>
-
-                        </div>
-
-                        <div class="row">
 
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Data</label>
                                 <input type="date"
-                                       class="form-control"
                                        name="dataPartida"
+                                       class="form-control"
                                        th:value="${dataPartida}"
                                        required>
                             </div>
@@ -105,32 +87,38 @@
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Hora</label>
                                 <input type="time"
-                                       class="form-control"
                                        name="horaPartida"
+                                       class="form-control"
                                        th:value="${horaPartida}"
                                        required>
                             </div>
 
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Estádio</label>
-                                <select class="form-select" name="estadioId" required>
+                                <select name="estadioId" class="form-control" required>
                                     <option value="">Selecione o estádio</option>
+
                                     <option th:each="estadio : ${estadios}"
                                             th:value="${estadio.id}"
                                             th:text="${estadio.nome}"
-                                            th:selected="${(estadioId != null and estadioId == estadio.id) or (partida.estadio != null and partida.estadio.id == estadio.id)}">
+                                            th:selected="${estadioId != null && estadioId == estadio.id}">
                                     </option>
                                 </select>
-                                <small class="text-muted">Cadastre o estádio antes de criar a partida.</small>
+
+                                <small class="text-muted">
+                                    Cadastre o estádio antes de criar a partida.
+                                </small>
                             </div>
 
                         </div>
 
-                        <div class="alert alert-warning mb-4">
-                            A partida sempre nasce como <strong>Agendada</strong>. Os gols só poderão ser lançados depois que ela estiver em andamento.
+                        <div class="alert alert-warning mt-3">
+                            <strong>Regra:</strong>
+                            na fase de grupos, as seleções precisam ser do mesmo grupo.
+                            A partir das fases eliminatórias, qualquer seleção pode enfrentar qualquer seleção.
                         </div>
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-salvar">
                                 Salvar Partida
                             </button>
@@ -148,39 +136,105 @@
         </div>
     </div>
 
-</div>
+</main>
 
-<script>
-    function filtrarSelecoesPorGrupo() {
-        const grupoSelecionado = document.getElementById('grupo').value;
-        const selects = [
-            document.getElementById('selecaoAId'),
-            document.getElementById('selecaoBId')
-        ];
+<script th:inline="javascript">
+    const faseSelect = document.getElementById("faseSelect");
+    const grupoSelect = document.getElementById("grupoSelect");
+    const selecaoASelect = document.getElementById("selecaoASelect");
+    const selecaoBSelect = document.getElementById("selecaoBSelect");
+    const grupoAjuda = document.getElementById("grupoAjuda");
 
-        selects.forEach(function (select) {
-            const valorAtual = select.value;
+    const selecaoASelecionada = /*[[${selecaoAId}]]*/ null;
+    const selecaoBSelecionada = /*[[${selecaoBId}]]*/ null;
 
-            Array.from(select.options).forEach(function (option, index) {
-                if (index === 0) {
-                    option.hidden = false;
-                    return;
-                }
+    function temTexto(valor) {
+        return valor !== null && valor !== undefined && valor.trim() !== "";
+    }
 
-                const pertenceAoGrupo = option.dataset.grupo === grupoSelecionado;
+    function ehFaseDeGrupos() {
+        const fase = faseSelect.value || "";
+        return fase.toLowerCase().includes("grupo");
+    }
 
-                option.hidden = !pertenceAoGrupo;
+    function limparSelecoes(mensagem) {
+        selecaoASelect.innerHTML = `<option value="">${mensagem}</option>`;
+        selecaoBSelect.innerHTML = `<option value="">${mensagem}</option>`;
+    }
 
-                if (!pertenceAoGrupo && option.value === valorAtual) {
-                    select.value = '';
-                }
-            });
+    function preencherSelect(select, selecoes, valorSelecionado, placeholder) {
+        select.innerHTML = "";
+
+        const optionInicial = document.createElement("option");
+        optionInicial.value = "";
+        optionInicial.textContent = placeholder;
+        select.appendChild(optionInicial);
+
+        selecoes.forEach(selecao => {
+            const option = document.createElement("option");
+
+            option.value = selecao.id;
+            option.textContent = `${selecao.nome} (${selecao.codigoFifa})`;
+
+            if (valorSelecionado !== null && String(valorSelecionado) === String(selecao.id)) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
         });
     }
 
-    document.getElementById('grupo').addEventListener('change', filtrarSelecoesPorGrupo);
+    function carregarSelecoes() {
+        const fase = faseSelect.value;
+        const grupo = grupoSelect.value;
 
-    filtrarSelecoesPorGrupo();
+        if (!temTexto(fase)) {
+            grupoSelect.disabled = true;
+            grupoSelect.required = false;
+            limparSelecoes("Selecione a fase primeiro");
+            grupoAjuda.textContent = "Selecione a fase para definir a regra da partida.";
+            return;
+        }
+
+        if (ehFaseDeGrupos()) {
+            grupoSelect.disabled = false;
+            grupoSelect.required = true;
+            grupoAjuda.textContent = "Na fase de grupos, selecione o grupo para carregar apenas as seleções daquele grupo.";
+
+            if (!temTexto(grupo)) {
+                limparSelecoes("Selecione o grupo primeiro");
+                return;
+            }
+        } else {
+            grupoSelect.value = "";
+            grupoSelect.disabled = true;
+            grupoSelect.required = false;
+            grupoAjuda.textContent = "Nas fases eliminatórias, o grupo não é necessário. Todas as seleções ficam disponíveis.";
+        }
+
+        const params = new URLSearchParams();
+
+        params.append("fase", fase);
+
+        if (temTexto(grupo)) {
+            params.append("grupo", grupo);
+        }
+
+        fetch(`/partidas/selecoes-por-grupo?${params.toString()}`)
+            .then(response => response.json())
+            .then(selecoes => {
+                preencherSelect(selecaoASelect, selecoes, selecaoASelecionada, "Selecione a seleção A");
+                preencherSelect(selecaoBSelect, selecoes, selecaoBSelecionada, "Selecione a seleção B");
+            })
+            .catch(() => {
+                limparSelecoes("Erro ao carregar seleções");
+            });
+    }
+
+    faseSelect.addEventListener("change", carregarSelecoes);
+    grupoSelect.addEventListener("change", carregarSelecoes);
+
+    carregarSelecoes();
 </script>
 
 </body>
