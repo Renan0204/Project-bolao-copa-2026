@@ -7,6 +7,7 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { buscarUsuarioLogado } from "../../services/usuarioService";
 import { buscarPartidas } from "../../services/partidaService";
@@ -14,15 +15,25 @@ import { buscarPartidas } from "../../services/partidaService";
 type Partida = {
   id: number;
   selecaoA: string;
+  selecaoABandeiraUrl?: string | null;
   selecaoB: string;
+  selecaoBBandeiraUrl?: string | null;
   dataHora: string;
   fase: string;
   grupo: string;
   estadio: string;
   status: string;
-  golsSelecaoA?: number | null;
-  golsSelecaoB?: number | null;
 };
+
+function formatarUrlImagem(url: string | null | undefined) {
+  if (!url) return undefined;
+
+  if (url.startsWith("http")) return url;
+
+  return `http://10.0.2.2:8080${
+    url.startsWith("/") ? "" : "/"
+  }${url}`;
+}
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -79,30 +90,59 @@ async function carregarDados() {
     });
   }
 
-  function renderizarCardPartida(partida: Partida, destaque = false) {
-    return (
+function renderizarCardPartida(partida: Partida, destaque = false) {
+  return (
+    <View
+      key={partida.id}
+      style={destaque ? styles.featuredContainer : styles.smallContainer}
+    >
       <View
-        key={partida.id}
         style={destaque ? styles.featuredCard : styles.smallCard}
       >
-        <Text style={destaque ? styles.matchText : styles.smallMatchText}>
+        <View style={styles.flagsRow}>
+          {partida.selecaoABandeiraUrl ? (
+            <Image
+              source={{
+                uri: formatarUrlImagem(
+                  partida.selecaoABandeiraUrl
+                ),
+              }}
+              style={styles.flag}
+            />
+          ) : (
+            <View style={styles.flagPlaceholder} />
+          )}
+
+          {partida.selecaoBBandeiraUrl ? (
+            <Image
+              source={{
+                uri: formatarUrlImagem(
+                  partida.selecaoBBandeiraUrl
+                ),
+              }}
+              style={styles.flag}
+            />
+          ) : (
+            <View style={styles.flagPlaceholder} />
+          )}
+        </View>
+
+        <Text
+          style={destaque ? styles.matchText : styles.smallMatchText}
+        >
           {partida.selecaoA} x {partida.selecaoB}
         </Text>
-
-        <Text style={styles.infoText}>{partida.fase}</Text>
-        <Text style={styles.infoText}>{partida.grupo}</Text>
-        <Text style={styles.infoText}>{formatarData(partida.dataHora)}</Text>
-        <Text style={styles.statusText}>Status: {partida.status}</Text>
-
-        <TouchableOpacity
-          style={styles.palpitarButton}
-          onPress={() => abrirDetalhesPartida(partida.id)}
-        >
-          <Text style={styles.palpitarText}>palpitar</Text>
-        </TouchableOpacity>
       </View>
-    );
-  }
+
+      <TouchableOpacity
+        style={styles.palpitarButton}
+        onPress={() => abrirDetalhesPartida(partida.id)}
+      >
+        <Text style={styles.palpitarText}>palpitar</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
   if (carregando) {
     return (
@@ -140,8 +180,6 @@ async function carregarDados() {
         </View>
       )}
 
-      <Text style={styles.sectionTitle}>Palpitar</Text>
-
       <View style={styles.gridRow}>
         {demaisPartidas.length > 0 ? (
           demaisPartidas.map((partida) => renderizarCardPartida(partida))
@@ -160,16 +198,19 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 20,
   },
+
   loadingContainer: {
     flex: 1,
     backgroundColor: "#F2F2F2",
     alignItems: "center",
     justifyContent: "center",
   },
+
   loadingText: {
     marginTop: 10,
     fontSize: 16,
   },
+
   greeting: {
     fontSize: 18,
     fontWeight: "bold",
@@ -177,41 +218,52 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
   },
+
   drawnRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
   },
+
   tabButton: {
     backgroundColor: "#FFF",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
     width: "48%",
     alignItems: "center",
     justifyContent: "center",
   },
+
   tabText: {
     fontSize: 12,
     fontWeight: "600",
     textAlign: "center",
   },
+
+  featuredContainer: {
+    marginBottom: 20,
+  },
+
   featuredCard: {
+    height: 140,
     backgroundColor: "#FFF",
-    paddingVertical: 30,
-    paddingHorizontal: 15,
-    alignItems: "center",
     borderWidth: 1,
     borderColor: "#ccc",
-    marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: 12,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 10,
+    marginBottom: 6,
   },
+
   matchText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
   },
+
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
@@ -219,52 +271,75 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
   },
-  palpitarButton: {
-    borderWidth: 1,
-    borderColor: "#000",
-    paddingHorizontal: 30,
-    paddingVertical: 5,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  palpitarText: {
-    fontWeight: "bold",
-  },
+
   gridRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     marginBottom: 40,
   },
-  smallCard: {
-    backgroundColor: "#FFF",
+
+  smallContainer: {
     width: "48%",
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
     marginBottom: 15,
   },
+
+  smallCard: {
+    height: 110,
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 12,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 10,
+    marginBottom: 6,
+  },
+
   smallMatchText: {
     fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+    paddingHorizontal: 5,
+  },
+
+  palpitarButton: {
+    backgroundColor: "#007AFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#007AFF",
+  },
+
+  palpitarText: {
+    color: "#FFF",
     fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
+    fontSize: 14,
   },
-  infoText: {
-    fontSize: 11,
-    color: "#555",
-    textAlign: "center",
+
+  flagsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
   },
-  statusText: {
-    fontSize: 11,
-    color: "#333",
-    fontWeight: "bold",
-    marginTop: 4,
-    textAlign: "center",
+
+  flag: {
+    width: 40,
+    height: 28,
+    resizeMode: "contain",
+    marginHorizontal: 5,
   },
+
+  flagPlaceholder: {
+    width: 40,
+    height: 28,
+    backgroundColor: "#E0E0E0",
+    borderRadius: 4,
+    marginHorizontal: 5,
+  },
+
   emptyText: {
     textAlign: "center",
     color: "#666",
