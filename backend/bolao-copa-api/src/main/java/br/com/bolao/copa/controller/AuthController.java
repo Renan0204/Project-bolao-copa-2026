@@ -1,11 +1,14 @@
 package br.com.bolao.copa.controller;
 
 import br.com.bolao.copa.model.Usuario;
+import br.com.bolao.copa.service.EmailService;
 import br.com.bolao.copa.service.TokenService;
 import br.com.bolao.copa.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +31,12 @@ public class AuthController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Value("${app.redefinicao-senha-url:http://localhost:8080/redefinir-senha}")
+    private String urlRedefinicaoSenha;
 
     @PostMapping("/cadastrar")
     public ResponseEntity<Map<String, Object>> cadastrar(@RequestBody Usuario usuario) {
@@ -115,17 +126,27 @@ public class AuthController {
         try {
             Usuario usuario = usuarioService.solicitarRecuperacaoSenha(email);
 
-            resposta.put("mensagem", "Se o e-mail estiver cadastrado, um token de recuperação será gerado.");
+            resposta.put("mensagem", "Se o e-mail estiver cadastrado, um link de recuperação será enviado.");
 
             if (usuario != null) {
-                resposta.put("tokenRecuperacao", usuario.getTokenRecuperacaoSenha());
-                resposta.put("expiraEm", usuario.getTokenRecuperacaoExpiraEm());
-                resposta.put("linkRecuperacao", "http://localhost:8081/redefinir-senha?token=" + usuario.getTokenRecuperacaoSenha());
+                String linkRecuperacao = montarLinkRecuperacao(usuario.getTokenRecuperacaoSenha());
+
+                emailService.enviarRecuperacaoSenha(
+                        usuario.getEmail(),
+                        usuario.getNome(),
+                        linkRecuperacao
+                );
             }
 
             return ResponseEntity.ok(resposta);
+        } catch (MailException erro) {
+            resposta.put("erro", "Token gerado, mas não foi possível enviar o e-mail. Verifique as configurações SMTP.");
+            resposta.put("detalhe", erro.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resposta);
         } catch (RuntimeException erro) {
             resposta.put("erro", erro.getMessage());
+
             return ResponseEntity.badRequest().body(resposta);
         }
     }
@@ -145,6 +166,7 @@ public class AuthController {
             return ResponseEntity.ok(resposta);
         } catch (RuntimeException erro) {
             resposta.put("erro", erro.getMessage());
+
             return ResponseEntity.badRequest().body(resposta);
         }
     }
@@ -156,5 +178,11 @@ public class AuthController {
         resposta.put("mensagem", "Logout realizado com sucesso. Remova o token armazenado no aplicativo.");
 
         return ResponseEntity.ok(resposta);
+    }
+
+    private String montarLinkRecuperacao(String token) {
+        String tokenCodificado = URLEncoder.encode(token, StandardCharsets.UTF_8);
+
+        return urlRedefinicaoSenha + "?token=" + tokenCodificado;
     }
 }
