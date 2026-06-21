@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tabText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "600",
     textAlign: "center",
   },
