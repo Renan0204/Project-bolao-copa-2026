@@ -25,11 +25,11 @@
           Cancelar
         </button>
 
-        <a href="#"
-           id="modalConfirmacaoConfirmar"
-           class="btn btn-danger">
+        <button type="button"
+                id="modalConfirmacaoConfirmar"
+                class="btn btn-danger">
           Confirmar
-        </a>
+        </button>
       </div>
 
     </div>
@@ -43,17 +43,9 @@
         const modalCancelar = document.getElementById("modalConfirmacaoCancelar");
         const modalConfirmar = document.getElementById("modalConfirmacaoConfirmar");
 
-        function abrirModalConfirmacao(link) {
-            const titulo = link.getAttribute("data-confirmacao-titulo") || "Confirmar ação";
-            const mensagem = link.getAttribute("data-confirmacao-mensagem") || "Tem certeza que deseja continuar?";
-            const textoBotao = link.getAttribute("data-confirmacao-botao") || "Confirmar";
-            const tipo = link.getAttribute("data-confirmacao-tipo") || "perigo";
+        let acaoConfirmada = null;
 
-            modalTitulo.textContent = titulo;
-            modalMensagem.textContent = mensagem;
-            modalConfirmar.textContent = textoBotao;
-            modalConfirmar.href = link.href;
-
+        function aplicarTipoBotao(tipo) {
             modalConfirmar.className = "btn";
 
             if (tipo === "sucesso") {
@@ -63,20 +55,56 @@
             } else {
                 modalConfirmar.classList.add("btn-danger");
             }
+        }
+
+        function abrirModalConfirmacao(elemento) {
+            const titulo = elemento.getAttribute("data-confirmacao-titulo") || "Confirmar ação";
+            const mensagem = elemento.getAttribute("data-confirmacao-mensagem") || "Tem certeza que deseja continuar?";
+            const textoBotao = elemento.getAttribute("data-confirmacao-botao") || "Confirmar";
+            const tipo = elemento.getAttribute("data-confirmacao-tipo") || "perigo";
+            const formId = elemento.getAttribute("data-confirmacao-form-id");
+
+            modalTitulo.textContent = titulo;
+            modalMensagem.textContent = mensagem;
+            modalConfirmar.textContent = textoBotao;
+
+            aplicarTipoBotao(tipo);
+
+            if (formId) {
+                acaoConfirmada = function () {
+                    const formulario = document.getElementById(formId);
+
+                    if (formulario) {
+                        formulario.submit();
+                    }
+                };
+            } else if (elemento.tagName.toLowerCase() === "a") {
+                acaoConfirmada = function () {
+                    window.location.href = elemento.href;
+                };
+            } else {
+                acaoConfirmada = null;
+            }
 
             modalBackdrop.classList.remove("d-none");
         }
 
         function fecharModalConfirmacao() {
             modalBackdrop.classList.add("d-none");
-            modalConfirmar.href = "#";
+            acaoConfirmada = null;
         }
 
-        document.querySelectorAll("[data-confirmacao='true']").forEach(function (link) {
-            link.addEventListener("click", function (evento) {
+        document.querySelectorAll("[data-confirmacao='true']").forEach(function (elemento) {
+            elemento.addEventListener("click", function (evento) {
                 evento.preventDefault();
-                abrirModalConfirmacao(link);
+                abrirModalConfirmacao(elemento);
             });
+        });
+
+        modalConfirmar.addEventListener("click", function () {
+            if (acaoConfirmada) {
+                acaoConfirmada();
+            }
         });
 
         modalCancelar.addEventListener("click", fecharModalConfirmacao);
