@@ -15,79 +15,89 @@
 
   <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-  <div class="card card-principal">
-    <div class="card-body p-4">
+  <section class="painel-dashboard-cabecalho mb-4">
+    <div>
+            <span class="painel-dashboard-etiqueta">
+                Cadastro base
+            </span>
 
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 class="mb-0">Estádios</h2>
-          <small class="text-muted">
-            Cadastre os estádios disponíveis para partidas.
-          </small>
-        </div>
+      <h2>
+        Estádios
+      </h2>
 
-        <div class="d-flex gap-2">
-          <a href="/estadios/novo" class="btn btn-novo">
-            Novo Estádio
-          </a>
-        </div>
-      </div>
-
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-
-          <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th class="text-end">Ações</th>
-          </tr>
-          </thead>
-
-          <tbody>
-
-          <tr th:each="estadio : ${estadios}">
-            <td th:text="${estadio.id}"></td>
-
-            <td>
-              <strong th:text="${estadio.nome}"></strong>
-            </td>
-
-            <td class="text-end">
-              <div class="d-flex gap-1 justify-content-end flex-wrap">
-
-                <a th:href="@{/estadios/editar/{id}(id=${estadio.id})}"
-                   class="btn btn-warning btn-sm">
-                  Editar
-                </a>
-
-                <a th:href="@{/estadios/excluir/{id}(id=${estadio.id})}"
-                   class="btn btn-danger btn-sm"
-                   data-confirmacao="true"
-                   data-confirmacao-titulo="Excluir estádio"
-                   data-confirmacao-mensagem="Tem certeza que deseja excluir este estádio? Essa ação não poderá ser desfeita."
-                   data-confirmacao-botao="Excluir"
-                   data-confirmacao-tipo="perigo">
-                  Excluir
-                </a>
-
-              </div>
-            </td>
-          </tr>
-
-          <tr th:if="${#lists.isEmpty(estadios)}">
-            <td colspan="3" class="text-center text-muted py-4">
-              Nenhum estádio cadastrado ainda.
-            </td>
-          </tr>
-
-          </tbody>
-
-        </table>
-      </div>
-
+      <p>
+        Gerencie os locais onde as partidas serão cadastradas no calendário do bolão.
+      </p>
     </div>
-  </div>
+
+    <a href="/estadios/novo" class="btn btn-novo">
+      Novo Estádio
+    </a>
+  </section>
+
+  <section class="painel-bloco">
+
+    <div class="painel-bloco-cabecalho">
+      <h3>Estádios cadastrados</h3>
+      <p>
+        Relação dos estádios disponíveis para associação nas partidas.
+      </p>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+
+        <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Nome</th>
+          <th class="text-end">Ações</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="estadio, item : ${estadios}">
+          <td th:text="${item.count}"></td>
+
+          <td>
+            <strong th:text="${estadio.nome}"></strong>
+          </td>
+
+          <td class="text-end">
+            <div class="d-flex gap-1 justify-content-end flex-wrap">
+
+              <a th:href="@{/estadios/editar/{id}(id=${estadio.id})}"
+                 class="btn btn-warning btn-sm">
+                Editar
+              </a>
+
+              <a th:href="@{/estadios/excluir/{id}(id=${estadio.id})}"
+                 class="btn btn-danger btn-sm"
+                 data-confirmacao="true"
+                 data-confirmacao-titulo="Excluir estádio"
+                 data-confirmacao-mensagem="Tem certeza que deseja excluir este estádio? Essa ação não poderá ser desfeita."
+                 data-confirmacao-botao="Excluir"
+                 data-confirmacao-tipo="perigo">
+                Excluir
+              </a>
+
+            </div>
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(estadios)}">
+          <td colspan="3" class="text-center text-muted py-4">
+            Nenhum estádio cadastrado ainda.
+          </td>
+        </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+
+  </section>
 
 </main>
 

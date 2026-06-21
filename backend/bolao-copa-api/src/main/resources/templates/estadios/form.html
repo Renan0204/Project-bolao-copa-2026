@@ -13,49 +13,63 @@
 
 <main class="container admin-pagina">
 
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-            <div class="card card-principal">
-                <div class="card-body p-4">
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Cadastro base
+            </span>
 
-                    <h2 class="mb-1">Cadastro de Estádio</h2>
-                    <p class="text-muted mb-4">
-                        Cadastre ou edite os estádios disponíveis para as partidas da competição.
-                    </p>
+            <h2 th:text="${estadio.id != null ? 'Editar Estádio' : 'Novo Estádio'}">
+                Cadastro de Estádio
+            </h2>
 
-                    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+            <p>
+                Cadastre ou atualize os estádios que serão utilizados nas partidas da competição.
+            </p>
+        </div>
 
-                    <form th:action="@{/estadios/salvar}" th:object="${estadio}" method="post">
+        <a href="/estadios" class="btn btn-voltar">
+            Voltar
+        </a>
+    </section>
 
-                        <input type="hidden" th:field="*{id}">
+    <section class="painel-bloco">
 
-                        <div class="mb-4">
-                            <label class="form-label">Nome do Estádio</label>
-                            <input type="text"
-                                   th:field="*{nome}"
-                                   class="form-control"
-                                   placeholder="Ex: Estádio de Toronto"
-                                   required>
-                        </div>
+        <div class="painel-bloco-cabecalho">
+            <h3>Dados do estádio</h3>
+            <p>
+                O nome cadastrado será exibido na listagem e nos detalhes das partidas.
+            </p>
+        </div>
 
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-salvar">
-                                Salvar Estádio
-                            </button>
+        <form th:action="@{/estadios/salvar}" th:object="${estadio}" method="post">
 
-                            <a href="/estadios" class="btn btn-voltar">
-                                Voltar
-                            </a>
-                        </div>
+            <input type="hidden" th:field="*{id}">
 
-                    </form>
-
-                </div>
+            <div class="mb-4">
+                <label class="form-label">Nome do Estádio</label>
+                <input type="text"
+                       th:field="*{nome}"
+                       class="form-control"
+                       placeholder="Ex: Estádio de Toronto"
+                       required>
             </div>
 
-        </div>
-    </div>
+            <div class="d-flex gap-2 justify-content-end flex-wrap">
+                <a href="/estadios" class="btn btn-voltar">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-salvar">
+                    Salvar Estádio
+                </button>
+            </div>
+
+        </form>
+
+    </section>
 
 </main>
 

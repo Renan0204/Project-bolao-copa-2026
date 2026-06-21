@@ -15,113 +15,132 @@
 
   <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-  <div class="card card-principal">
-    <div class="card-body p-4">
+  <section class="painel-dashboard-cabecalho mb-4">
+    <div>
+            <span class="painel-dashboard-etiqueta">
+                Gestão de acesso
+            </span>
 
-      <div class="mb-4">
-        <h2 class="mb-1">Usuários</h2>
-        <p class="text-muted mb-0">
-          Liste, busque, visualize detalhes e bloqueie usuários do sistema.
-        </p>
-      </div>
+      <h2>
+        Usuários
+      </h2>
 
-      <form th:action="@{/usuarios-admin}" method="get" class="row mb-4">
-        <div class="col-md-10 mb-2 mb-md-0">
-          <input type="text"
-                 name="termo"
-                 class="form-control"
-                 placeholder="Buscar por nome ou e-mail"
-                 th:value="${termo}">
-        </div>
-
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-salvar w-100">
-            Buscar
-          </button>
-        </div>
-      </form>
-
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-
-          <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Tipo</th>
-            <th>Pontos</th>
-            <th>Exatos</th>
-            <th>Status</th>
-            <th>Cadastro</th>
-            <th class="text-end">Ações</th>
-          </tr>
-          </thead>
-
-          <tbody>
-
-          <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.id}"></td>
-
-            <td>
-              <strong th:text="${usuario.nome}"></strong>
-            </td>
-
-            <td th:text="${usuario.email}"></td>
-
-            <td>
-              <span class="badge-grupo" th:text="${usuario.tipo}"></span>
-            </td>
-
-            <td th:text="${usuario.pontuacaoTotal}"></td>
-
-            <td th:text="${usuario.placaresExatos}"></td>
-
-            <td>
-                            <span th:classappend="${usuario.bloqueado == true ? ' status-usuario-bloqueado' : ' status-usuario-ativo'}"
-                                  class="badge-status"
-                                  th:text="${usuario.bloqueado == true ? 'Bloqueado' : 'Ativo'}">
-                            </span>
-            </td>
-
-            <td th:text="${usuario.criadoEm != null ? #temporals.format(usuario.criadoEm, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-
-            <td class="text-end">
-              <div class="d-flex gap-1 justify-content-end flex-wrap">
-
-                <a th:href="@{/usuarios-admin/{id}(id=${usuario.id})}"
-                   class="btn btn-secondary btn-sm">
-                  Detalhes
-                </a>
-
-                <a th:href="@{/usuarios-admin/bloquear/{id}(id=${usuario.id})}"
-                   th:classappend="${usuario.bloqueado == true ? ' btn-success' : ' btn-warning'}"
-                   class="btn btn-sm"
-                   th:text="${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'}"
-                   data-confirmacao="true"
-                   th:attr="data-confirmacao-titulo=${usuario.bloqueado == true ? 'Desbloquear usuário' : 'Bloquear usuário'},
-                                            data-confirmacao-mensagem=${usuario.bloqueado == true ? 'Deseja desbloquear este usuário e permitir o acesso novamente?' : 'Deseja bloquear este usuário e impedir o acesso ao sistema?'},
-                                            data-confirmacao-botao=${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'},
-                                            data-confirmacao-tipo=${usuario.bloqueado == true ? 'sucesso' : 'aviso'}">
-                </a>
-
-              </div>
-            </td>
-          </tr>
-
-          <tr th:if="${#lists.isEmpty(usuarios)}">
-            <td colspan="9" class="text-center text-muted py-4">
-              Nenhum usuário encontrado.
-            </td>
-          </tr>
-
-          </tbody>
-
-        </table>
-      </div>
-
+      <p>
+        Consulte participantes, acompanhe pontuação, visualize dados cadastrais e controle bloqueios.
+      </p>
     </div>
-  </div>
+
+    <div class="painel-dashboard-status">
+      <span class="status-ponto"></span>
+      Monitoramento ativo
+    </div>
+  </section>
+
+  <section class="painel-bloco">
+
+    <div class="painel-bloco-cabecalho">
+      <h3>Consulta de usuários</h3>
+      <p>
+        Use a busca para localizar usuários por nome ou e-mail.
+      </p>
+    </div>
+
+    <form th:action="@{/usuarios-admin}" method="get" class="row mb-4">
+      <div class="col-md-10 mb-2 mb-md-0">
+        <input type="text"
+               name="termo"
+               class="form-control"
+               placeholder="Buscar por nome ou e-mail"
+               th:value="${termo}">
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-salvar w-100">
+          Buscar
+        </button>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+
+        <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Tipo</th>
+          <th>Pontos</th>
+          <th>Exatos</th>
+          <th>Status</th>
+          <th>Cadastro</th>
+          <th class="text-end">Ações</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="usuario, item : ${usuarios}">
+          <td th:text="${item.count}"></td>
+
+          <td>
+            <strong th:text="${usuario.nome}"></strong>
+          </td>
+
+          <td th:text="${usuario.email}"></td>
+
+          <td>
+            <span class="badge-grupo" th:text="${usuario.tipo}"></span>
+          </td>
+
+          <td th:text="${usuario.pontuacaoTotal}"></td>
+
+          <td th:text="${usuario.placaresExatos}"></td>
+
+          <td>
+                        <span th:classappend="${usuario.bloqueado == true ? ' status-usuario-bloqueado' : ' status-usuario-ativo'}"
+                              class="badge-status"
+                              th:text="${usuario.bloqueado == true ? 'Bloqueado' : 'Ativo'}">
+                        </span>
+          </td>
+
+          <td th:text="${usuario.criadoEm != null ? #temporals.format(usuario.criadoEm, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+
+          <td class="text-end">
+            <div class="d-flex gap-1 justify-content-end flex-wrap">
+
+              <a th:href="@{/usuarios-admin/{id}(id=${usuario.id})}"
+                 class="btn btn-secondary btn-sm">
+                Detalhes
+              </a>
+
+              <a th:href="@{/usuarios-admin/bloquear/{id}(id=${usuario.id})}"
+                 th:classappend="${usuario.bloqueado == true ? ' btn-success' : ' btn-warning'}"
+                 class="btn btn-sm"
+                 th:text="${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'}"
+                 data-confirmacao="true"
+                 th:attr="data-confirmacao-titulo=${usuario.bloqueado == true ? 'Desbloquear usuário' : 'Bloquear usuário'},
+                                        data-confirmacao-mensagem=${usuario.bloqueado == true ? 'Deseja desbloquear este usuário e permitir o acesso novamente?' : 'Deseja bloquear este usuário e impedir o acesso ao sistema?'},
+                                        data-confirmacao-botao=${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'},
+                                        data-confirmacao-tipo=${usuario.bloqueado == true ? 'sucesso' : 'aviso'}">
+              </a>
+
+            </div>
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(usuarios)}">
+          <td colspan="9" class="text-center text-muted py-4">
+            Nenhum usuário encontrado.
+          </td>
+        </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+
+  </section>
 
 </main>
 

@@ -15,140 +15,138 @@
 
     <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-9">
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Calendário e resultados
+            </span>
 
-            <div class="card card-principal">
-                <div class="card-body p-4">
+            <h2 th:text="${partida.id != null ? 'Editar Partida' : 'Nova Partida'}">
+                Cadastro de Partida
+            </h2>
 
-                    <h2 class="mb-1"
-                        th:text="${partida.id != null ? 'Editar Partida' : 'Cadastro de Partida'}">
-                        Cadastro de Partida
-                    </h2>
+            <p>
+                Na fase de grupos, as seleções são filtradas pelo grupo. Nas demais fases, qualquer seleção pode enfrentar qualquer seleção.
+            </p>
+        </div>
 
-                    <p class="text-muted mb-4"
-                       th:if="${partida.id == null}">
-                        Na fase de grupos, as seleções são filtradas pelo grupo.
-                        Nas demais fases, qualquer seleção pode enfrentar qualquer seleção.
-                    </p>
+        <a href="/partidas" class="btn btn-voltar">
+            Voltar
+        </a>
+    </section>
 
-                    <p class="text-muted mb-4"
-                       th:if="${partida.id != null}">
-                        Altere os dados da partida selecionada.
-                        Partidas só podem ser editadas enquanto estiverem agendadas.
-                    </p>
+    <section class="painel-bloco">
 
-                    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+        <div class="painel-bloco-cabecalho">
+            <h3>Dados da partida</h3>
+            <p>
+                Informe fase, seleções, data, horário e estádio da partida.
+            </p>
+        </div>
 
-                    <form th:action="@{/partidas/salvar}" th:object="${partida}" method="post">
+        <form th:action="@{/partidas/salvar}" th:object="${partida}" method="post">
 
-                        <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{id}">
 
-                        <div class="row">
+            <div class="row">
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Fase</label>
-                                <select id="faseSelect" th:field="*{fase}" class="form-control" required>
-                                    <option value="">Selecione a fase</option>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fase</label>
+                    <select id="faseSelect" th:field="*{fase}" class="form-control" required>
+                        <option value="">Selecione a fase</option>
 
-                                    <option th:each="fase : ${fases}"
-                                            th:value="${fase}"
-                                            th:text="${fase}">
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Grupo</label>
-                                <select id="grupoSelect" th:field="*{grupo}" class="form-control">
-                                    <option value="">Selecione o grupo</option>
-
-                                    <option th:each="grupo : ${grupos}"
-                                            th:value="${grupo}"
-                                            th:text="${grupo}">
-                                    </option>
-                                </select>
-
-                                <small id="grupoAjuda" class="text-muted">
-                                    Obrigatório apenas para partidas da fase de grupos.
-                                </small>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Seleção A</label>
-                                <select id="selecaoASelect" name="selecaoAId" class="form-control" required>
-                                    <option value="">Carregando seleções...</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Seleção B</label>
-                                <select id="selecaoBSelect" name="selecaoBId" class="form-control" required>
-                                    <option value="">Carregando seleções...</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Data</label>
-                                <input type="date"
-                                       name="dataPartida"
-                                       class="form-control"
-                                       th:value="${dataPartida}"
-                                       required>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Hora</label>
-                                <input type="time"
-                                       name="horaPartida"
-                                       class="form-control"
-                                       th:value="${horaPartida}"
-                                       required>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Estádio</label>
-                                <select name="estadioId" class="form-control" required>
-                                    <option value="">Selecione o estádio</option>
-
-                                    <option th:each="estadio : ${estadios}"
-                                            th:value="${estadio.id}"
-                                            th:text="${estadio.nome}"
-                                            th:selected="${estadioId != null && estadio.id != null && estadioId == estadio.id}">
-                                    </option>
-                                </select>
-
-                                <small class="text-muted">
-                                    Cadastre o estádio antes de criar a partida.
-                                </small>
-                            </div>
-
-                        </div>
-
-                        <div class="alert alert-warning mt-3">
-                            <strong>Regra:</strong>
-                            na fase de grupos, as seleções precisam ser do mesmo grupo.
-                            A partir das fases eliminatórias, qualquer seleção pode enfrentar qualquer seleção.
-                        </div>
-
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-salvar"
-                                    th:text="${partida.id != null ? 'Salvar Alterações' : 'Salvar Partida'}">
-                                Salvar Partida
-                            </button>
-
-                            <a href="/partidas" class="btn btn-voltar">
-                                Voltar
-                            </a>
-                        </div>
-
-                    </form>
-
+                        <option th:each="fase : ${fases}"
+                                th:value="${fase}"
+                                th:text="${fase}">
+                        </option>
+                    </select>
                 </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Grupo</label>
+                    <select id="grupoSelect" th:field="*{grupo}" class="form-control">
+                        <option value="">Selecione o grupo</option>
+
+                        <option th:each="grupo : ${grupos}"
+                                th:value="${grupo}"
+                                th:text="${grupo}">
+                        </option>
+                    </select>
+
+                    <small id="grupoAjuda" class="text-muted">
+                        Obrigatório apenas para partidas da fase de grupos.
+                    </small>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Seleção A</label>
+                    <select id="selecaoASelect" name="selecaoAId" class="form-control" required>
+                        <option value="">Carregando seleções...</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Seleção B</label>
+                    <select id="selecaoBSelect" name="selecaoBId" class="form-control" required>
+                        <option value="">Carregando seleções...</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Data</label>
+                    <input type="date"
+                           name="dataPartida"
+                           class="form-control"
+                           th:value="${dataPartida}"
+                           required>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Hora</label>
+                    <input type="time"
+                           name="horaPartida"
+                           class="form-control"
+                           th:value="${horaPartida}"
+                           required>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Estádio</label>
+                    <select name="estadioId" class="form-control" required>
+                        <option value="">Selecione o estádio</option>
+
+                        <option th:each="estadio : ${estadios}"
+                                th:value="${estadio.id}"
+                                th:text="${estadio.nome}"
+                                th:selected="${estadioId != null && estadio.id != null && estadioId == estadio.id}">
+                        </option>
+                    </select>
+                </div>
+
             </div>
 
-        </div>
-    </div>
+            <div class="alert alert-warning mt-3">
+                <strong>Regra:</strong>
+                na fase de grupos, as seleções precisam pertencer ao grupo escolhido.
+                A partir das fases eliminatórias, o grupo não é obrigatório.
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end flex-wrap mt-4">
+
+                <a href="/partidas" class="btn btn-voltar">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-salvar"
+                        th:text="${partida.id != null ? 'Salvar Alterações' : 'Salvar Partida'}">
+                    Salvar Partida
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
 
 </main>
 
@@ -190,12 +188,9 @@
             const option = document.createElement("option");
 
             option.value = selecao.id;
-
-            if (selecao.codigoFifa) {
-                option.textContent = `${selecao.nome} (${selecao.codigoFifa})`;
-            } else {
-                option.textContent = selecao.nome;
-            }
+            option.textContent = selecao.codigoFifa
+                ? `${selecao.nome} (${selecao.codigoFifa})`
+                : selecao.nome;
 
             if (valorSelecionado !== null && valorSelecionado !== undefined && String(valorSelecionado) === String(selecao.id)) {
                 option.selected = true;

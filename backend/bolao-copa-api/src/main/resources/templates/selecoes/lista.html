@@ -15,102 +15,112 @@
 
     <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-    <div class="card card-principal">
-        <div class="card-body p-4">
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Cadastro base
+            </span>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="mb-0">Seleções</h2>
-                    <small class="text-muted">
-                        Cadastre e organize as seleções da Copa.
-                    </small>
-                </div>
+            <h2>
+                Seleções
+            </h2>
 
-                <div class="d-flex gap-2">
-                    <a href="/selecoes/novo" class="btn btn-novo">
-                        Nova Seleção
-                    </a>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-
-                    <thead>
-                    <tr>
-                        <th>Nº</th>
-                        <th>Bandeira</th>
-                        <th>Nome</th>
-                        <th>Código FIFA</th>
-                        <th>Grupo</th>
-                        <th class="text-end">Ações</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-
-                    <tr th:each="selecao, item : ${selecoes}">
-                        <td th:text="${item.count}"></td>
-
-                        <td>
-                            <img th:if="${selecao.bandeiraUrl != null && !#strings.isEmpty(selecao.bandeiraUrl)}"
-                                 th:src="${selecao.bandeiraUrl}"
-                                 alt="Bandeira"
-                                 style="width: 46px; height: 32px; object-fit: cover; border-radius: 6px; border: 1px solid #d9e1e8;">
-
-                            <span th:if="${selecao.bandeiraUrl == null || #strings.isEmpty(selecao.bandeiraUrl)}"
-                                  class="text-muted">
-                                -
-                            </span>
-                        </td>
-
-                        <td>
-                            <strong th:text="${selecao.nome}"></strong>
-                        </td>
-
-                        <td>
-                            <span class="badge-grupo" th:text="${selecao.codigoFifa}"></span>
-                        </td>
-
-                        <td>
-                            <span class="badge-grupo" th:text="${selecao.grupo}"></span>
-                        </td>
-
-                        <td class="text-end">
-                            <div class="d-flex gap-1 justify-content-end flex-wrap">
-
-                                <a th:href="@{/selecoes/editar/{id}(id=${selecao.id})}"
-                                   class="btn btn-warning btn-sm">
-                                    Editar
-                                </a>
-
-                                <a th:href="@{/selecoes/excluir/{id}(id=${selecao.id})}"
-                                   class="btn btn-danger btn-sm"
-                                   data-confirmacao="true"
-                                   data-confirmacao-titulo="Excluir seleção"
-                                   data-confirmacao-mensagem="Tem certeza que deseja excluir esta seleção? Essa ação não poderá ser desfeita."
-                                   data-confirmacao-botao="Excluir"
-                                   data-confirmacao-tipo="perigo">
-                                    Excluir
-                                </a>
-
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr th:if="${#lists.isEmpty(selecoes)}">
-                        <td colspan="6" class="text-center text-muted py-4">
-                            Nenhuma seleção cadastrada ainda.
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-            </div>
-
+            <p>
+                Mantenha as seleções cadastradas, seus códigos FIFA, grupos e bandeiras utilizadas no sistema.
+            </p>
         </div>
-    </div>
+
+        <a href="/selecoes/novo" class="btn btn-novo">
+            Nova Seleção
+        </a>
+    </section>
+
+    <section class="painel-bloco">
+
+        <div class="painel-bloco-cabecalho">
+            <h3>Seleções cadastradas</h3>
+            <p>
+                Lista das seleções disponíveis para criação de partidas e organização dos grupos.
+            </p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+
+                <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Bandeira</th>
+                    <th>Nome</th>
+                    <th>Código FIFA</th>
+                    <th>Grupo</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="selecao, item : ${selecoes}">
+                    <td th:text="${item.count}"></td>
+
+                    <td>
+                        <img th:if="${selecao.bandeiraUrl != null && !#strings.isEmpty(selecao.bandeiraUrl)}"
+                             th:src="${selecao.bandeiraUrl}"
+                             alt="Bandeira"
+                             class="bandeira">
+
+                        <span th:if="${selecao.bandeiraUrl == null || #strings.isEmpty(selecao.bandeiraUrl)}"
+                              class="text-muted">
+                            -
+                        </span>
+                    </td>
+
+                    <td>
+                        <strong th:text="${selecao.nome}"></strong>
+                    </td>
+
+                    <td>
+                        <span class="badge-grupo" th:text="${selecao.codigoFifa}"></span>
+                    </td>
+
+                    <td>
+                        <span class="badge-grupo" th:text="${selecao.grupo}"></span>
+                    </td>
+
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end flex-wrap">
+
+                            <a th:href="@{/selecoes/editar/{id}(id=${selecao.id})}"
+                               class="btn btn-warning btn-sm">
+                                Editar
+                            </a>
+
+                            <a th:href="@{/selecoes/excluir/{id}(id=${selecao.id})}"
+                               class="btn btn-danger btn-sm"
+                               data-confirmacao="true"
+                               data-confirmacao-titulo="Excluir seleção"
+                               data-confirmacao-mensagem="Tem certeza que deseja excluir esta seleção? Essa ação não poderá ser desfeita."
+                               data-confirmacao-botao="Excluir"
+                               data-confirmacao-tipo="perigo">
+                                Excluir
+                            </a>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(selecoes)}">
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Nenhuma seleção cadastrada ainda.
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </section>
 
 </main>
 

@@ -2,49 +2,81 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Senha redefinida - Bolão Copa 2026</title>
+    <title>Senha Redefinida</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
-<body>
+<body class="login-admin-body">
 
-<div class="topo">
-    <div class="container">
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Senha redefinida</p>
-    </div>
-</div>
+<div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-<div class="container">
+<main class="login-admin-page">
 
-    <div class="row justify-content-center">
-        <div class="col-md-5">
+    <section class="login-admin-container">
 
-            <div class="card card-principal">
-                <div class="card-body p-4 text-center">
+        <div class="login-admin-brand">
 
-                    <div class="alert alert-success" th:text="${sucesso}">
-                        Senha redefinida com sucesso.
-                    </div>
+            <div class="login-admin-logo-area">
+                <img th:src="@{/images/logo-bolao.png}"
+                     alt="Logo Bolão Copa 2026"
+                     class="login-admin-logo">
+            </div>
 
-                    <h2 class="mb-3">Tudo certo!</h2>
+            <h1>Bolão Copa 2026</h1>
 
-                    <p class="text-muted">
-                        Sua senha foi redefinida. Agora você já pode voltar ao aplicativo e fazer login com a nova senha.
-                    </p>
+            <p>
+                Sua senha foi atualizada com sucesso. Agora você já pode acessar novamente
+                o painel administrativo.
+            </p>
 
-                    <a href="/admin/login" class="btn btn-secondary mt-2">
-                        Ir para login administrativo
-                    </a>
+            <div class="login-admin-info-grid">
 
+                <div class="login-admin-info-card">
+                    <strong>Concluído</strong>
+                    <span>A senha foi redefinida.</span>
                 </div>
+
+                <div class="login-admin-info-card">
+                    <strong>Login</strong>
+                    <span>Use a nova senha no próximo acesso.</span>
+                </div>
+
+                <div class="login-admin-info-card">
+                    <strong>Segurança</strong>
+                    <span>Mantenha seus dados protegidos.</span>
+                </div>
+
             </div>
 
         </div>
-    </div>
 
-</div>
+        <div class="login-admin-card">
+
+            <div class="login-admin-card-header">
+                <h2>Senha redefinida</h2>
+                <p>A alteração foi concluída com sucesso.</p>
+            </div>
+
+            <div class="alert alert-success">
+                Sua senha foi redefinida. Você já pode voltar para a tela de login e acessar o painel.
+            </div>
+
+            <a th:href="@{/admin/login}" class="btn btn-salvar w-100 mt-2">
+                Ir para o login
+            </a>
+
+            <div class="login-admin-footer">
+                <small>
+                    Caso não reconheça essa alteração, solicite uma nova recuperação de senha.
+                </small>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
 
 </body>
 </html>

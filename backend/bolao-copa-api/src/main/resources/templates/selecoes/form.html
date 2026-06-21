@@ -13,145 +13,164 @@
 
 <main class="container admin-pagina">
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-            <div class="card card-principal">
-                <div class="card-body p-4">
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Cadastro base
+            </span>
 
-                    <h2 class="mb-1">Cadastro de Seleção</h2>
-                    <p class="text-muted mb-4">
-                        Preencha os dados da seleção e informe a bandeira por URL ou por upload de imagem.
-                    </p>
+            <h2 th:text="${selecao.id != null ? 'Editar Seleção' : 'Nova Seleção'}">
+                Cadastro de Seleção
+            </h2>
 
-                    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+            <p>
+                Informe os dados da seleção e escolha uma forma de cadastrar a bandeira: URL ou upload de imagem.
+            </p>
+        </div>
 
-                    <form th:action="@{/selecoes/salvar}"
-                          th:object="${selecao}"
-                          method="post"
-                          enctype="multipart/form-data">
+        <a href="/selecoes" class="btn btn-voltar">
+            Voltar
+        </a>
+    </section>
 
-                        <input type="hidden" th:field="*{id}">
+    <section class="painel-bloco">
 
-                        <div class="mb-3">
-                            <label class="form-label">Nome da Seleção</label>
-                            <input type="text"
-                                   th:field="*{nome}"
-                                   class="form-control"
-                                   placeholder="Ex: Brasil"
-                                   required>
-                        </div>
+        <div class="painel-bloco-cabecalho">
+            <h3>Dados da seleção</h3>
+            <p>
+                Esses dados serão utilizados na montagem das partidas e na exibição para os usuários.
+            </p>
+        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Código FIFA</label>
-                            <input type="text"
-                                   th:field="*{codigoFifa}"
-                                   class="form-control"
-                                   placeholder="Ex: BRA"
-                                   maxlength="5"
-                                   required>
-                        </div>
+        <form th:action="@{/selecoes/salvar}"
+              th:object="${selecao}"
+              method="post"
+              enctype="multipart/form-data">
 
-                        <div class="mb-3">
-                            <label class="form-label">Grupo</label>
-                            <select th:field="*{grupo}" class="form-control" required>
-                                <option value="">Selecione o grupo</option>
+            <input type="hidden" th:field="*{id}">
 
-                                <option th:each="grupo : ${grupos}"
-                                        th:value="${grupo}"
-                                        th:text="${grupo}">
-                                </option>
-                            </select>
-                        </div>
+            <div class="row">
 
-                        <div class="card border mb-3">
-                            <div class="card-body">
-
-                                <h5 class="mb-2">Bandeira da seleção</h5>
-
-                                <p class="text-muted mb-3">
-                                    Escolha uma das opções: informe a URL da imagem ou anexe um arquivo.
-                                    Não é permitido usar as duas opções ao mesmo tempo.
-                                </p>
-
-                                <div class="mb-3">
-                                    <label class="form-label">URL da Bandeira</label>
-                                    <input type="text"
-                                           id="bandeiraUrlInput"
-                                           th:field="*{bandeiraUrl}"
-                                           class="form-control"
-                                           placeholder="Cole aqui o link da imagem da bandeira">
-
-                                    <small class="text-muted">
-                                        Use esta opção se a imagem estiver disponível na internet.
-                                    </small>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Ou anexe a imagem da bandeira</label>
-                                    <input type="file"
-                                           id="arquivoBandeiraInput"
-                                           name="arquivoBandeira"
-                                           class="form-control"
-                                           accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
-
-                                    <small class="text-muted">
-                                        Formatos aceitos: PNG, JPG, JPEG e WEBP.
-                                    </small>
-                                </div>
-
-                                <div class="alert alert-warning mb-3">
-                                    <strong>Regra:</strong>
-                                    se preencher a URL, o upload será bloqueado.
-                                    Se anexar uma imagem, a URL será bloqueada.
-                                </div>
-
-                                <button type="button"
-                                        id="limparBandeiraBtn"
-                                        class="btn btn-secondary btn-sm">
-                                    Limpar opção de bandeira
-                                </button>
-
-                                <div id="previewBandeiraContainer"
-                                     class="mt-3"
-                                     th:if="${selecao.bandeiraUrl != null && !#strings.isEmpty(selecao.bandeiraUrl)}">
-
-                                    <p class="mb-2 text-muted">Pré-visualização atual:</p>
-
-                                    <img id="previewBandeira"
-                                         th:src="${selecao.bandeiraUrl}"
-                                         alt="Pré-visualização da bandeira"
-                                         style="max-width: 90px; max-height: 60px; border: 1px solid #d9e1e8; border-radius: 8px; padding: 4px;">
-                                </div>
-
-                                <div id="previewArquivoContainer" class="mt-3 d-none">
-                                    <p class="mb-2 text-muted">Pré-visualização do arquivo selecionado:</p>
-
-                                    <img id="previewArquivo"
-                                         alt="Pré-visualização do arquivo"
-                                         style="max-width: 90px; max-height: 60px; border: 1px solid #d9e1e8; border-radius: 8px; padding: 4px;">
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-salvar">
-                                Salvar Seleção
-                            </button>
-
-                            <a href="/selecoes" class="btn btn-voltar">
-                                Voltar
-                            </a>
-                        </div>
-
-                    </form>
-
+                <div class="col-md-5 mb-3">
+                    <label class="form-label">Nome da Seleção</label>
+                    <input type="text"
+                           th:field="*{nome}"
+                           class="form-control"
+                           placeholder="Ex: Brasil"
+                           required>
                 </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Código FIFA</label>
+                    <input type="text"
+                           th:field="*{codigoFifa}"
+                           class="form-control"
+                           placeholder="Ex: BRA"
+                           maxlength="5"
+                           required>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Grupo</label>
+                    <select th:field="*{grupo}" class="form-control" required>
+                        <option value="">Selecione o grupo</option>
+
+                        <option th:each="grupo : ${grupos}"
+                                th:value="${grupo}"
+                                th:text="${grupo}">
+                        </option>
+                    </select>
+                </div>
+
             </div>
 
-        </div>
-    </div>
+            <div class="painel-bloco mt-4">
+
+                <div class="painel-bloco-cabecalho">
+                    <h3>Bandeira</h3>
+                    <p>
+                        Escolha apenas uma opção: link externo da imagem ou envio de arquivo.
+                    </p>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">URL da Bandeira</label>
+                        <input type="text"
+                               id="bandeiraUrlInput"
+                               th:field="*{bandeiraUrl}"
+                               class="form-control"
+                               placeholder="Cole aqui o link da imagem">
+
+                        <small class="text-muted">
+                            Use esta opção se a imagem já estiver disponível na internet.
+                        </small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Upload da bandeira</label>
+                        <input type="file"
+                               id="arquivoBandeiraInput"
+                               name="arquivoBandeira"
+                               class="form-control"
+                               accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
+
+                        <small class="text-muted">
+                            Formatos aceitos: PNG, JPG, JPEG e WEBP.
+                        </small>
+                    </div>
+
+                </div>
+
+                <div class="alert alert-warning mb-3">
+                    <strong>Regra:</strong>
+                    se informar uma URL, o envio de arquivo será bloqueado. Se anexar uma imagem, a URL será bloqueada.
+                </div>
+
+                <button type="button"
+                        id="limparBandeiraBtn"
+                        class="btn btn-secondary btn-sm">
+                    Limpar opção de bandeira
+                </button>
+
+                <div id="previewBandeiraContainer"
+                     class="mt-3"
+                     th:if="${selecao.bandeiraUrl != null && !#strings.isEmpty(selecao.bandeiraUrl)}">
+
+                    <p class="mb-2 text-muted">Pré-visualização atual:</p>
+
+                    <img id="previewBandeira"
+                         th:src="${selecao.bandeiraUrl}"
+                         alt="Pré-visualização da bandeira"
+                         style="max-width: 90px; max-height: 60px; border: 1px solid #d9e1e8; border-radius: 8px; padding: 4px;">
+                </div>
+
+                <div id="previewArquivoContainer" class="mt-3 d-none">
+                    <p class="mb-2 text-muted">Pré-visualização do arquivo selecionado:</p>
+
+                    <img id="previewArquivo"
+                         alt="Pré-visualização do arquivo"
+                         style="max-width: 90px; max-height: 60px; border: 1px solid #d9e1e8; border-radius: 8px; padding: 4px;">
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end flex-wrap mt-4">
+                <a href="/selecoes" class="btn btn-voltar">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-salvar">
+                    Salvar Seleção
+                </button>
+            </div>
+
+        </form>
+
+    </section>
 
 </main>
 
@@ -170,17 +189,8 @@
         const urlInformada = temTexto(bandeiraUrlInput.value);
         const arquivoInformado = arquivoBandeiraInput.files.length > 0;
 
-        if (urlInformada) {
-            arquivoBandeiraInput.disabled = true;
-        } else {
-            arquivoBandeiraInput.disabled = false;
-        }
-
-        if (arquivoInformado) {
-            bandeiraUrlInput.disabled = true;
-        } else {
-            bandeiraUrlInput.disabled = false;
-        }
+        arquivoBandeiraInput.disabled = urlInformada;
+        bandeiraUrlInput.disabled = arquivoInformado;
     }
 
     function limparArquivoSelecionado() {
