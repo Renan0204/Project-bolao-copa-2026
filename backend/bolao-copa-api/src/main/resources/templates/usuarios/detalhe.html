@@ -2,148 +2,138 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Detalhe do Usuário</title>
+  <title>Detalhes do Usuário</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
 
-<div class="topo">
-  <div class="container">
-    <div class="painel-cabecalho">
-      <div>
-        <h1 class="mb-1">Bolão Copa 2026</h1>
-        <p class="mb-0">Detalhes do usuário</p>
-      </div>
+<div th:replace="~{fragments/admin-header :: header('usuarios')}"></div>
 
-      <div class="menu-superior">
-        <a href="/dashboard" class="menu-link">Dashboard</a>
-        <a href="/selecoes" class="menu-link">Seleções</a>
-        <a href="/estadios" class="menu-link">Estádios</a>
-        <a href="/partidas" class="menu-link">Partidas</a>
-        <a href="/usuarios-admin" class="menu-link ativo">Usuários</a>
-        <a href="/admin/logout" class="menu-link">Sair</a>
-      </div>
-    </div>
-  </div>
-</div>
+<main class="container admin-pagina">
 
-<div class="container">
+  <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
+  <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
-  <div class="card card-principal">
-    <div class="card-body p-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
 
-      <div class="secao-titulo mb-4">
-        <div>
-          <h2 class="mb-1" th:text="${usuario.nome}"></h2>
-          <p class="text-muted mb-0" th:text="${usuario.email}"></p>
-        </div>
+      <div class="card card-principal">
+        <div class="card-body p-4">
 
-        <div class="d-flex gap-2">
-          <a href="/usuarios-admin" class="btn btn-secondary">
-            Voltar
-          </a>
-
-          <a th:href="@{/usuarios-admin/bloquear/{id}(id=${usuario.id})}"
-             th:classappend="${usuario.bloqueado == true ? ' btn-success' : ' btn-warning'}"
-             class="btn"
-             th:text="${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'}"
-             onclick="return confirm('Confirma a alteração de status deste usuário?');">
-          </a>
-        </div>
-      </div>
-
-      <div class="row">
-
-        <div class="col-md-4 mb-3">
-          <div class="card card-status">
-            <div class="card-body">
-              <span class="indicador-label">Status</span>
-
-              <span th:classappend="${usuario.bloqueado == true ? ' status-usuario-bloqueado' : ' status-usuario-ativo'}"
-                    class="badge-status"
-                    th:text="${usuario.bloqueado == true ? 'Bloqueado' : 'Ativo'}">
-                            </span>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2 class="mb-1">Detalhes do Usuário</h2>
+              <p class="text-muted mb-0">
+                Visualize os dados cadastrais, pontuação e status do usuário.
+              </p>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-4 mb-3">
-          <div class="card card-status">
-            <div class="card-body">
-              <span class="indicador-label">Tipo</span>
-              <div class="numero menor" th:text="${usuario.tipo}"></div>
+            <a href="/usuarios-admin" class="btn btn-voltar">
+              Voltar
+            </a>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">ID</label>
+              <div class="form-control bg-light" th:text="${usuario.id}"></div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-4 mb-3">
-          <div class="card card-status">
-            <div class="card-body">
-              <span class="indicador-label">Pontuação</span>
-              <div class="numero menor" th:text="${usuario.pontuacaoTotal}"></div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Status</label>
+              <div>
+                                <span th:classappend="${usuario.bloqueado == true ? ' status-usuario-bloqueado' : ' status-usuario-ativo'}"
+                                      class="badge-status"
+                                      th:text="${usuario.bloqueado == true ? 'Bloqueado' : 'Ativo'}">
+                                </span>
+              </div>
             </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Nome</label>
+              <div class="form-control bg-light" th:text="${usuario.nome}"></div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">E-mail</label>
+              <div class="form-control bg-light" th:text="${usuario.email}"></div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Tipo</label>
+              <div>
+                <span class="badge-grupo" th:text="${usuario.tipo}"></span>
+              </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Pontuação total</label>
+              <div class="form-control bg-light" th:text="${usuario.pontuacaoTotal}"></div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Placares exatos</label>
+              <div class="form-control bg-light" th:text="${usuario.placaresExatos}"></div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Data de cadastro</label>
+              <div class="form-control bg-light"
+                   th:text="${usuario.criadoEm != null ? #temporals.format(usuario.criadoEm, 'dd/MM/yyyy HH:mm') : '-'}">
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Último acesso</label>
+              <div class="form-control bg-light"
+                   th:text="${usuario.ultimoAcessoEm != null ? #temporals.format(usuario.ultimoAcessoEm, 'dd/MM/yyyy HH:mm') : '-'}">
+              </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Avatar</label>
+
+              <div th:if="${usuario.avatarUrl != null && !#strings.isEmpty(usuario.avatarUrl)}">
+                <img th:src="${usuario.avatarUrl}"
+                     alt="Avatar do usuário"
+                     style="max-width: 100px; max-height: 100px; border-radius: 12px; border: 1px solid #d9e1e8; padding: 4px;">
+              </div>
+
+              <div th:if="${usuario.avatarUrl == null || #strings.isEmpty(usuario.avatarUrl)}"
+                   class="form-control bg-light">
+                Nenhum avatar cadastrado.
+              </div>
+            </div>
+
           </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex gap-2 justify-content-end flex-wrap">
+
+            <a href="/usuarios-admin" class="btn btn-voltar">
+              Voltar para usuários
+            </a>
+
+            <a th:href="@{/usuarios-admin/bloquear/{id}(id=${usuario.id})}"
+               th:classappend="${usuario.bloqueado == true ? ' btn-success' : ' btn-warning'}"
+               class="btn"
+               th:text="${usuario.bloqueado == true ? 'Desbloquear usuário' : 'Bloquear usuário'}"
+               onclick="return confirm('Confirma a alteração de status deste usuário?');">
+            </a>
+
+          </div>
+
         </div>
-
-      </div>
-
-      <div class="table-responsive mt-4">
-        <table class="table table-hover align-middle">
-          <tbody>
-          <tr>
-            <th>ID</th>
-            <td th:text="${usuario.id}"></td>
-          </tr>
-
-          <tr>
-            <th>Nome</th>
-            <td th:text="${usuario.nome}"></td>
-          </tr>
-
-          <tr>
-            <th>E-mail</th>
-            <td th:text="${usuario.email}"></td>
-          </tr>
-
-          <tr>
-            <th>Tipo</th>
-            <td th:text="${usuario.tipo}"></td>
-          </tr>
-
-          <tr>
-            <th>Pontuação total</th>
-            <td th:text="${usuario.pontuacaoTotal}"></td>
-          </tr>
-
-          <tr>
-            <th>Placares exatos</th>
-            <td th:text="${usuario.placaresExatos}"></td>
-          </tr>
-
-          <tr>
-            <th>Avatar</th>
-            <td th:text="${usuario.avatarUrl != null && usuario.avatarUrl != '' ? usuario.avatarUrl : '-'}"></td>
-          </tr>
-
-          <tr>
-            <th>Criado em</th>
-            <td th:text="${usuario.criadoEm != null ? #temporals.format(usuario.criadoEm, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-          </tr>
-
-          <tr>
-            <th>Último acesso</th>
-            <td th:text="${usuario.ultimoAcessoEm != null ? #temporals.format(usuario.ultimoAcessoEm, 'dd/MM/yyyy HH:mm') : '-'}"></td>
-          </tr>
-          </tbody>
-        </table>
       </div>
 
     </div>
   </div>
 
-</div>
+</main>
 
 </body>
 </html>
