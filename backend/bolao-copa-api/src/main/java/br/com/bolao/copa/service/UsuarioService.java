@@ -51,11 +51,32 @@ public class UsuarioService {
     }
 
     public Usuario listar(Long id) {
-        return repository.findById(id).get();
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
     }
 
     public List<Usuario> listar() {
         return repository.findAll();
+    }
+
+    public List<Usuario> listarPorTermo(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listar();
+        }
+
+        String termoBusca = termo.trim().toLowerCase();
+
+        return repository.findAll()
+                .stream()
+                .filter(usuario -> {
+                    boolean nomeEncontrado = usuario.getNome() != null
+                            && usuario.getNome().toLowerCase().contains(termoBusca);
+
+                    boolean emailEncontrado = usuario.getEmail() != null
+                            && usuario.getEmail().toLowerCase().contains(termoBusca);
+
+                    return nomeEncontrado || emailEncontrado;
+                })
+                .toList();
     }
 
     public void remover(Long id) {
