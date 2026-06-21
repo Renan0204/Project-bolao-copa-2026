@@ -79,6 +79,10 @@ public class PalpiteService {
                 .orElseThrow(() -> new RuntimeException("Palpite não encontrado."));
     }
 
+    public List<Palpite> listarTodos() {
+        return palpiteRepository.findAll();
+    }
+
     public List<Palpite> listarMeusPalpites(Usuario usuario) {
         validarUsuario(usuario);
 

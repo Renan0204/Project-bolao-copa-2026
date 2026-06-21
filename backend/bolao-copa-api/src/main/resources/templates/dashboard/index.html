@@ -40,7 +40,7 @@
 
     <div class="row mb-4">
 
-        <div class="col-md-4 col-lg-2 mb-3">
+        <div class="col-md-4 col-lg-3 mb-3">
             <div class="card card-indicador">
                 <div class="card-body">
                     <span class="indicador-label">Usuários</span>
@@ -50,51 +50,95 @@
             </div>
         </div>
 
-        <div class="col-md-4 col-lg-2 mb-3">
+        <div class="col-md-4 col-lg-3 mb-3">
             <div class="card card-indicador">
                 <div class="card-body">
-                    <span class="indicador-label">Ativos</span>
-                    <div class="numero" th:text="${usuariosAtivos}"></div>
-                    <small>Usuários liberados</small>
+                    <span class="indicador-label">Palpites</span>
+                    <div class="numero" th:text="${totalPalpites}"></div>
+                    <small>Total registrado</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 col-lg-2 mb-3">
+        <div class="col-md-4 col-lg-3 mb-3">
             <div class="card card-indicador">
                 <div class="card-body">
+                    <span class="indicador-label">Pendentes</span>
+                    <div class="numero" th:text="${partidasPendentesResultado}"></div>
+                    <small>Partidas pendentes de resultado</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3 mb-3">
+            <div class="card card-indicador">
+                <div class="card-body">
+                    <span class="indicador-label">Ativos 24h</span>
+                    <div class="numero" th:text="${usuariosAtivosUltimas24h}"></div>
+                    <small>Usuários com login recente</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-4 col-lg-2 mb-3">
+            <div class="card card-status">
+                <div class="card-body">
                     <span class="indicador-label">Seleções</span>
-                    <div class="numero" th:text="${totalSelecoes}"></div>
+                    <div class="numero menor" th:text="${totalSelecoes}"></div>
                     <small>Classificadas</small>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-indicador">
+            <div class="card card-status">
                 <div class="card-body">
                     <span class="indicador-label">Estádios</span>
-                    <div class="numero" th:text="${totalEstadios}"></div>
+                    <div class="numero menor" th:text="${totalEstadios}"></div>
                     <small>Cadastrados</small>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-indicador">
+            <div class="card card-status">
                 <div class="card-body">
                     <span class="indicador-label">Partidas</span>
-                    <div class="numero" th:text="${totalPartidas}"></div>
+                    <div class="numero menor" th:text="${totalPartidas}"></div>
                     <small>Total criado</small>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4 col-lg-2 mb-3">
-            <div class="card card-indicador">
+            <div class="card card-status">
+                <div class="card-body">
+                    <span class="indicador-label">Agendadas</span>
+                    <div class="numero menor" th:text="${partidasAgendadas}"></div>
+                    <small>Aguardando início</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2 mb-3">
+            <div class="card card-status">
+                <div class="card-body">
+                    <span class="indicador-label">Em andamento</span>
+                    <div class="numero menor" th:text="${partidasEmAndamento}"></div>
+                    <small>Recebem gols</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-2 mb-3">
+            <div class="card card-status">
                 <div class="card-body">
                     <span class="indicador-label">Finalizadas</span>
-                    <div class="numero" th:text="${partidasFinalizadas}"></div>
+                    <div class="numero menor" th:text="${partidasFinalizadas}"></div>
                     <small>Com pontuação</small>
                 </div>
             </div>
@@ -104,37 +148,22 @@
 
     <div class="row mb-4">
 
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 mb-3">
             <div class="card card-status">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <span class="indicador-label">Agendadas</span>
-                            <div class="numero menor" th:text="${partidasAgendadas}"></div>
+                            <span class="indicador-label">Usuários liberados</span>
+                            <div class="numero menor" th:text="${usuariosAtivos}"></div>
                         </div>
 
-                        <span class="badge-status status-agendada">Agendada</span>
+                        <span class="badge-status status-usuario-ativo">Ativos</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card card-status">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="indicador-label">Em andamento</span>
-                            <div class="numero menor" th:text="${partidasEmAndamento}"></div>
-                        </div>
-
-                        <span class="badge-status status-em-andamento">Em andamento</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 mb-3">
             <div class="card card-status">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
