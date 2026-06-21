@@ -130,9 +130,6 @@ export default function HomeScreen() {
         >
           <Text style={styles.tabText}>Ranking {"\n"}resumido</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabButton}>
-          <Text style={styles.tabText}>Pontuação {"\n"}atual</Text>
-        </TouchableOpacity>
       </View>
 
       {partidaDestaque ? (
@@ -191,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: "#ccc",
-    width: "32%",
+    width: "48%",
     alignItems: "center",
     justifyContent: "center",
   },
