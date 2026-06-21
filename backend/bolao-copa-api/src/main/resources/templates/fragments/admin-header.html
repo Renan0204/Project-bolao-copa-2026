@@ -7,7 +7,6 @@
         <div class="admin-cabecalho">
 
             <a th:href="@{/dashboard}" class="admin-marca">
-
                 <img th:src="@{/images/logo-bolao.png}"
                      alt="Logo Bolão Copa 2026"
                      class="admin-logo-img">
@@ -44,13 +43,87 @@
                     Usuários
                 </a>
 
-                <a th:href="@{/admin/logout}" class="admin-menu-link sair">
+                <a th:href="@{/admin/logout}"
+                   class="admin-menu-link sair admin-logout-link"
+                   data-logout-url="/admin/logout">
                     Sair
                 </a>
             </nav>
 
         </div>
     </div>
+
+    <div id="modalLogoutBackdrop" class="modal-confirmacao-backdrop d-none">
+        <div class="modal-confirmacao-card">
+
+            <div class="modal-confirmacao-icone">
+                !
+            </div>
+
+            <h3>
+                Sair do sistema
+            </h3>
+
+            <p>
+                Tem certeza que deseja encerrar sua sessão no painel administrativo?
+            </p>
+
+            <div class="modal-confirmacao-acoes">
+                <button type="button"
+                        id="modalLogoutCancelar"
+                        class="btn btn-secondary">
+                    Cancelar
+                </button>
+
+                <a th:href="@{/admin/logout}"
+                   id="modalLogoutConfirmar"
+                   class="btn btn-danger">
+                    Sair
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const botaoSair = document.querySelector(".admin-logout-link");
+            const modalLogoutBackdrop = document.getElementById("modalLogoutBackdrop");
+            const modalLogoutCancelar = document.getElementById("modalLogoutCancelar");
+            const modalLogoutConfirmar = document.getElementById("modalLogoutConfirmar");
+
+            if (!botaoSair || !modalLogoutBackdrop || !modalLogoutCancelar || !modalLogoutConfirmar) {
+                return;
+            }
+
+            botaoSair.addEventListener("click", function (evento) {
+                evento.preventDefault();
+
+                const logoutUrl = botaoSair.getAttribute("data-logout-url") || botaoSair.href;
+                modalLogoutConfirmar.href = logoutUrl;
+
+                modalLogoutBackdrop.classList.remove("d-none");
+            });
+
+            function fecharModalLogout() {
+                modalLogoutBackdrop.classList.add("d-none");
+            }
+
+            modalLogoutCancelar.addEventListener("click", fecharModalLogout);
+
+            modalLogoutBackdrop.addEventListener("click", function (evento) {
+                if (evento.target === modalLogoutBackdrop) {
+                    fecharModalLogout();
+                }
+            });
+
+            document.addEventListener("keydown", function (evento) {
+                if (evento.key === "Escape") {
+                    fecharModalLogout();
+                }
+            });
+        });
+    </script>
 </header>
 
 </body>
