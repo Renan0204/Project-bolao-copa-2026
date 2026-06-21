@@ -11,6 +11,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Usuario findByEmail(String email);
 
+    Usuario findByTokenRecuperacaoSenha(String tokenRecuperacaoSenha);
+
     boolean existsByEmail(String email);
 
     Page<Usuario> findAllByOrderByPontuacaoTotalDescPlacaresExatosDescCriadoEmAsc(Pageable pageable);

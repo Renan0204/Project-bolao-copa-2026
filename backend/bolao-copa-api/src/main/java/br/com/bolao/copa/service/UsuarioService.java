@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UsuarioService {
@@ -110,6 +111,64 @@ public class UsuarioService {
         Usuario usuario = listar(id);
 
         usuario.setBloqueado(!Boolean.TRUE.equals(usuario.getBloqueado()));
+
+        return repository.save(usuario);
+    }
+
+    public Usuario solicitarRecuperacaoSenha(String email) {
+        if (email == null || email.isBlank()) {
+            throw new RuntimeException("Informe o e-mail.");
+        }
+
+        Usuario usuario = repository.findByEmail(email);
+
+        if (usuario == null) {
+            return null;
+        }
+
+        if (Boolean.TRUE.equals(usuario.getBloqueado())) {
+            throw new RuntimeException("Usuário bloqueado.");
+        }
+
+        String token = UUID.randomUUID().toString();
+
+        usuario.setTokenRecuperacaoSenha(token);
+        usuario.setTokenRecuperacaoExpiraEm(LocalDateTime.now().plusMinutes(30));
+
+        return repository.save(usuario);
+    }
+
+    public Usuario redefinirSenha(String token, String novaSenha) {
+        if (token == null || token.isBlank()) {
+            throw new RuntimeException("Token de recuperação é obrigatório.");
+        }
+
+        if (novaSenha == null || novaSenha.isBlank()) {
+            throw new RuntimeException("Nova senha é obrigatória.");
+        }
+
+        if (novaSenha.length() < 4) {
+            throw new RuntimeException("A nova senha deve ter pelo menos 4 caracteres.");
+        }
+
+        Usuario usuario = repository.findByTokenRecuperacaoSenha(token);
+
+        if (usuario == null) {
+            throw new RuntimeException("Token inválido.");
+        }
+
+        if (usuario.getTokenRecuperacaoExpiraEm() == null
+                || usuario.getTokenRecuperacaoExpiraEm().isBefore(LocalDateTime.now())) {
+            usuario.setTokenRecuperacaoSenha(null);
+            usuario.setTokenRecuperacaoExpiraEm(null);
+            repository.save(usuario);
+
+            throw new RuntimeException("Token expirado. Solicite uma nova recuperação de senha.");
+        }
+
+        usuario.setSenha(novaSenha);
+        usuario.setTokenRecuperacaoSenha(null);
+        usuario.setTokenRecuperacaoExpiraEm(null);
 
         return repository.save(usuario);
     }

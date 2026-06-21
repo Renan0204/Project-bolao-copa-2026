@@ -30,6 +30,11 @@ public class Usuario {
     private LocalDateTime criadoEm;
     private LocalDateTime ultimoAcessoEm;
 
+    @Column(length = 100)
+    private String tokenRecuperacaoSenha;
+
+    private LocalDateTime tokenRecuperacaoExpiraEm;
+
     @PrePersist
     public void antesDeSalvar() {
         if (pontuacaoTotal == null) {
@@ -97,6 +102,14 @@ public class Usuario {
         return ultimoAcessoEm;
     }
 
+    public String getTokenRecuperacaoSenha() {
+        return tokenRecuperacaoSenha;
+    }
+
+    public LocalDateTime getTokenRecuperacaoExpiraEm() {
+        return tokenRecuperacaoExpiraEm;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -139,5 +152,13 @@ public class Usuario {
 
     public void setUltimoAcessoEm(LocalDateTime ultimoAcessoEm) {
         this.ultimoAcessoEm = ultimoAcessoEm;
+    }
+
+    public void setTokenRecuperacaoSenha(String tokenRecuperacaoSenha) {
+        this.tokenRecuperacaoSenha = tokenRecuperacaoSenha;
+    }
+
+    public void setTokenRecuperacaoExpiraEm(LocalDateTime tokenRecuperacaoExpiraEm) {
+        this.tokenRecuperacaoExpiraEm = tokenRecuperacaoExpiraEm;
     }
 }

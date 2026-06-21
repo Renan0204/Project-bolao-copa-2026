@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -96,6 +97,63 @@ public class AuthController {
         resposta.put("token", token);
         resposta.put("tipoToken", "Bearer");
         resposta.put("usuario", dadosUsuario);
+
+        return ResponseEntity.ok(resposta);
+    }
+
+    @PostMapping("/recuperar-senha")
+    public ResponseEntity<Map<String, Object>> recuperarSenha(@RequestBody Map<String, String> dados) {
+        Map<String, Object> resposta = new HashMap<>();
+
+        String email = dados.get("email");
+
+        if (email == null || email.isBlank()) {
+            resposta.put("erro", "O e-mail é obrigatório.");
+            return ResponseEntity.badRequest().body(resposta);
+        }
+
+        try {
+            Usuario usuario = usuarioService.solicitarRecuperacaoSenha(email);
+
+            resposta.put("mensagem", "Se o e-mail estiver cadastrado, um token de recuperação será gerado.");
+
+            if (usuario != null) {
+                resposta.put("tokenRecuperacao", usuario.getTokenRecuperacaoSenha());
+                resposta.put("expiraEm", usuario.getTokenRecuperacaoExpiraEm());
+                resposta.put("linkRecuperacao", "http://localhost:8081/redefinir-senha?token=" + usuario.getTokenRecuperacaoSenha());
+            }
+
+            return ResponseEntity.ok(resposta);
+        } catch (RuntimeException erro) {
+            resposta.put("erro", erro.getMessage());
+            return ResponseEntity.badRequest().body(resposta);
+        }
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<Map<String, Object>> redefinirSenha(@RequestBody Map<String, String> dados) {
+        Map<String, Object> resposta = new HashMap<>();
+
+        String token = dados.get("token");
+        String novaSenha = dados.get("novaSenha");
+
+        try {
+            usuarioService.redefinirSenha(token, novaSenha);
+
+            resposta.put("mensagem", "Senha redefinida com sucesso.");
+
+            return ResponseEntity.ok(resposta);
+        } catch (RuntimeException erro) {
+            resposta.put("erro", erro.getMessage());
+            return ResponseEntity.badRequest().body(resposta);
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(@RequestHeader(value = "Authorization", required = false) String authorization) {
+        Map<String, Object> resposta = new HashMap<>();
+
+        resposta.put("mensagem", "Logout realizado com sucesso. Remova o token armazenado no aplicativo.");
 
         return ResponseEntity.ok(resposta);
     }
