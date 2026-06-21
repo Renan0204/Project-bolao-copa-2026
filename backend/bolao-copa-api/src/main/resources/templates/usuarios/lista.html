@@ -13,8 +13,7 @@
 
 <main class="container admin-pagina">
 
-  <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
-  <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+  <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
   <div class="card card-principal">
     <div class="card-body p-4">
@@ -99,7 +98,11 @@
                    th:classappend="${usuario.bloqueado == true ? ' btn-success' : ' btn-warning'}"
                    class="btn btn-sm"
                    th:text="${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'}"
-                   onclick="return confirm('Confirma a alteração de status deste usuário?');">
+                   data-confirmacao="true"
+                   th:attr="data-confirmacao-titulo=${usuario.bloqueado == true ? 'Desbloquear usuário' : 'Bloquear usuário'},
+                                            data-confirmacao-mensagem=${usuario.bloqueado == true ? 'Deseja desbloquear este usuário e permitir o acesso novamente?' : 'Deseja bloquear este usuário e impedir o acesso ao sistema?'},
+                                            data-confirmacao-botao=${usuario.bloqueado == true ? 'Desbloquear' : 'Bloquear'},
+                                            data-confirmacao-tipo=${usuario.bloqueado == true ? 'sucesso' : 'aviso'}">
                 </a>
 
               </div>
@@ -121,6 +124,8 @@
   </div>
 
 </main>
+
+<div th:replace="~{fragments/admin-confirm-modal :: modal}"></div>
 
 </body>
 </html>

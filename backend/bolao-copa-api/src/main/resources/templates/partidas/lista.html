@@ -13,8 +13,7 @@
 
 <main class="container admin-pagina">
 
-    <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
-    <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
     <div class="card card-principal mb-4">
         <div class="card-body p-4">
@@ -169,7 +168,11 @@
                                     <a th:if="${partida.status == 'Agendada'}"
                                        th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
                                        class="btn btn-success btn-sm"
-                                       onclick="return confirm('Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites.');">
+                                       data-confirmacao="true"
+                                       data-confirmacao-titulo="Iniciar partida"
+                                       data-confirmacao-mensagem="Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites."
+                                       data-confirmacao-botao="Iniciar"
+                                       data-confirmacao-tipo="sucesso">
                                         Iniciar
                                     </a>
 
@@ -182,7 +185,11 @@
                                     <a th:if="${partida.status == 'Em andamento'}"
                                        th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
                                        class="btn btn-novo btn-sm"
-                                       onclick="return confirm('Deseja finalizar esta partida? A pontuação dos usuários será calculada automaticamente.');">
+                                       data-confirmacao="true"
+                                       data-confirmacao-titulo="Finalizar partida"
+                                       data-confirmacao-mensagem="Deseja finalizar esta partida? A pontuação dos usuários será calculada automaticamente."
+                                       data-confirmacao-botao="Finalizar"
+                                       data-confirmacao-tipo="sucesso">
                                         Finalizar
                                     </a>
 
@@ -201,7 +208,11 @@
                                     <a th:if="${partida.status == 'Agendada'}"
                                        th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
                                        class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Tem certeza que deseja excluir essa partida?');">
+                                       data-confirmacao="true"
+                                       data-confirmacao-titulo="Excluir partida"
+                                       data-confirmacao-mensagem="Tem certeza que deseja excluir esta partida? Essa ação não poderá ser desfeita."
+                                       data-confirmacao-botao="Excluir"
+                                       data-confirmacao-tipo="perigo">
                                         Excluir
                                     </a>
 
@@ -220,6 +231,8 @@
     </div>
 
 </main>
+
+<div th:replace="~{fragments/admin-confirm-modal :: modal}"></div>
 
 </body>
 </html>

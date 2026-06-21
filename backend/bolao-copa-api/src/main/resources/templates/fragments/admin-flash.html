@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="mensagens">
+
+  <div class="admin-flash-container">
+
+    <div th:if="${sucesso}"
+         class="admin-flash admin-flash-sucesso"
+         data-auto-dismiss="true">
+
+      <div class="admin-flash-icone">
+        ✓
+      </div>
+
+      <div class="admin-flash-conteudo">
+        <strong>Sucesso</strong>
+        <span th:text="${sucesso}"></span>
+      </div>
+
+      <button type="button"
+              class="admin-flash-fechar"
+              aria-label="Fechar mensagem">
+        ×
+      </button>
+
+    </div>
+
+    <div th:if="${erro}"
+         class="admin-flash admin-flash-erro"
+         data-auto-dismiss="true">
+
+      <div class="admin-flash-icone">
+        !
+      </div>
+
+      <div class="admin-flash-conteudo">
+        <strong>Atenção</strong>
+        <span th:text="${erro}"></span>
+      </div>
+
+      <button type="button"
+              class="admin-flash-fechar"
+              aria-label="Fechar mensagem">
+        ×
+      </button>
+
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const mensagens = document.querySelectorAll(".admin-flash[data-auto-dismiss='true']");
+
+        mensagens.forEach(function (mensagem) {
+            const botaoFechar = mensagem.querySelector(".admin-flash-fechar");
+
+            function fecharMensagem() {
+                mensagem.classList.add("admin-flash-saindo");
+
+                setTimeout(function () {
+                    mensagem.remove();
+                }, 300);
+            }
+
+            if (botaoFechar) {
+                botaoFechar.addEventListener("click", fecharMensagem);
+            }
+
+            setTimeout(fecharMensagem, 4500);
+        });
+    });
+  </script>
+
+</div>
+
+</body>
+</html>

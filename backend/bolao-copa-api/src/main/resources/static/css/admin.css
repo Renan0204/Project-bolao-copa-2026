@@ -666,3 +666,222 @@ body {
     height: 56px;
     object-fit: contain;
 }
+
+/* ===============================
+   MODAL DE CONFIRMACAO ADMIN
+   =============================== */
+
+.modal-confirmacao-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 24px;
+}
+
+.modal-confirmacao-card {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #d9e1e8;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.25);
+    padding: 28px;
+    text-align: center;
+}
+
+.modal-confirmacao-icone {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 1.8rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.modal-confirmacao-card h3 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #071226;
+}
+
+.modal-confirmacao-card p {
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.modal-confirmacao-acoes {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.modal-confirmacao-acoes .btn {
+    min-width: 120px;
+}
+
+/* ===============================
+   MENSAGENS AUTOMATICAS ADMIN
+   =============================== */
+
+.admin-flash-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10000;
+    width: min(420px, calc(100% - 32px));
+}
+
+.admin-flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #d9e1e8;
+    border-left: 6px solid #16a34a;
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.18);
+    padding: 16px;
+    margin-bottom: 12px;
+    animation: adminFlashEntrada 0.25s ease-out;
+}
+
+.admin-flash-erro {
+    border-left-color: #dc2626;
+}
+
+.admin-flash-sucesso .admin-flash-icone {
+    background: #dcfce7;
+    color: #087a38;
+}
+
+.admin-flash-erro .admin-flash-icone {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.admin-flash-icone {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    flex-shrink: 0;
+}
+
+.admin-flash-conteudo {
+    flex: 1;
+}
+
+.admin-flash-conteudo strong {
+    display: block;
+    color: #071226;
+    margin-bottom: 2px;
+}
+
+.admin-flash-conteudo span {
+    display: block;
+    color: #64748b;
+}
+
+.admin-flash-fechar {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.admin-flash-saindo {
+    opacity: 0;
+    transform: translateX(24px);
+    transition: all 0.3s ease;
+}
+
+@keyframes adminFlashEntrada {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===============================
+   MODAL DE CONFIRMACAO ADMIN
+   =============================== */
+
+.modal-confirmacao-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 24px;
+}
+
+.modal-confirmacao-card {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #d9e1e8;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.25);
+    padding: 28px;
+    text-align: center;
+}
+
+.modal-confirmacao-icone {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 1.8rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.modal-confirmacao-card h3 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #071226;
+}
+
+.modal-confirmacao-card p {
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.modal-confirmacao-acoes {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.modal-confirmacao-acoes .btn {
+    min-width: 120px;
+}

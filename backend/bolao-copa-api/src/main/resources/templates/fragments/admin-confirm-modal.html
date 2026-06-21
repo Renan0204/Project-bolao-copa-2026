@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="modal">
+  <div id="modalConfirmacaoBackdrop" class="modal-confirmacao-backdrop d-none">
+    <div class="modal-confirmacao-card">
+
+      <div class="modal-confirmacao-icone">
+        !
+      </div>
+
+      <h3 id="modalConfirmacaoTitulo">
+        Confirmar ação
+      </h3>
+
+      <p id="modalConfirmacaoMensagem">
+        Tem certeza que deseja continuar?
+      </p>
+
+      <div class="modal-confirmacao-acoes">
+        <button type="button"
+                id="modalConfirmacaoCancelar"
+                class="btn btn-secondary">
+          Cancelar
+        </button>
+
+        <a href="#"
+           id="modalConfirmacaoConfirmar"
+           class="btn btn-danger">
+          Confirmar
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalBackdrop = document.getElementById("modalConfirmacaoBackdrop");
+        const modalTitulo = document.getElementById("modalConfirmacaoTitulo");
+        const modalMensagem = document.getElementById("modalConfirmacaoMensagem");
+        const modalCancelar = document.getElementById("modalConfirmacaoCancelar");
+        const modalConfirmar = document.getElementById("modalConfirmacaoConfirmar");
+
+        function abrirModalConfirmacao(link) {
+            const titulo = link.getAttribute("data-confirmacao-titulo") || "Confirmar ação";
+            const mensagem = link.getAttribute("data-confirmacao-mensagem") || "Tem certeza que deseja continuar?";
+            const textoBotao = link.getAttribute("data-confirmacao-botao") || "Confirmar";
+            const tipo = link.getAttribute("data-confirmacao-tipo") || "perigo";
+
+            modalTitulo.textContent = titulo;
+            modalMensagem.textContent = mensagem;
+            modalConfirmar.textContent = textoBotao;
+            modalConfirmar.href = link.href;
+
+            modalConfirmar.className = "btn";
+
+            if (tipo === "sucesso") {
+                modalConfirmar.classList.add("btn-success");
+            } else if (tipo === "aviso") {
+                modalConfirmar.classList.add("btn-warning");
+            } else {
+                modalConfirmar.classList.add("btn-danger");
+            }
+
+            modalBackdrop.classList.remove("d-none");
+        }
+
+        function fecharModalConfirmacao() {
+            modalBackdrop.classList.add("d-none");
+            modalConfirmar.href = "#";
+        }
+
+        document.querySelectorAll("[data-confirmacao='true']").forEach(function (link) {
+            link.addEventListener("click", function (evento) {
+                evento.preventDefault();
+                abrirModalConfirmacao(link);
+            });
+        });
+
+        modalCancelar.addEventListener("click", fecharModalConfirmacao);
+
+        modalBackdrop.addEventListener("click", function (evento) {
+            if (evento.target === modalBackdrop) {
+                fecharModalConfirmacao();
+            }
+        });
+
+        document.addEventListener("keydown", function (evento) {
+            if (evento.key === "Escape") {
+                fecharModalConfirmacao();
+            }
+        });
+    });
+  </script>
+</div>
+
+</body>
+</html>
