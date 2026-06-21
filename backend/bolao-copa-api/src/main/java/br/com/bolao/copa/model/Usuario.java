@@ -18,22 +18,29 @@ public class Usuario {
 
     private String nome;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false, length = 100)
     private String senha;
+
     private String tipo = "USER";
+
     private Integer pontuacaoTotal = 0;
+
     private Integer placaresExatos = 0;
+
     private Boolean bloqueado = false;
+
     private String avatarUrl;
+
     private LocalDateTime criadoEm;
+
     private LocalDateTime ultimoAcessoEm;
 
-    @Column(length = 100)
-    private String tokenRecuperacaoSenha;
+    private String tokenRedefinicaoSenha;
 
-    private LocalDateTime tokenRecuperacaoExpiraEm;
+    private LocalDateTime expiracaoTokenRedefinicaoSenha;
 
     @PrePersist
     public void antesDeSalvar() {
@@ -102,12 +109,20 @@ public class Usuario {
         return ultimoAcessoEm;
     }
 
-    public String getTokenRecuperacaoSenha() {
-        return tokenRecuperacaoSenha;
+    public String getTokenRedefinicaoSenha() {
+        return tokenRedefinicaoSenha;
     }
 
-    public LocalDateTime getTokenRecuperacaoExpiraEm() {
-        return tokenRecuperacaoExpiraEm;
+    public LocalDateTime getExpiracaoTokenRedefinicaoSenha() {
+        return expiracaoTokenRedefinicaoSenha;
+    }
+
+    public String getTokenRecuperacaoSenha() {
+        return tokenRedefinicaoSenha;
+    }
+
+    public LocalDateTime getExpiracaoTokenRecuperacaoSenha() {
+        return expiracaoTokenRedefinicaoSenha;
     }
 
     public void setId(Long id) {
@@ -154,11 +169,19 @@ public class Usuario {
         this.ultimoAcessoEm = ultimoAcessoEm;
     }
 
-    public void setTokenRecuperacaoSenha(String tokenRecuperacaoSenha) {
-        this.tokenRecuperacaoSenha = tokenRecuperacaoSenha;
+    public void setTokenRedefinicaoSenha(String tokenRedefinicaoSenha) {
+        this.tokenRedefinicaoSenha = tokenRedefinicaoSenha;
     }
 
-    public void setTokenRecuperacaoExpiraEm(LocalDateTime tokenRecuperacaoExpiraEm) {
-        this.tokenRecuperacaoExpiraEm = tokenRecuperacaoExpiraEm;
+    public void setExpiracaoTokenRedefinicaoSenha(LocalDateTime expiracaoTokenRedefinicaoSenha) {
+        this.expiracaoTokenRedefinicaoSenha = expiracaoTokenRedefinicaoSenha;
+    }
+
+    public void setTokenRecuperacaoSenha(String tokenRecuperacaoSenha) {
+        this.tokenRedefinicaoSenha = tokenRecuperacaoSenha;
+    }
+
+    public void setExpiracaoTokenRecuperacaoSenha(LocalDateTime expiracaoTokenRecuperacaoSenha) {
+        this.expiracaoTokenRedefinicaoSenha = expiracaoTokenRecuperacaoSenha;
     }
 }

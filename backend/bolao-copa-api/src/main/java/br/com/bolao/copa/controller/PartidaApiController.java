@@ -159,11 +159,25 @@ public class PartidaApiController {
         if (partida.getSelecaoA() != null) {
             dados.put("selecaoA", partida.getSelecaoA().getNome());
             dados.put("selecaoAId", partida.getSelecaoA().getId());
+            dados.put("selecaoACodigoFifa", partida.getSelecaoA().getCodigoFifa());
+            dados.put("selecaoABandeiraUrl", partida.getSelecaoA().getBandeiraUrl());
+        } else {
+            dados.put("selecaoA", null);
+            dados.put("selecaoAId", null);
+            dados.put("selecaoACodigoFifa", null);
+            dados.put("selecaoABandeiraUrl", null);
         }
 
         if (partida.getSelecaoB() != null) {
             dados.put("selecaoB", partida.getSelecaoB().getNome());
             dados.put("selecaoBId", partida.getSelecaoB().getId());
+            dados.put("selecaoBCodigoFifa", partida.getSelecaoB().getCodigoFifa());
+            dados.put("selecaoBBandeiraUrl", partida.getSelecaoB().getBandeiraUrl());
+        } else {
+            dados.put("selecaoB", null);
+            dados.put("selecaoBId", null);
+            dados.put("selecaoBCodigoFifa", null);
+            dados.put("selecaoBBandeiraUrl", null);
         }
 
         return dados;
