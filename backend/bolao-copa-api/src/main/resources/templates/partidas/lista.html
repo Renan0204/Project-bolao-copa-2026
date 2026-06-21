@@ -34,14 +34,14 @@
     <div th:if="${sucesso}" class="alert alert-success" th:text="${sucesso}"></div>
     <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
 
-    <div class="card card-principal">
+    <div class="card card-principal mb-4">
         <div class="card-body p-4">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="mb-0">Partidas</h2>
                     <small class="text-muted">
-                        Cadastre jogos, inicie partidas, lance gols, finalize e corrija resultados
+                        Cadastre jogos, filtre por fase/data/status e acompanhe as partidas agrupadas por fase e data
                     </small>
                 </div>
 
@@ -56,110 +56,186 @@
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
+            <form th:action="@{/partidas}" method="get" class="row align-items-end">
 
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Partida</th>
-                        <th>Data e Hora</th>
-                        <th>Fase</th>
-                        <th>Grupo</th>
-                        <th>Estádio</th>
-                        <th>Placar</th>
-                        <th>Status</th>
-                        <th class="text-end">Ações</th>
-                    </tr>
-                    </thead>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Fase</label>
+                    <select name="fase" class="form-control">
+                        <option value="">Todas as fases</option>
 
-                    <tbody>
+                        <option th:each="fase : ${fases}"
+                                th:value="${fase}"
+                                th:text="${fase}"
+                                th:selected="${faseFiltro != null && faseFiltro == fase}">
+                        </option>
+                    </select>
+                </div>
 
-                    <tr th:each="partida : ${partidas}">
-                        <td th:text="${partida.id}"></td>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-control">
+                        <option value="">Todos os status</option>
 
-                        <td>
-                            <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
-                            <span> x </span>
-                            <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
-                        </td>
+                        <option th:each="status : ${statusList}"
+                                th:value="${status}"
+                                th:text="${status}"
+                                th:selected="${statusFiltro != null && statusFiltro == status}">
+                        </option>
+                    </select>
+                </div>
 
-                        <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Data</label>
+                    <input type="date"
+                           name="data"
+                           class="form-control"
+                           th:value="${dataFiltro}">
+                </div>
 
-                        <td th:text="${partida.fase}"></td>
+                <div class="col-md-2 mb-3">
+                    <button type="submit" class="btn btn-salvar w-100">
+                        Filtrar
+                    </button>
+                </div>
 
-                        <td th:text="${partida.grupo}"></td>
+            </form>
 
-                        <td th:text="${partida.estadio != null ? partida.estadio.nome : '-'}"></td>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <small class="text-muted">
+                    <span th:text="${totalFiltrado}"></span>
+                    <span> partida(s) encontrada(s)</span>
+                </small>
 
-                        <td class="placar">
-                            <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
-                            <span> x </span>
-                            <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
-                        </td>
+                <a href="/partidas" class="btn btn-secondary btn-sm">
+                    Limpar filtros
+                </a>
+            </div>
 
-                        <td>
-                            <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
-                                  class="badge-status"
-                                  th:text="${partida.status}">
-                            </span>
-                        </td>
+        </div>
+    </div>
 
-                        <td class="text-end">
-                            <div class="d-flex gap-1 justify-content-end flex-wrap">
+    <div th:if="${#maps.isEmpty(partidasAgrupadas)}" class="card card-principal">
+        <div class="card-body p-4 text-center text-muted">
+            Nenhuma partida encontrada para os filtros informados.
+        </div>
+    </div>
 
-                                <a th:if="${partida.status == 'Agendada'}"
-                                   th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
-                                   class="btn btn-success btn-sm"
-                                   onclick="return confirm('Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites.');">
-                                    Iniciar
-                                </a>
+    <div th:each="grupoFase : ${partidasAgrupadas}" class="card card-principal mb-4">
+        <div class="card-body p-4">
 
-                                <a th:if="${partida.status == 'Em andamento'}"
-                                   th:href="@{/resultados/lancar/{id}(id=${partida.id})}"
-                                   class="btn btn-success btn-sm">
-                                    Lançar Gols
-                                </a>
+            <div class="secao-titulo mb-4">
+                <div>
+                    <h2 class="mb-1" th:text="${grupoFase.key}">Fase</h2>
+                    <p class="text-muted mb-0">
+                        Partidas agrupadas por data dentro desta fase.
+                    </p>
+                </div>
+            </div>
 
-                                <a th:if="${partida.status == 'Em andamento'}"
-                                   th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
-                                   class="btn btn-novo btn-sm"
-                                   onclick="return confirm('Deseja finalizar esta partida? A pontuação dos usuários será calculada automaticamente.');">
-                                    Finalizar
-                                </a>
+            <div th:each="grupoData : ${grupoFase.value}" class="mb-4">
 
-                                <a th:if="${partida.status == 'Finalizada'}"
-                                   th:href="@{/resultados/editar/{id}(id=${partida.id})}"
-                                   class="btn btn-warning btn-sm">
-                                    Corrigir Resultado
-                                </a>
+                <div class="alert alert-secondary mb-3">
+                    <strong>Data:</strong>
+                    <span th:text="${grupoData.key}"></span>
+                </div>
 
-                                <a th:if="${partida.status == 'Agendada'}"
-                                   th:href="@{/partidas/editar/{id}(id=${partida.id})}"
-                                   class="btn btn-warning btn-sm">
-                                    Editar
-                                </a>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
 
-                                <a th:if="${partida.status == 'Agendada'}"
-                                   th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
-                                   class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Tem certeza que deseja excluir essa partida?');">
-                                    Excluir
-                                </a>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Partida</th>
+                            <th>Horário</th>
+                            <th>Grupo</th>
+                            <th>Estádio</th>
+                            <th>Placar</th>
+                            <th>Status</th>
+                            <th class="text-end">Ações</th>
+                        </tr>
+                        </thead>
 
-                            </div>
-                        </td>
-                    </tr>
+                        <tbody>
 
-                    <tr th:if="${#lists.isEmpty(partidas)}">
-                        <td colspan="9" class="text-center text-muted py-4">
-                            Nenhuma partida cadastrada ainda.
-                        </td>
-                    </tr>
+                        <tr th:each="partida : ${grupoData.value}">
+                            <td th:text="${partida.id}"></td>
 
-                    </tbody>
+                            <td>
+                                <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
+                                <span> x </span>
+                                <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
+                            </td>
 
-                </table>
+                            <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'HH:mm') : '-'}"></td>
+
+                            <td th:text="${partida.grupo != null ? partida.grupo : '-'}"></td>
+
+                            <td th:text="${partida.estadio != null ? partida.estadio.nome : '-'}"></td>
+
+                            <td class="placar">
+                                <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
+                                <span> x </span>
+                                <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
+                            </td>
+
+                            <td>
+                                <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
+                                      class="badge-status"
+                                      th:text="${partida.status}">
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+                                <div class="d-flex gap-1 justify-content-end flex-wrap">
+
+                                    <a th:if="${partida.status == 'Agendada'}"
+                                       th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
+                                       class="btn btn-success btn-sm"
+                                       onclick="return confirm('Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites.');">
+                                        Iniciar
+                                    </a>
+
+                                    <a th:if="${partida.status == 'Em andamento'}"
+                                       th:href="@{/resultados/lancar/{id}(id=${partida.id})}"
+                                       class="btn btn-success btn-sm">
+                                        Lançar Gols
+                                    </a>
+
+                                    <a th:if="${partida.status == 'Em andamento'}"
+                                       th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
+                                       class="btn btn-novo btn-sm"
+                                       onclick="return confirm('Deseja finalizar esta partida? A pontuação dos usuários será calculada automaticamente.');">
+                                        Finalizar
+                                    </a>
+
+                                    <a th:if="${partida.status == 'Finalizada'}"
+                                       th:href="@{/resultados/editar/{id}(id=${partida.id})}"
+                                       class="btn btn-warning btn-sm">
+                                        Corrigir Resultado
+                                    </a>
+
+                                    <a th:if="${partida.status == 'Agendada'}"
+                                       th:href="@{/partidas/editar/{id}(id=${partida.id})}"
+                                       class="btn btn-warning btn-sm">
+                                        Editar
+                                    </a>
+
+                                    <a th:if="${partida.status == 'Agendada'}"
+                                       th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Tem certeza que deseja excluir essa partida?');">
+                                        Excluir
+                                    </a>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
             </div>
 
         </div>

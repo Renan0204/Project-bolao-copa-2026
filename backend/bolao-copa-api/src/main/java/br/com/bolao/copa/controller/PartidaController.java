@@ -19,8 +19,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +43,28 @@ public class PartidaController {
     }
 
     @GetMapping("/partidas")
-    public String listarPartidas(Model model) {
-        model.addAttribute("partidas", partidaService.listarTodas());
+    public String listarPartidas(@RequestParam(required = false) String fase,
+                                 @RequestParam(required = false) String status,
+                                 @RequestParam(required = false) String data,
+                                 Model model) {
+        List<Partida> partidas = partidaService.listarTodas();
+        List<Partida> partidasFiltradas = aplicarFiltros(partidas, fase, status, data);
+
+        model.addAttribute("partidas", partidasFiltradas);
+        model.addAttribute("partidasAgrupadas", agruparPorFaseEData(partidasFiltradas));
+
+        model.addAttribute("fases", OpcoesAdmin.fases());
+        model.addAttribute("statusList", List.of(
+                PartidaService.STATUS_AGENDADA,
+                PartidaService.STATUS_EM_ANDAMENTO,
+                PartidaService.STATUS_FINALIZADA
+        ));
+
+        model.addAttribute("faseFiltro", fase);
+        model.addAttribute("statusFiltro", status);
+        model.addAttribute("dataFiltro", data);
+        model.addAttribute("totalFiltrado", partidasFiltradas.size());
+
         return "partidas/lista";
     }
 
@@ -165,6 +188,83 @@ public class PartidaController {
         }
 
         return resposta;
+    }
+
+    private List<Partida> aplicarFiltros(List<Partida> partidas,
+                                         String fase,
+                                         String status,
+                                         String data) {
+        List<Partida> partidasFiltradas = new ArrayList<>();
+        LocalDate dataFiltro = converterData(data);
+
+        for (Partida partida : partidas) {
+            boolean passouNoFiltro = true;
+
+            if (temTexto(fase) && !textoIgual(partida.getFase(), fase)) {
+                passouNoFiltro = false;
+            }
+
+            if (temTexto(status) && !textoIgual(partida.getStatus(), status)) {
+                passouNoFiltro = false;
+            }
+
+            if (temTexto(data)) {
+                if (dataFiltro == null || partida.getDataHora() == null) {
+                    passouNoFiltro = false;
+                } else if (!partida.getDataHora().toLocalDate().equals(dataFiltro)) {
+                    passouNoFiltro = false;
+                }
+            }
+
+            if (passouNoFiltro) {
+                partidasFiltradas.add(partida);
+            }
+        }
+
+        return partidasFiltradas;
+    }
+
+    private Map<String, Map<String, List<Partida>>> agruparPorFaseEData(List<Partida> partidas) {
+        Map<String, Map<String, List<Partida>>> partidasAgrupadas = new LinkedHashMap<>();
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        for (Partida partida : partidas) {
+            String fase = temTexto(partida.getFase()) ? partida.getFase() : "Sem fase";
+            String data = partida.getDataHora() != null
+                    ? partida.getDataHora().toLocalDate().format(formatoData)
+                    : "Sem data";
+
+            partidasAgrupadas
+                    .computeIfAbsent(fase, chave -> new LinkedHashMap<>())
+                    .computeIfAbsent(data, chave -> new ArrayList<>())
+                    .add(partida);
+        }
+
+        return partidasAgrupadas;
+    }
+
+    private LocalDate converterData(String data) {
+        if (!temTexto(data)) {
+            return null;
+        }
+
+        try {
+            return LocalDate.parse(data);
+        } catch (DateTimeParseException erro) {
+            return null;
+        }
+    }
+
+    private boolean textoIgual(String valor, String filtro) {
+        if (valor == null || filtro == null) {
+            return false;
+        }
+
+        return valor.trim().equalsIgnoreCase(filtro.trim());
+    }
+
+    private boolean temTexto(String valor) {
+        return valor != null && !valor.isBlank();
     }
 
     private void prepararFormulario(Model model, Partida partida) {
