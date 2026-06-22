@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
   Modal,
   RefreshControl,
   ScrollView,
@@ -13,20 +12,8 @@ import {
 import { useFocusEffect, useRouter } from 'expo-router';
 import { buscarPartidas } from '../../services/partidaService';
 
-type Partida = {
-  id: number;
-  selecaoA: string;
-  selecaoABandeiraUrl?: string | null;
-  selecaoB: string;
-  selecaoBBandeiraUrl?: string | null;
-  golsSelecaoA?: number;
-  golsSelecaoB?: number;
-  dataHora: string;
-  fase: string;
-  grupo: string;
-  estadio: string;
-  status: string;
-};
+import { Partida } from '../../types/partida';
+import PartidaCard from '../../componentes/PartidaCard';
 
 type TipoFiltro = 'fase' | 'data' | 'status';
 
@@ -74,12 +61,6 @@ export default function PartidasScreen() {
     return `${data.toLocaleDateString('pt-BR')} às ${data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
   }
 
-  function formatarUrlImagem(url: string | null | undefined) {
-    if (!url) return undefined;
-    if (url.startsWith('http')) return url;
-    return `http://10.0.2.2:8080${url.startsWith('/') ? '' : '/'}${url}`;
-  }
-
   function statusContem(statusReal: string, palavraBuscada: string) {
     if (!statusReal) return false;
     const limpo = statusReal.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
@@ -101,10 +82,9 @@ export default function PartidasScreen() {
     });
   }, [partidas, filtros]);
 
-  // Separando em três categorias agora
   const partidasEmAndamento = partidasFiltradas.filter((p) => statusContem(p.status, 'andamento'));
   const partidasAgendadas = partidasFiltradas.filter((p) => statusContem(p.status, 'agend'));
-  const partidasFinalizadas = partidasFiltradas.filter((p) => statusContem(p.status, 'finalizad')); // Pega 'finalizada' ou 'finalizadas'
+  const partidasFinalizadas = partidasFiltradas.filter((p) => statusContem(p.status, 'finalizad'));
   
   const nenhumaPartida = partidasEmAndamento.length === 0 && partidasAgendadas.length === 0 && partidasFinalizadas.length === 0;
 
@@ -118,54 +98,19 @@ export default function PartidasScreen() {
     setModalAberto(false);
   }
 
-  function renderizarCardPartida(item: Partida) {
-    // Se está em andamento OU finalizada, nós mostramos o placar (se existir)
-    const mostrarPlacar = (statusContem(item.status, 'andamento') || statusContem(item.status, 'finalizad')) && 
-                          item.golsSelecaoA !== undefined && item.golsSelecaoB !== undefined &&
-                          item.golsSelecaoA !== null && item.golsSelecaoB !== null;
-
-    return (
-      <View key={item.id} style={styles.card}>
-        <View style={styles.cardContent}>
-          <View style={styles.flagsRow}>
-            {item.selecaoABandeiraUrl ? (
-              <Image source={{ uri: formatarUrlImagem(item.selecaoABandeiraUrl) }} style={styles.flag} />
-            ) : (
-              <View style={styles.flagPlaceholder} />
-            )}
-
-            {item.selecaoBBandeiraUrl ? (
-              <Image source={{ uri: formatarUrlImagem(item.selecaoBBandeiraUrl) }} style={styles.flag} />
-            ) : (
-              <View style={styles.flagPlaceholder} />
-            )}
-          </View>
-
-          {mostrarPlacar ? (
-            <Text style={styles.matchTextScore}>
-              {item.selecaoA}  <Text style={styles.scoreText}>{item.golsSelecaoA ?? 0}</Text> x <Text style={styles.scoreText}>{item.golsSelecaoB ?? 0}</Text>  {item.selecaoB}
-            </Text>
-          ) : (
-             <Text style={styles.matchText}>{item.selecaoA} x {item.selecaoB}</Text>
-          )}
-          
-          <Text style={styles.dateText}>{formatarData(item.dataHora)}</Text>
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={() => router.push({ pathname: '/(drawer)/detalhesPartida', params: { partidaId: String(item.id) } })}>
-          <Text style={styles.buttonText}>detalhes</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   function renderizarGrupo(titulo: string, lista: Partida[]) {
     if (lista.length === 0) return null;
     return (
       <View style={styles.groupContainer}>
         <Text style={styles.section}>{titulo}</Text>
         <View style={styles.cardsGrid}>
-          {lista.map(renderizarCardPartida)}
+          {lista.map((item) => (
+            <PartidaCard 
+              key={item.id} 
+              partida={item} 
+              onPress={() => router.push({ pathname: '/(drawer)/detalhesPartida', params: { partidaId: String(item.id) } })}
+            />
+          ))}
         </View>
       </View>
     );
@@ -203,7 +148,6 @@ export default function PartidasScreen() {
           ))}
         </View>
 
-        {/* Agora renderizamos as três categorias */}
         {renderizarGrupo('Em Andamento', partidasEmAndamento)}
         {renderizarGrupo('Agendados', partidasAgendadas)}
         {renderizarGrupo('Finalizadas', partidasFinalizadas)}
@@ -276,75 +220,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  card: {
-    width: '48%',
-    marginBottom: 15,
-  },
-  cardContent: {
-    height: 140,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-  },
-  flagsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  flag: {
-    width: 40,
-    height: 28,
-    resizeMode: 'contain',
-    borderRadius: 4,
-    marginHorizontal: 5,
-  },
-  flagPlaceholder: {
-    width: 40,
-    height: 28,
-    backgroundColor: '#D1D5DB',
-    borderRadius: 4,
-    marginHorizontal: 5,
-  },
-  matchText: {
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  matchTextScore: {
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  scoreText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#15803D',
-  },
-  dateText: {
-    marginTop: 6,
-    fontSize: 11,
-    color: '#6B7280',
-    textAlign: 'center',
-  },
-  button: {
-    marginTop: 6,
-    backgroundColor: '#15803D',
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 14,
   },
   empty: {
     textAlign: 'center',

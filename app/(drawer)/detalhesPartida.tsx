@@ -3,18 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "rea
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { buscarPartidaPorId } from "../../services/partidaService";
 
-type Partida = {
-  id: number;
-  selecaoA: string;
-  selecaoB: string;
-  dataHora: string;
-  fase: string;
-  grupo: string;
-  estadio: string;
-  status: string;
-  golsSelecaoA?: number | null;
-  golsSelecaoB?: number | null;
-};
+import { Partida } from "../../types/partida";
 
 function normalizarStatus(status: string) {
   return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() || "";
@@ -24,19 +13,19 @@ export default function DetalhesPartidaScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-const partidaId = Number(params.partidaId);
+  const partidaId = Number(params.partidaId);
 
   const [partida, setPartida] = useState<Partida | null>(null);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     carregarPartida();
-  }, [partidaId]); 
+  }, [partidaId]);
 
   async function carregarPartida() {
     try {
       setCarregando(true);
-      setPartida(null);
+      setPartida(null); 
 
       if (!partidaId) {
         console.error("partidaId não informado.");
@@ -102,7 +91,7 @@ const partidaId = Number(params.partidaId);
   const statusNorm = normalizarStatus(partida.status);
   const isFinalizada = statusNorm.includes("finalizad");
   const isEmAndamento = statusNorm.includes("andamento");
-  const isAgendada = !isFinalizada && !isEmAndamento;
+  const isAgendada = !isFinalizada && !isEmAndamento; 
 
   const permitePalpite = isAgendada;
 
@@ -177,10 +166,10 @@ const partidaId = Number(params.partidaId);
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20, 
-    backgroundColor: "#F8FAF7"
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#F8FAF7",
   },
   loadingContainer: {
     flex: 1,
@@ -193,12 +182,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#6B7280",
   },
-  title: { 
-    fontSize: 24, 
-    fontWeight: "bold", 
-    marginBottom: 20, 
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
     textAlign: "center",
-    color: "#111827"
+    color: "#111827",
   },
   header: {
     backgroundColor: "#FFFFFF",
@@ -207,12 +196,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#D1D5DB"
+    borderColor: "#D1D5DB",
   },
-  headerText: { 
-    fontSize: 18, 
+  headerText: {
+    fontSize: 18,
     fontWeight: "600",
-    color: "#111827"
+    color: "#111827",
   },
   matchCard: {
     backgroundColor: "#FFFFFF",
@@ -223,10 +212,10 @@ const styles = StyleSheet.create({
     borderColor: "#D1D5DB",
     alignItems: "center",
   },
-  matchTitle: { 
-    fontSize: 20, 
+  matchTitle: {
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#111827"
+    color: "#111827",
   },
   scoreHighlight: {
     color: "#15803D",
@@ -242,13 +231,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#D1D5DB",
   },
-  label: { 
-    fontSize: 16, 
-    fontWeight: "600", 
-    color: "#6B7280"
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6B7280",
   },
-  value: { 
-    fontSize: 16, 
+  value: {
+    fontSize: 16,
     color: "#111827",
     fontWeight: "500",
   },
@@ -267,10 +256,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  buttonText: { 
-    color: "#FFFFFF", 
-    fontSize: 16, 
-    fontWeight: "bold" 
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   disabledButtonContainer: {
     backgroundColor: "#E5E7EB",
@@ -285,5 +274,5 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontSize: 16,
     fontWeight: "bold",
-  }
+  },
 });

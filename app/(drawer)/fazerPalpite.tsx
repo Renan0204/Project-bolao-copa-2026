@@ -1,3 +1,5 @@
+// app/(drawer)/fazerPalpite.tsx
+
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -10,30 +12,11 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { buscarPartidaPorId } from "../../services/partidaService";
-import {
-  registrarPalpite,
-  listarMeusPalpites,
-} from "../../services/palpiteService";
+import { registrarPalpite, listarMeusPalpites } from "../../services/palpiteService";
 
-type Partida = {
-  id: number;
-  selecaoA: string;
-  selecaoB: string;
-  dataHora: string;
-  fase: string;
-  grupo: string;
-  estadio: string;
-  status: string;
-};
-
-type Palpite = {
-  id: number;
-  golsSelecaoA: number;
-  golsSelecaoB: number;
-  partida?: {
-    id?: number;
-  };
-};
+// Importando os tipos centralizados!
+import { Partida } from "../../types/partida";
+import { Palpite } from "../../types/palpite";
 
 export default function FazerPalpiteScreen() {
   const router = useRouter();
@@ -56,6 +39,7 @@ export default function FazerPalpiteScreen() {
     try {
       setCarregando(true);
       
+      // Limpeza dos estados para evitar o efeito "Fantasma"
       setPartida(null);
       setPalpiteExistente(null);
       setGolsSelecaoA("");
