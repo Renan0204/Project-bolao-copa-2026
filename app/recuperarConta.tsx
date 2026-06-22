@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { AlertHelper } from "../utils/AlertHelper";
@@ -37,11 +38,13 @@ export default function RecuperarContaScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        <Text style={styles.title}>Recuperação</Text>
+        <Image
+          source={require("../assets/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
-        <View style={styles.uploadBox}>
-          <Text style={styles.uploadText}>📤 Upload</Text>
-        </View>
+        <Text style={styles.title}>Recuperação</Text>
 
         <TextInput
           style={styles.input}
@@ -94,25 +97,18 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
     color: "#111827",
-  },
-  uploadBox: {
-    backgroundColor: "#F3F4F6",
-    padding: 20,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
-  },
-  uploadText: {
-    fontSize: 16,
-    color: "#6B7280",
   },
   input: {
     borderWidth: 1,

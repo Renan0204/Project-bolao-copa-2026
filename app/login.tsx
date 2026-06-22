@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { logar } from "../services/loginService";
@@ -50,11 +51,13 @@ export default function LoginScreen() {
       style={styles.container}
     >
       <View style={styles.innerContainer}>
+        <Image 
+           source={require("../assets/logo.png")} 
+            style={styles.logo} 
+           resizeMode="contain" 
+        />
+        
         <Text style={styles.title}>Login</Text>
-
-        <View style={styles.uploadBox}>
-          <Text style={styles.uploadText}>Logo</Text>
-        </View>
 
         <TextInput
           style={styles.input}
@@ -117,25 +120,18 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#111827",
     marginBottom: 20,
     textAlign: "center",
-  },
-  uploadBox: {
-    backgroundColor: "#F3F4F6",
-    padding: 20,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
-  },
-  uploadText: {
-    fontSize: 16,
-    color: "#6B7280",
   },
   input: {
     width: "100%",

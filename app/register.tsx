@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 import { registrar } from "../services/registerService";
 import { AlertHelper } from "../utils/AlertHelper";
@@ -57,6 +58,12 @@ export default function RegisterScreen() {
       style={styles.container}
     >
       <View style={styles.innerContainer}>
+        <Image
+          source={require("../assets/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         <Text style={styles.title}>Cadastro</Text>
 
         <TextInput
@@ -131,6 +138,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
