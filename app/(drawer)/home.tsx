@@ -1,17 +1,17 @@
 import { useFocusEffect, useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
+  Image,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
-  ActivityIndicator,
-  Image,
-  RefreshControl,
 } from "react-native";
-import { buscarUsuarioLogado } from "../../services/usuarioService";
 import { buscarPartidas } from "../../services/partidaService";
+import { buscarUsuarioLogado } from "../../services/usuarioService";
 
 type Partida = {
   id: number;
@@ -24,16 +24,24 @@ type Partida = {
   grupo: string;
   estadio: string;
   status: string;
+  golsSelecaoA?: number | null;
+  golsSelecaoB?: number | null;
 };
 
-function formatarUrlImagem(url: string | null | undefined) {
+const API_URL = "http://10.0.2.2:8080";
+
+function formatarUrlImagem(url?: string | null) {
   if (!url) return undefined;
-  if (url.startsWith("http")) return url;
-  return `http://10.0.2.2:8080${url.startsWith("/") ? "" : "/"}${url}`;
+  return url.startsWith("http") ? url : `${API_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
+function normalizarStatus(status: string) {
+  return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
 export default function HomeScreen() {
   const router = useRouter();
+
   const [nomeUsuario, setNomeUsuario] = useState("Usuário");
   const [partidas, setPartidas] = useState<Partida[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -48,18 +56,13 @@ export default function HomeScreen() {
   async function carregarDados(exibirLoading = true) {
     try {
       if (exibirLoading) setCarregando(true);
-      
+
       const usuario = await buscarUsuarioLogado();
       const partidasApi = await buscarPartidas();
 
-      if (usuario?.nome) {
-        setNomeUsuario(usuario.nome);
-      } else if (usuario?.usuario?.nome) {
-        setNomeUsuario(usuario.usuario.nome);
-      }
-
+      setNomeUsuario(usuario?.nome ?? usuario?.usuario?.nome ?? "Usuário");
       setPartidas(partidasApi ?? []);
-    } catch (error) {
+    } catch {
       router.replace("/login");
     } finally {
       if (exibirLoading) setCarregando(false);
@@ -67,25 +70,20 @@ export default function HomeScreen() {
   }
 
   async function atualizarDados() {
-    try {
-      setAtualizando(true);
-      await carregarDados(false);
-    } finally {
-      setAtualizando(false);
-    }
+    setAtualizando(true);
+    await carregarDados(false);
+    setAtualizando(false);
   }
 
   function formatarData(dataHora: string) {
     if (!dataHora) return "Data não informada";
 
     const data = new Date(dataHora);
-    const dataFormatada = data.toLocaleDateString("pt-BR");
-    const horaFormatada = data.toLocaleTimeString("pt-BR", {
+
+    return `${data.toLocaleDateString("pt-BR")} às ${data.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
-    });
-
-    return `${dataFormatada} às ${horaFormatada}`;
+    })}`;
   }
 
   function abrirDetalhesPartida(partidaId: number) {
@@ -95,55 +93,79 @@ export default function HomeScreen() {
     });
   }
 
-  function renderizarCardPartida(partida: Partida, destaque = false) {
+  function ehEmAndamento(partida: Partida) {
+    return normalizarStatus(partida.status).includes("andamento");
+  }
+
+  function temPlacar(partida: Partida) {
+    return partida.golsSelecaoA != null && partida.golsSelecaoB != null;
+  }
+
+  function renderBandeiras(partida: Partida) {
     return (
-      <View
-        key={partida.id}
-        style={destaque ? styles.featuredContainer : styles.smallContainer}
-      >
+      <View style={styles.flagsRow}>
+        {partida.selecaoABandeiraUrl ? (
+          <Image source={{ uri: formatarUrlImagem(partida.selecaoABandeiraUrl) }} style={styles.flag} />
+        ) : (
+          <View style={styles.flagPlaceholder} />
+        )}
+
+        {partida.selecaoBBandeiraUrl ? (
+          <Image source={{ uri: formatarUrlImagem(partida.selecaoBBandeiraUrl) }} style={styles.flag} />
+        ) : (
+          <View style={styles.flagPlaceholder} />
+        )}
+      </View>
+    );
+  }
+
+  function renderizarCardPartida(partida: Partida, destaque = false) {
+    const emAndamento = ehEmAndamento(partida);
+    const mostrarPlacar = destaque && emAndamento && temPlacar(partida);
+
+    return (
+      <View key={partida.id} style={destaque ? styles.featuredContainer : styles.smallContainer}>
         <View style={destaque ? styles.featuredCard : styles.smallCard}>
-          <View style={styles.flagsRow}>
-            {partida.selecaoABandeiraUrl ? (
-              <Image
-                source={{
-                  uri: formatarUrlImagem(partida.selecaoABandeiraUrl),
-                }}
-                style={styles.flag}
-              />
-            ) : (
-              <View style={styles.flagPlaceholder} />
-            )}
+          {destaque && emAndamento && (
+            <Text style={styles.statusEmAndamento}>Em andamento</Text>
+          )}
 
-            {partida.selecaoBBandeiraUrl ? (
-              <Image
-                source={{
-                  uri: formatarUrlImagem(partida.selecaoBBandeiraUrl),
-                }}
-                style={styles.flag}
-              />
-            ) : (
-              <View style={styles.flagPlaceholder} />
-            )}
-          </View>
+          {renderBandeiras(partida)}
 
-          <Text style={destaque ? styles.matchText : styles.smallMatchText}>
-            {partida.selecaoA} x {partida.selecaoB}
-          </Text>
+          {mostrarPlacar ? (
+            <Text style={destaque ? styles.matchText : styles.smallMatchText}>
+              {partida.selecaoA}  <Text style={styles.scoreText}>{partida.golsSelecaoA}</Text> x <Text style={styles.scoreText}>{partida.golsSelecaoB}</Text>  {partida.selecaoB}
+            </Text>
+          ) : (
+            <Text style={destaque ? styles.matchText : styles.smallMatchText}>
+              {partida.selecaoA} x {partida.selecaoB}
+            </Text>
+          )}
 
-          <Text style={styles.dateText}>
-            {formatarData(partida.dataHora)}
-          </Text>
+          <Text style={styles.dateText}>{formatarData(partida.dataHora)}</Text>
         </View>
 
         <TouchableOpacity
           style={styles.palpitarButton}
           onPress={() => abrirDetalhesPartida(partida.id)}
         >
-          <Text style={styles.palpitarText}>palpitar</Text>
+          <Text style={styles.palpitarText}>
+            {destaque && emAndamento ? "detalhes" : "palpitar"}
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
+
+  const partidaDestaque = useMemo(() => {
+    return partidas.find(ehEmAndamento) ?? partidas[0];
+  }, [partidas]);
+
+  const demaisPartidas = useMemo(() => {
+    return partidaDestaque
+      ? partidas.filter((partida) => partida.id !== partidaDestaque.id)
+      : [];
+  }, [partidas, partidaDestaque]);
 
   if (carregando) {
     return (
@@ -154,33 +176,25 @@ export default function HomeScreen() {
     );
   }
 
-  const partidaDestaque = partidas[0];
-  const demaisPartidas = partidas.slice(1);
-
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       refreshControl={
         <RefreshControl
           refreshing={atualizando}
           onRefresh={atualizarDados}
-          colors={['#15803D']}
+          colors={["#15803D"]}
         />
       }
     >
       <Text style={styles.greeting}>Olá, {nomeUsuario}</Text>
 
       <View style={styles.drawnRow}>
-        <TouchableOpacity 
-          style={styles.tabButton}
-          onPress={() => router.push("/(drawer)/partidas")}
-        >
+        <TouchableOpacity style={styles.tabButton} onPress={() => router.push("/(drawer)/partidas")}>
           <Text style={styles.tabText}>Partidas</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabButton}
-          onPress={() => router.push("/(drawer)/ranking")}
-        >
+
+        <TouchableOpacity style={styles.tabButton} onPress={() => router.push("/(drawer)/ranking")}>
           <Text style={styles.tabText}>Ranking</Text>
         </TouchableOpacity>
       </View>
@@ -188,9 +202,15 @@ export default function HomeScreen() {
       {partidaDestaque ? (
         renderizarCardPartida(partidaDestaque, true)
       ) : (
-        <View style={styles.featuredCard}>
-          <Text style={styles.matchText}>Nenhuma partida cadastrada</Text>
+        <View style={styles.featuredContainer}>
+          <View style={styles.featuredCard}>
+            <Text style={styles.matchText}>Nenhuma partida cadastrada</Text>
+          </View>
         </View>
+      )}
+
+      {demaisPartidas.length > 0 && (
+        <Text style={styles.sectionTitle}>Próximos jogos</Text>
       )}
 
       <View style={styles.gridRow}>
@@ -211,17 +231,20 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 20,
   },
+
   loadingContainer: {
     flex: 1,
     backgroundColor: "#F8FAF7",
     alignItems: "center",
     justifyContent: "center",
   },
+
   loadingText: {
     marginTop: 10,
     fontSize: 16,
     color: "#6B7280",
   },
+
   greeting: {
     fontSize: 18,
     fontWeight: "bold",
@@ -229,11 +252,13 @@ const styles = StyleSheet.create({
     color: "#111827",
     textAlign: "center",
   },
+
   drawnRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
   },
+
   tabButton: {
     backgroundColor: "#FFFFFF",
     padding: 10,
@@ -242,19 +267,20 @@ const styles = StyleSheet.create({
     borderColor: "#D1D5DB",
     width: "48%",
     alignItems: "center",
-    justifyContent: "center",
   },
+
   tabText: {
     fontSize: 12,
     fontWeight: "600",
-    textAlign: "center",
     color: "#111827",
   },
+
   featuredContainer: {
     marginBottom: 20,
   },
+
   featuredCard: {
-    height: 125,
+    minHeight: 125,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#D1D5DB",
@@ -264,12 +290,27 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginBottom: 6,
   },
+
+  statusEmAndamento: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#15803D",
+    marginBottom: 8,
+    textTransform: "uppercase",
+  },
+
   matchText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "700",
     textAlign: "center",
     color: "#111827",
   },
+
+  scoreText: {
+    color: "#15803D",
+    fontWeight: "bold",
+  },
+
   dateText: {
     marginTop: 6,
     fontSize: 12,
@@ -277,16 +318,27 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
   },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 12,
+    marginTop: 4,
+  },
+
   gridRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     marginBottom: 40,
   },
+
   smallContainer: {
     width: "48%",
     marginBottom: 15,
   },
+
   smallCard: {
     height: 140,
     backgroundColor: "#FFFFFF",
@@ -298,6 +350,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginBottom: 6,
   },
+
   smallMatchText: {
     fontSize: 14,
     fontWeight: "600",
@@ -305,6 +358,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     color: "#111827",
   },
+
   palpitarButton: {
     backgroundColor: "#15803D",
     borderRadius: 8,
@@ -313,35 +367,40 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#15803D",
   },
+
   palpitarText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 14,
   },
+
   flagsRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 12,
   },
+
   flag: {
     width: 40,
     height: 28,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     borderRadius: 4,
     marginHorizontal: 5,
   },
+
   flagPlaceholder: {
     width: 40,
     height: 28,
-    backgroundColor: '#D1D5DB',
+    backgroundColor: "#D1D5DB",
     borderRadius: 4,
     marginHorizontal: 5,
   },
+
   emptyText: {
-    textAlign: 'center',
-    color: '#6B7280',
-    width: '100%',
+    textAlign: "center",
+    color: "#6B7280",
+    width: "100%",
     marginTop: 10,
   },
 });
