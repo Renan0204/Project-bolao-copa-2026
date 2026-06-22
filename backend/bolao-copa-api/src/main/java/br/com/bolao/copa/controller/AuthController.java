@@ -35,7 +35,7 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
-    @Value("${app.redefinicao-senha-url:http://localhost:8080/redefinir-senha}")
+    @Value("${app.redefinicao-senha-url.mobile:maozinhabet://redefinir-senha}")
     private String urlRedefinicaoSenha;
 
     @PostMapping("/cadastrar")

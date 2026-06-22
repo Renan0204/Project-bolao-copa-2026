@@ -14,4 +14,6 @@ public interface PalpiteRepository extends JpaRepository<Palpite, Long> {
     List<Palpite> findByUsuarioOrderByCriadoEmDesc(Usuario usuario);
 
     List<Palpite> findByPartida(Partida partida);
+
+    void deleteByUsuario(Usuario usuario);
 }

@@ -1,8 +1,10 @@
 package br.com.bolao.copa.service;
 
 import br.com.bolao.copa.model.Usuario;
+import br.com.bolao.copa.repository.PalpiteRepository;
 import br.com.bolao.copa.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,11 +17,14 @@ public class UsuarioService {
     private static final String TIPO_ADMIN = "ADMIN";
 
     private final UsuarioRepository repository;
+    private final PalpiteRepository palpiteRepository;
     private final SenhaService senhaService;
 
     public UsuarioService(UsuarioRepository repository,
+                          PalpiteRepository palpiteRepository,
                           SenhaService senhaService) {
         this.repository = repository;
+        this.palpiteRepository = palpiteRepository;
         this.senhaService = senhaService;
     }
 
@@ -63,8 +68,18 @@ public class UsuarioService {
         return buscarPorNomeOuEmail(termo);
     }
 
+    @Transactional
     public void remover(Long id) {
-        repository.deleteById(id);
+        if (id == null) {
+            throw new RuntimeException("Usuário não informado.");
+        }
+
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        palpiteRepository.deleteByUsuario(usuario);
+
+        repository.delete(usuario);
     }
 
     public Usuario buscarPorEmail(String email) {

@@ -24,7 +24,7 @@ public class AdminLoginController {
     private final UsuarioService usuarioService;
     private final EmailService emailService;
 
-    @Value("${app.redefinicao-senha-url:http://localhost:8080/redefinir-senha}")
+    @Value("${app.redefinicao-senha-url.web:http://localhost:8080/redefinir-senha}")
     private String urlRedefinicaoSenha;
 
     public AdminLoginController(UsuarioService usuarioService,
