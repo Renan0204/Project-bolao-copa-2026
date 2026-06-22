@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { buscarPartidaPorId } from "../../services/partidaService";
 
 import { Partida } from "../../types/partida";
 
 function normalizarStatus(status: string) {
-  return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() || "";
+  return status
+    ?.toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim() || "";
 }
 
 export default function DetalhesPartidaScreen() {
@@ -25,7 +36,7 @@ export default function DetalhesPartidaScreen() {
   async function carregarPartida() {
     try {
       setCarregando(true);
-      setPartida(null); 
+      setPartida(null);
 
       if (!partidaId) {
         console.error("partidaId não informado.");
@@ -76,7 +87,7 @@ export default function DetalhesPartidaScreen() {
 
   if (!partida) {
     return (
-      <View style={styles.container}>
+      <View style={styles.emptyContainer}>
         <Text style={styles.title}>Partida não encontrada</Text>
         <TouchableOpacity
           style={styles.buttonPrimary}
@@ -91,12 +102,17 @@ export default function DetalhesPartidaScreen() {
   const statusNorm = normalizarStatus(partida.status);
   const isFinalizada = statusNorm.includes("finalizad");
   const isEmAndamento = statusNorm.includes("andamento");
-  const isAgendada = !isFinalizada && !isEmAndamento; 
+  const isAgendada = !isFinalizada && !isEmAndamento;
 
   const permitePalpite = isAgendada;
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={styles.title}>Detalhes da Partida</Text>
 
       <View style={styles.header}>
@@ -104,10 +120,15 @@ export default function DetalhesPartidaScreen() {
       </View>
 
       <View style={styles.matchCard}>
-        {(isFinalizada || isEmAndamento) && partida.golsSelecaoA != null && partida.golsSelecaoB != null ? (
-           <Text style={styles.matchTitle}>
-             {partida.selecaoA}  <Text style={styles.scoreHighlight}>{partida.golsSelecaoA}</Text> x <Text style={styles.scoreHighlight}>{partida.golsSelecaoB}</Text>  {partida.selecaoB}
-           </Text>
+        {(isFinalizada || isEmAndamento) &&
+        partida.golsSelecaoA != null &&
+        partida.golsSelecaoB != null ? (
+          <Text style={styles.matchTitle}>
+            {partida.selecaoA}{" "}
+            <Text style={styles.scoreHighlight}>{partida.golsSelecaoA}</Text> x{" "}
+            <Text style={styles.scoreHighlight}>{partida.golsSelecaoB}</Text>{" "}
+            {partida.selecaoB}
+          </Text>
         ) : (
           <Text style={styles.matchTitle}>
             {partida.selecaoA} x {partida.selecaoB}
@@ -142,8 +163,14 @@ export default function DetalhesPartidaScreen() {
 
       <View style={styles.infoCard}>
         <Text style={styles.label}>Status:</Text>
-        <Text style={[styles.value, isFinalizada && styles.statusFinalizada, isEmAndamento && styles.statusAndamento]}>
-           {partida.status || "Desconhecido"}
+        <Text
+          style={[
+            styles.value,
+            isFinalizada && styles.statusFinalizada,
+            isEmAndamento && styles.statusAndamento,
+          ]}
+        >
+          {partida.status || "Desconhecido"}
         </Text>
       </View>
 
@@ -161,15 +188,24 @@ export default function DetalhesPartidaScreen() {
           </Text>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F8FAF7",
+  },
+  contentContainer: {
+    padding: 20,
+    paddingBottom: 90,
+  },
+  emptyContainer: {
+    flex: 1,
     padding: 20,
     backgroundColor: "#F8FAF7",
+    justifyContent: "center",
   },
   loadingContainer: {
     flex: 1,
@@ -216,6 +252,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#111827",
+    textAlign: "center",
   },
   scoreHighlight: {
     color: "#15803D",
@@ -230,6 +267,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#D1D5DB",
+    gap: 10,
   },
   label: {
     fontSize: 16,
@@ -240,6 +278,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#111827",
     fontWeight: "500",
+    textAlign: "right",
+    flexShrink: 1,
   },
   statusFinalizada: {
     color: "#DC2626",

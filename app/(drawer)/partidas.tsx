@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -8,14 +8,14 @@ import {
   Modal,
   RefreshControl,
   ScrollView,
-} from 'react-native';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { buscarPartidas } from '../../services/partidaService';
+} from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import { buscarPartidas } from "../../services/partidaService";
 
-import { Partida } from '../../types/partida';
-import PartidaCard from '../../componentes/PartidaCard';
+import { Partida } from "../../types/partida";
+import PartidaCard from "../../componentes/PartidaCard";
 
-type TipoFiltro = 'fase' | 'data' | 'status';
+type TipoFiltro = "fase" | "data" | "status";
 
 export default function PartidasScreen() {
   const router = useRouter();
@@ -24,9 +24,9 @@ export default function PartidasScreen() {
   const [carregando, setCarregando] = useState(true);
   const [atualizando, setAtualizando] = useState(false);
 
-  const [filtros, setFiltros] = useState({ fase: '', data: '', status: '' });
+  const [filtros, setFiltros] = useState({ fase: "", data: "", status: "" });
   const [modalAberto, setModalAberto] = useState(false);
-  const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>('fase');
+  const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>("fase");
 
   useFocusEffect(
     useCallback(() => {
@@ -37,10 +37,12 @@ export default function PartidasScreen() {
   async function carregarPartidas(exibirLoading = true) {
     try {
       if (exibirLoading) setCarregando(true);
+
       const dados = await buscarPartidas();
+
       setPartidas(dados || []);
     } catch (error) {
-      console.error('Erro ao carregar partidas:', error);
+      console.error("Erro ao carregar partidas:", error);
     } finally {
       if (exibirLoading) setCarregando(false);
     }
@@ -56,37 +58,69 @@ export default function PartidasScreen() {
   }
 
   function formatarData(dataHora: string) {
-    if (!dataHora) return 'Não informada';
+    if (!dataHora) return "Não informada";
+
     const data = new Date(dataHora);
-    return `${data.toLocaleDateString('pt-BR')} às ${data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+
+    return `${data.toLocaleDateString("pt-BR")} às ${data.toLocaleTimeString(
+      "pt-BR",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    )}`;
   }
 
   function statusContem(statusReal: string, palavraBuscada: string) {
     if (!statusReal) return false;
-    const limpo = statusReal.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+
+    const limpo = statusReal
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+
     return limpo.includes(palavraBuscada);
   }
 
-  const opcoesModal = useMemo(() => ({
-    fase: ['', ...new Set(partidas.map((p) => p.fase).filter(Boolean))],
-    data: ['', ...new Set(partidas.map((p) => formatarData(p.dataHora)).filter(Boolean))],
-    status: ['', ...new Set(partidas.map((p) => p.status).filter(Boolean))],
-  }), [partidas]);
+  const opcoesModal = useMemo(
+    () => ({
+      fase: ["", ...new Set(partidas.map((p) => p.fase).filter(Boolean))],
+      data: [
+        "",
+        ...new Set(partidas.map((p) => formatarData(p.dataHora)).filter(Boolean)),
+      ],
+      status: ["", ...new Set(partidas.map((p) => p.status).filter(Boolean))],
+    }),
+    [partidas]
+  );
 
   const partidasFiltradas = useMemo(() => {
     return partidas.filter((p) => {
       const faseOk = filtros.fase ? p.fase === filtros.fase : true;
       const dataOk = filtros.data ? formatarData(p.dataHora) === filtros.data : true;
       const statusOk = filtros.status ? p.status === filtros.status : true;
+
       return faseOk && dataOk && statusOk;
     });
   }, [partidas, filtros]);
 
-  const partidasEmAndamento = partidasFiltradas.filter((p) => statusContem(p.status, 'andamento'));
-  const partidasAgendadas = partidasFiltradas.filter((p) => statusContem(p.status, 'agend'));
-  const partidasFinalizadas = partidasFiltradas.filter((p) => statusContem(p.status, 'finalizad'));
-  
-  const nenhumaPartida = partidasEmAndamento.length === 0 && partidasAgendadas.length === 0 && partidasFinalizadas.length === 0;
+  const partidasEmAndamento = partidasFiltradas.filter((p) =>
+    statusContem(p.status, "andamento")
+  );
+
+  const partidasAgendadas = partidasFiltradas.filter((p) =>
+    statusContem(p.status, "agend")
+  );
+
+  const partidasFinalizadas = partidasFiltradas.filter((p) =>
+    statusContem(p.status, "finalizad")
+  );
+
+  const nenhumaPartida =
+    partidasEmAndamento.length === 0 &&
+    partidasAgendadas.length === 0 &&
+    partidasFinalizadas.length === 0;
 
   function abrirModal(tipo: TipoFiltro) {
     setTipoFiltro(tipo);
@@ -98,17 +132,26 @@ export default function PartidasScreen() {
     setModalAberto(false);
   }
 
+  function abrirDetalhesPartida(partidaId: number) {
+    router.push({
+      pathname: "/(drawer)/detalhesPartida",
+      params: { partidaId: String(partidaId) },
+    });
+  }
+
   function renderizarGrupo(titulo: string, lista: Partida[]) {
     if (lista.length === 0) return null;
+
     return (
       <View style={styles.groupContainer}>
         <Text style={styles.section}>{titulo}</Text>
+
         <View style={styles.cardsGrid}>
           {lista.map((item) => (
-            <PartidaCard 
-              key={item.id} 
-              partida={item} 
-              onPress={() => router.push({ pathname: '/(drawer)/detalhesPartida', params: { partidaId: String(item.id) } })}
+            <PartidaCard
+              key={item.id}
+              partida={item}
+              onPress={() => abrirDetalhesPartida(item.id)}
             />
           ))}
         </View>
@@ -125,22 +168,34 @@ export default function PartidasScreen() {
   }
 
   const filtrosBotoes: { key: TipoFiltro; label: string }[] = [
-    { key: 'fase', label: 'Fase' },
-    { key: 'data', label: 'Data' },
-    { key: 'status', label: 'Status' },
+    { key: "fase", label: "Fase" },
+    { key: "data", label: "Data" },
+    { key: "status", label: "Status" },
   ];
 
   return (
     <View style={styles.container}>
       <ScrollView
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={atualizando} onRefresh={atualizarPartidas} colors={['#15803D']} />}
+        keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl
+            refreshing={atualizando}
+            onRefresh={atualizarPartidas}
+            colors={["#15803D"]}
+          />
+        }
       >
         <Text style={styles.title}>Partidas</Text>
 
         <View style={styles.filtersContainer}>
           {filtrosBotoes.map(({ key, label }) => (
-            <TouchableOpacity key={key} style={styles.filterBtn} onPress={() => abrirModal(key)}>
+            <TouchableOpacity
+              key={key}
+              style={styles.filterBtn}
+              onPress={() => abrirModal(key)}
+            >
               <Text style={styles.filterText} numberOfLines={1}>
                 {filtros[key] || label}
               </Text>
@@ -148,21 +203,34 @@ export default function PartidasScreen() {
           ))}
         </View>
 
-        {renderizarGrupo('Em Andamento', partidasEmAndamento)}
-        {renderizarGrupo('Agendados', partidasAgendadas)}
-        {renderizarGrupo('Finalizadas', partidasFinalizadas)}
+        {renderizarGrupo("Em Andamento", partidasEmAndamento)}
+        {renderizarGrupo("Agendados", partidasAgendadas)}
+        {renderizarGrupo("Finalizadas", partidasFinalizadas)}
 
-        {nenhumaPartida && <Text style={styles.empty}>Nenhuma partida encontrada.</Text>}
-
-        <View style={{ height: 40 }} />
+        {nenhumaPartida && (
+          <Text style={styles.empty}>Nenhuma partida encontrada.</Text>
+        )}
       </ScrollView>
 
-      <Modal visible={modalAberto} transparent animationType="fade" onRequestClose={() => setModalAberto(false)}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setModalAberto(false)}>
+      <Modal
+        visible={modalAberto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalAberto(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setModalAberto(false)}
+        >
           <View style={styles.modalContent}>
             {opcoesModal[tipoFiltro].map((opcao) => (
-              <TouchableOpacity key={opcao || 'todos'} style={styles.modalOption} onPress={() => selecionarOpcao(opcao)}>
-                <Text style={styles.modalOptionText}>{opcao || 'Todos'}</Text>
+              <TouchableOpacity
+                key={opcao || "todos"}
+                style={styles.modalOption}
+                onPress={() => selecionarOpcao(opcao)}
+              >
+                <Text style={styles.modalOptionText}>{opcao || "Todos"}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -175,35 +243,39 @@ export default function PartidasScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F8FAF7",
+  },
+  scrollContent: {
     padding: 16,
-    backgroundColor: '#F8FAF7',
+    paddingBottom: 90,
   },
   containerCenter: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F8FAF7",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 15,
-    color: '#111827',
+    color: "#111827",
   },
   filtersContainer: {
     marginBottom: 10,
   },
   filterBtn: {
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: "#D1D5DB",
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
     marginBottom: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   filterText: {
-    color: '#6B7280',
+    color: "#6B7280",
     fontSize: 14,
   },
   groupContainer: {
@@ -211,41 +283,41 @@ const styles = StyleSheet.create({
   },
   section: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     marginTop: 10,
     marginBottom: 15,
-    color: '#111827',
+    color: "#111827",
   },
   cardsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   empty: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
-    color: '#6B7280',
+    color: "#6B7280",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    width: '80%',
-    backgroundColor: '#FFFFFF',
+    width: "80%",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 10,
   },
   modalOption: {
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
   modalOptionText: {
     fontSize: 16,
-    color: '#111827',
-    textAlign: 'center',
+    color: "#111827",
+    textAlign: "center",
   },
 });

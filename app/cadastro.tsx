@@ -23,18 +23,21 @@ export default function CadastroScreen() {
   const [carregando, setCarregando] = useState(false);
 
   async function clicouEmCadastrar() {
-    if (!name || !email || !senha || !confirmSenha) {
+    const nomeTratado = name.trim();
+    const emailTratado = email.trim().toLowerCase();
+
+    if (!nomeTratado || !emailTratado || !senha || !confirmSenha) {
       AlertHelper.warning("Todos os campos são obrigatórios.");
       return;
     }
 
-    if (name.trim().length < 3) {
+    if (nomeTratado.length < 3) {
       AlertHelper.warning("O nome deve ter pelo menos 3 letras.");
       return;
     }
 
     const emailValido = /\S+@\S+\.\S+/;
-    if (!emailValido.test(email)) {
+    if (!emailValido.test(emailTratado)) {
       AlertHelper.warning("Por favor, insira um e-mail válido.");
       return;
     }
@@ -52,7 +55,7 @@ export default function CadastroScreen() {
     try {
       setCarregando(true);
 
-      await registrar(name, email, senha);
+      await registrar(nomeTratado, emailTratado, senha);
 
       AlertHelper.success("Conta criada com sucesso!");
       router.replace("/login");
@@ -72,11 +75,15 @@ export default function CadastroScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       style={styles.container}
     >
-      <ScrollView 
+      <ScrollView
+        style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.innerContainer}>
           <Image
@@ -93,6 +100,7 @@ export default function CadastroScreen() {
             placeholderTextColor="#6B7280"
             value={name}
             onChangeText={setName}
+            returnKeyType="next"
           />
 
           <TextInput
@@ -101,8 +109,10 @@ export default function CadastroScreen() {
             placeholderTextColor="#6B7280"
             keyboardType="email-address"
             autoCapitalize="none"
+            autoCorrect={false}
             value={email}
             onChangeText={setEmail}
+            returnKeyType="next"
           />
 
           <TextInput
@@ -112,6 +122,7 @@ export default function CadastroScreen() {
             secureTextEntry
             value={senha}
             onChangeText={setSenha}
+            returnKeyType="next"
           />
 
           <TextInput
@@ -121,10 +132,12 @@ export default function CadastroScreen() {
             secureTextEntry
             value={confirmSenha}
             onChangeText={setConfirmSenha}
+            returnKeyType="done"
+            onSubmitEditing={clicouEmCadastrar}
           />
 
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, carregando && styles.buttonDisabled]}
             onPress={clicouEmCadastrar}
             disabled={carregando}
           >
@@ -147,10 +160,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8FAF7",
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
     padding: 20,
+    paddingBottom: 120,
   },
   innerContainer: {
     backgroundColor: "#FFFFFF",
@@ -165,8 +182,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   logo: {
-    width: 180,
-    height: 180,
+    width: 160,
+    height: 160,
     alignSelf: "center",
     marginBottom: 10,
   },
@@ -174,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#111827",
-    marginBottom: 30,
+    marginBottom: 25,
     textAlign: "center",
   },
   input: {
@@ -198,6 +215,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#15803D",
     marginTop: 10,
     marginBottom: 15,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   buttonText: {
     fontSize: 16,

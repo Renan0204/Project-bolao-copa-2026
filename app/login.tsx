@@ -19,9 +19,12 @@ export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
   async function clicouEmLogar() {
-    if (!email) {
+    const emailTratado = email.trim().toLowerCase();
+
+    if (!emailTratado) {
       AlertHelper.warning("E-mail é obrigatório.");
       return;
     }
@@ -32,7 +35,9 @@ export default function LoginScreen() {
     }
 
     try {
-      const token = await logar(email, senha);
+      setCarregando(true);
+
+      const token = await logar(emailTratado, senha);
 
       if (!token) {
         AlertHelper.error("Falha ao realizar login, tente novamente.");
@@ -44,6 +49,8 @@ export default function LoginScreen() {
     } catch (error) {
       AlertHelper.error("Ocorreu um erro ao tentar logar.");
       console.error(error);
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -54,18 +61,19 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       style={styles.container}
     >
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={voltarParaVisitante}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={voltarParaVisitante}>
         <Ionicons name="arrow-back" size={28} color="#15803D" />
       </TouchableOpacity>
 
-      <ScrollView 
+      <ScrollView
+        style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.innerContainer}>
           <Image
@@ -82,8 +90,10 @@ export default function LoginScreen() {
             placeholderTextColor="#6B7280"
             keyboardType="email-address"
             autoCapitalize="none"
+            autoCorrect={false}
             value={email}
             onChangeText={setEmail}
+            returnKeyType="next"
           />
 
           <TextInput
@@ -93,10 +103,18 @@ export default function LoginScreen() {
             secureTextEntry
             value={senha}
             onChangeText={setSenha}
+            returnKeyType="done"
+            onSubmitEditing={clicouEmLogar}
           />
 
-          <TouchableOpacity style={styles.buttonPrimary} onPress={clicouEmLogar}>
-            <Text style={styles.buttonText}>Entrar</Text>
+          <TouchableOpacity
+            style={[styles.buttonPrimary, carregando && styles.buttonDisabled]}
+            onPress={clicouEmLogar}
+            disabled={carregando}
+          >
+            <Text style={styles.buttonText}>
+              {carregando ? "Entrando..." : "Entrar"}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -123,10 +141,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8FAF7",
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
     padding: 15,
+    paddingTop: 80,
+    paddingBottom: 120,
   },
   backButton: {
     position: "absolute",
@@ -147,7 +170,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 3,
   },
-
   innerContainer: {
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
@@ -161,14 +183,12 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-
   logo: {
-    width: 180,
-    height: 180,
+    width: 160,
+    height: 160,
     alignSelf: "center",
     marginBottom: 10,
   },
-
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -176,7 +196,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-
   input: {
     width: "100%",
     height: 45,
@@ -189,7 +208,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginBottom: 15,
   },
-
   buttonPrimary: {
     backgroundColor: "#15803D",
     width: "100%",
@@ -200,18 +218,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-
+  buttonDisabled: {
+    opacity: 0.7,
+  },
   buttonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
-
   link: {
     marginTop: 12,
     alignItems: "center",
   },
-
   linkText: {
     color: "#15803D",
     fontSize: 14,
