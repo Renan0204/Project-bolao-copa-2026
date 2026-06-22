@@ -10,10 +10,10 @@ import {
   View,
   Image,
 } from "react-native";
-import { registrar } from "../services/registerService";
+import { registrar } from "../services/registerService"; // Se desejar, depois pode renomear o serviço para cadastroService
 import { AlertHelper } from "../utils/AlertHelper";
 
-export default function RegisterScreen() {
+export default function CadastroScreen() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
