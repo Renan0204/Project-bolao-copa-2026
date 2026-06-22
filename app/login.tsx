@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { logar } from "../services/loginService";
 import { AlertHelper } from "../utils/AlertHelper";
 
@@ -45,18 +46,29 @@ export default function LoginScreen() {
     }
   }
 
+  function voltarParaVisitante() {
+    router.replace("/");
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={voltarParaVisitante}
+      >
+        <Ionicons name="arrow-back" size={28} color="#15803D" />
+      </TouchableOpacity>
+
       <View style={styles.innerContainer}>
-        <Image 
-          source={require("../assets/logo.png")} 
-          style={styles.logo} 
-          resizeMode="contain" 
+        <Image
+          source={require("../assets/logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
         />
-        
+
         <Text style={styles.title}>Login</Text>
 
         <TextInput
@@ -107,6 +119,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 15,
   },
+
+  backButton: {
+    position: "absolute",
+    top: 45,
+    left: 20,
+    zIndex: 10,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+
   innerContainer: {
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
@@ -120,12 +153,14 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
+
   logo: {
     width: 180,
     height: 180,
     alignSelf: "center",
     marginBottom: 10,
   },
+
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -133,6 +168,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+
   input: {
     width: "100%",
     height: 45,
@@ -145,6 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginBottom: 15,
   },
+
   buttonPrimary: {
     backgroundColor: "#15803D",
     width: "100%",
@@ -155,15 +192,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
+
   buttonText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
+
   link: {
     marginTop: 12,
     alignItems: "center",
   },
+
   linkText: {
     color: "#15803D",
     fontSize: 14,

@@ -39,7 +39,6 @@ export default function HomeScreen() {
   const [carregando, setCarregando] = useState(true);
   const [atualizando, setAtualizando] = useState(false);
 
-  // Alterado para carregar toda vez que a tela ganha foco
   useFocusEffect(
     useCallback(() => {
       carregarDados();
@@ -67,11 +66,10 @@ export default function HomeScreen() {
     }
   }
 
-  // Função para o gesto de arrastar para baixo
   async function atualizarDados() {
     try {
       setAtualizando(true);
-      await carregarDados(false); // Passa false para não piscar a tela inteira
+      await carregarDados(false);
     } finally {
       setAtualizando(false);
     }
@@ -166,7 +164,7 @@ export default function HomeScreen() {
         <RefreshControl
           refreshing={atualizando}
           onRefresh={atualizarDados}
-          colors={['#15803D']} // Cor oficial
+          colors={['#15803D']}
         />
       }
     >
