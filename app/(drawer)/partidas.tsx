@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,9 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  RefreshControl,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { buscarPartidas } from '../../services/partidaService';
 
 type Partida = {
@@ -29,42 +30,59 @@ type TipoFiltro = 'fase' | 'data' | 'status';
 
 export default function PartidasScreen() {
   const router = useRouter();
+
   const [partidas, setPartidas] = useState<Partida[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
 
   const [filtros, setFiltros] = useState({ fase: '', data: '', status: '' });
   const [modalAberto, setModalAberto] = useState(false);
   const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>('fase');
 
-  useEffect(() => {
-    carregarPartidas();
-  }, []);
-
-  async function carregarPartidas() {
+  async function carregarPartidas(exibirLoading = true) {
     try {
-      setCarregando(true);
+      if (exibirLoading) setCarregando(true);
       const dados = await buscarPartidas();
       setPartidas(dados || []);
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao carregar partidas:', error);
     } finally {
-      setCarregando(false);
+      if (exibirLoading) setCarregando(false);
     }
   }
 
-  const formatarData = (dataHora: string) => {
+  useFocusEffect(
+    useCallback(() => {
+      carregarPartidas();
+    }, [])
+  );
+
+  async function atualizarPartidas() {
+    try {
+      setAtualizando(true);
+      await carregarPartidas(false);
+    } finally {
+      setAtualizando(false);
+    }
+  }
+
+  function formatarData(dataHora: string) {
     if (!dataHora) return 'Não informada';
     const data = new Date(dataHora);
     return `${data.toLocaleDateString('pt-BR')} às ${data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-  };
+  }
 
-  const opcoesModal = useMemo(() => {
-    return {
-      fase: ['', ...new Set(partidas.map((p) => p.fase).filter(Boolean))],
-      data: ['', ...new Set(partidas.map((p) => formatarData(p.dataHora)).filter(Boolean))],
-      status: ['', ...new Set(partidas.map((p) => p.status).filter(Boolean))],
-    };
-  }, [partidas]);
+  function formatarUrlImagem(url: string | null | undefined) {
+    if (!url) return undefined;
+    if (url.startsWith('http')) return url;
+    return `http://10.0.2.2:8080${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+
+  const opcoesModal = useMemo(() => ({
+    fase: ['', ...new Set(partidas.map((p) => p.fase).filter(Boolean))],
+    data: ['', ...new Set(partidas.map((p) => formatarData(p.dataHora)).filter(Boolean))],
+    status: ['', ...new Set(partidas.map((p) => p.status).filter(Boolean))],
+  }), [partidas]);
 
   const partidasFiltradas = useMemo(() => {
     return partidas.filter((p) => {
@@ -75,15 +93,22 @@ export default function PartidasScreen() {
     });
   }, [partidas, filtros]);
 
+  function abrirModal(tipo: TipoFiltro) {
+    setTipoFiltro(tipo);
+    setModalAberto(true);
+  }
+
   function selecionarOpcao(valor: string) {
     setFiltros((prev) => ({ ...prev, [tipoFiltro]: valor }));
     setModalAberto(false);
   }
 
-  const formatarUrlImagem = (url: string | null | undefined) => {
-    if (!url) return undefined;
-    return url.startsWith('http') ? url : `http://10.0.2.2:8080${url.startsWith('/') ? '' : '/'}${url}`;
-  };
+  function abrirDetalhesPartida(partidaId: number) {
+    router.push({
+      pathname: '/(drawer)/detalhesPartida',
+      params: { partidaId: String(partidaId) },
+    });
+  }
 
   const renderItem = ({ item }: { item: Partida }) => (
     <View style={styles.card}>
@@ -94,19 +119,19 @@ export default function PartidasScreen() {
           ) : (
             <View style={styles.flagPlaceholder} />
           )}
+
           {item.selecaoBBandeiraUrl ? (
             <Image source={{ uri: formatarUrlImagem(item.selecaoBBandeiraUrl) }} style={styles.flag} />
           ) : (
             <View style={styles.flagPlaceholder} />
           )}
         </View>
+
         <Text style={styles.matchText}>{item.selecaoA} x {item.selecaoB}</Text>
         <Text style={styles.dateText}>{formatarData(item.dataHora)}</Text>
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push({ pathname: '/(drawer)/detalhesPartida', params: { partidaId: String(item.id) } })}
-      >
+
+      <TouchableOpacity style={styles.button} onPress={() => abrirDetalhesPartida(item.id)}>
         <Text style={styles.buttonText}>detalhes</Text>
       </TouchableOpacity>
     </View>
@@ -120,6 +145,12 @@ export default function PartidasScreen() {
     );
   }
 
+  const filtrosBotoes: { key: TipoFiltro; label: string }[] = [
+    { key: 'fase', label: 'Fase' },
+    { key: 'data', label: 'Data' },
+    { key: 'status', label: 'Status' }
+  ];
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -129,22 +160,19 @@ export default function PartidasScreen() {
         numColumns={2}
         columnWrapperStyle={styles.row}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={atualizando} onRefresh={atualizarPartidas} colors={['#15803D']} />}
         ListHeaderComponent={
           <>
             <Text style={styles.title}>Partidas</Text>
-            
             <View style={styles.filtersContainer}>
-              <TouchableOpacity style={styles.filterBtn} onPress={() => { setTipoFiltro('fase'); setModalAberto(true); }}>
-                <Text style={styles.filterText} numberOfLines={1}>{filtros.fase || 'Fase'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.filterBtn} onPress={() => { setTipoFiltro('data'); setModalAberto(true); }}>
-                <Text style={styles.filterText} numberOfLines={1}>{filtros.data || 'Data'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.filterBtn} onPress={() => { setTipoFiltro('status'); setModalAberto(true); }}>
-                <Text style={styles.filterText} numberOfLines={1}>{filtros.status || 'Status'}</Text>
-              </TouchableOpacity>
+              {filtrosBotoes.map(({ key, label }) => (
+                <TouchableOpacity key={key} style={styles.filterBtn} onPress={() => abrirModal(key)}>
+                  <Text style={styles.filterText} numberOfLines={1}>
+                    {filtros[key] || label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
-
             <Text style={styles.section}>Listagem Geral</Text>
           </>
         }
