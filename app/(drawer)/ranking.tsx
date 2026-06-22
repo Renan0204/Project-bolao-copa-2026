@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
+import { useFocusEffect } from "expo-router";
 import {
   buscarRankingGeral,
   buscarMinhaPosicaoRanking,
@@ -31,20 +33,25 @@ export default function RankingScreen() {
   const [ranking, setRanking] = useState<JogadorRanking[]>([]);
   const [meuRanking, setMeuRanking] = useState<JogadorRanking | null>(null);
   const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
 
-  useEffect(() => {
-    carregarRanking();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarRanking();
+    }, [])
+  );
 
-  async function carregarRanking() {
+  async function carregarRanking(exibirLoading = true) {
     try {
-      setCarregando(true);
+      if (exibirLoading) setCarregando(true);
 
       const rankingGeral = await buscarRankingGeral();
       const minhaPosicao = await buscarMinhaPosicaoRanking();
 
       if (rankingGeral?.ranking) {
         setRanking(rankingGeral.ranking);
+      } else if (Array.isArray(rankingGeral)) {
+        setRanking(rankingGeral); 
       }
 
       if (minhaPosicao) {
@@ -53,7 +60,16 @@ export default function RankingScreen() {
     } catch (error) {
       console.error("Erro ao carregar ranking:", error);
     } finally {
-      setCarregando(false);
+      if (exibirLoading) setCarregando(false);
+    }
+  }
+
+  async function atualizarDados() {
+    try {
+      setAtualizando(true);
+      await carregarRanking(false); 
+    } finally {
+      setAtualizando(false);
     }
   }
 
@@ -92,39 +108,49 @@ export default function RankingScreen() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#15803D" />
-        <Text style={styles.loadingText}>Carregando ranking...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ranking</Text>
-
-      <View style={styles.myRankingCard}>
-        <Text style={styles.myRankingTitle}>Meu Ranking</Text>
-
-        {meuRanking ? (
-          <>
-            <Text style={styles.myRankingText}>
-              {obterPosicao(meuRanking)}º {obterNome(meuRanking)} —{" "}
-              {obterPontuacao(meuRanking)} pts
-            </Text>
-            <Text style={styles.myRankingSubText}>
-              Placares exatos: {obterPlacaresExatos(meuRanking)}
-            </Text>
-          </>
-        ) : (
-          <Text style={styles.myRankingText}>
-            Você ainda não está no ranking.
-          </Text>
-        )}
-      </View>
-
       <FlatList
         data={ranking}
         renderItem={renderItem}
         keyExtractor={(item, index) => String(item.id ?? item.usuario?.id ?? index)}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={atualizando}
+            onRefresh={atualizarDados}
+            colors={["#15803D"]}
+          />
+        }
+        ListHeaderComponent={
+          <>
+            <Text style={styles.title}>Ranking</Text>
+
+            <View style={styles.myRankingCard}>
+              <Text style={styles.myRankingTitle}>Meu Ranking</Text>
+
+              {meuRanking ? (
+                <>
+                  <Text style={styles.myRankingText}>
+                    {obterPosicao(meuRanking)}º {obterNome(meuRanking)} —{" "}
+                    {obterPontuacao(meuRanking)} pts
+                  </Text>
+                  <Text style={styles.myRankingSubText}>
+                    Placares exatos: {obterPlacaresExatos(meuRanking)}
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.myRankingText}>
+                  Você ainda não está no ranking.
+                </Text>
+              )}
+            </View>
+          </>
+        }
         ListEmptyComponent={
           <Text style={styles.emptyText}>Nenhum usuário no ranking.</Text>
         }
@@ -145,16 +171,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#F8FAF7",
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#6B7280",
-  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     color: "#111827",
+    textAlign: "center",
   },
   myRankingCard: {
     backgroundColor: "#FFFFFF",
