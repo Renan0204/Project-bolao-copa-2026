@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,8 +7,10 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
   buscarUsuarioLogado,
@@ -33,14 +35,18 @@ export default function UsuarioScreen() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [quantidadePalpites, setQuantidadePalpites] = useState(0);
   const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
 
-  useEffect(() => {
-    carregarDados();
-  }, []);
+  // Atualiza automaticamente ao entrar na tela ou voltar da edição
+  useFocusEffect(
+    useCallback(() => {
+      carregarDados();
+    }, [])
+  );
 
-  async function carregarDados() {
+  async function carregarDados(exibirLoading = true) {
     try {
-      setCarregando(true);
+      if (exibirLoading) setCarregando(true);
 
       const dadosUsuario = await buscarUsuarioLogado();
       const usuarioRecebido = dadosUsuario?.usuario ?? dadosUsuario;
@@ -60,26 +66,21 @@ export default function UsuarioScreen() {
       console.error("Erro ao carregar dados da conta:", error);
       router.replace("/login");
     } finally {
-      setCarregando(false);
+      if (exibirLoading) setCarregando(false);
     }
   }
 
+  async function atualizarDados() {
+    setAtualizando(true);
+    await carregarDados(false);
+    setAtualizando(false);
+  }
+
   function handleSair() {
-    Alert.alert(
-      "Sair da Conta",
-      "Deseja realmente sair da sua conta?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Sair",
-          style: "destructive",
-          onPress: sairDaConta,
-        },
-      ]
-    );
+    Alert.alert("Sair da Conta", "Deseja realmente sair da sua conta?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Sair", style: "destructive", onPress: sairDaConta },
+    ]);
   }
 
   async function sairDaConta() {
@@ -87,7 +88,6 @@ export default function UsuarioScreen() {
       await sairUsuario();
       router.replace("/login");
     } catch (error) {
-      console.error("Erro ao sair da conta:", error);
       router.replace("/login");
     }
   }
@@ -95,17 +95,10 @@ export default function UsuarioScreen() {
   function handleExcluirConta() {
     Alert.alert(
       "Excluir Conta",
-      "Tem certeza que deseja excluir a sua conta? Esta ação é irreversível e perderá todos os seus palpites.",
+      "Tem certeza que deseja excluir a sua conta? Esta ação é irreversível.",
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Sim, excluir",
-          style: "destructive",
-          onPress: excluirConta,
-        },
+        { text: "Cancelar", style: "cancel" },
+        { text: "Sim, excluir", style: "destructive", onPress: excluirConta },
       ]
     );
   }
@@ -113,25 +106,11 @@ export default function UsuarioScreen() {
   async function excluirConta() {
     try {
       await excluirUsuarioLogado();
-
-      Alert.alert("Conta excluída", "A sua conta foi removida com sucesso.");
       router.replace("/login");
     } catch (error: any) {
-      console.error("Erro ao excluir conta:", error);
-
-      const mensagem =
-        error?.response?.data?.erro ||
-        error?.response?.data?.mensagem ||
-        error?.response?.data ||
-        "Erro ao excluir conta.";
-
-      Alert.alert("Erro", String(mensagem));
+      Alert.alert("Erro", "Não foi possível excluir a conta.");
     }
   }
-
-  const handleAlterarFoto = () => {
-    Alert.alert("Funcionalidade", "A alteração de foto será tratada pela equipe mobile.");
-  };
 
   if (carregando) {
     return (
@@ -143,7 +122,16 @@ export default function UsuarioScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={atualizando}
+          onRefresh={atualizarDados}
+          colors={["#15803D"]}
+        />
+      }
+    >
       <Text style={styles.title}>Minha Conta</Text>
 
       <View style={styles.profileHeader}>
@@ -155,10 +143,6 @@ export default function UsuarioScreen() {
           )}
         </View>
 
-        <TouchableOpacity onPress={handleAlterarFoto}>
-          <Text style={styles.editPhotoText}>Alterar Foto Perfil</Text>
-        </TouchableOpacity>
-
         <Text style={styles.userName}>{usuario?.nome ?? "Usuário"}</Text>
         <Text style={styles.userEmail}>{usuario?.email ?? ""}</Text>
 
@@ -166,7 +150,7 @@ export default function UsuarioScreen() {
           style={styles.buttonEditProfile}
           onPress={() => router.push("/(drawer)/editarUsuario")}
         >
-          <Text style={styles.buttonTextEdit}>Editar Perfil (Nome e Email)</Text>
+          <Text style={styles.buttonTextEdit}>Editar Perfil</Text>
         </TouchableOpacity>
       </View>
 
@@ -192,17 +176,18 @@ export default function UsuarioScreen() {
       <TouchableOpacity style={styles.buttonDelete} onPress={handleExcluirConta}>
         <Text style={styles.buttonTextDelete}>Excluir conta</Text>
       </TouchableOpacity>
-    </View>
+      
+      <View style={{ height: 40 }} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20, 
-    backgroundColor: "#F8FAF7"
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#F8FAF7",
   },
-
   loadingContainer: {
     flex: 1,
     backgroundColor: "#F8FAF7",
@@ -214,7 +199,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#6B7280",
   },
-
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -222,7 +206,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#111827",
   },
-
   profileHeader: {
     alignItems: "center",
     marginBottom: 30,
@@ -278,7 +261,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
-
   infoBox: {
     backgroundColor: "#FFFFFF",
     padding: 15,
@@ -290,17 +272,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  label: { 
-    fontSize: 16, 
-    fontWeight: "600", 
-    color: "#6B7280"
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6B7280",
   },
-  value: { 
-    fontSize: 16, 
-    fontWeight: "bold", 
-    color: "#15803D"
+  value: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#15803D",
   },
-  
   buttonExit: {
     backgroundColor: "#15803D",
     padding: 15,
@@ -317,10 +298,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#DC2626",
   },
-  buttonText: { 
+  buttonText: {
     color: "#FFFFFF",
-    fontSize: 16, 
-    fontWeight: "bold" 
+    fontSize: 16,
+    fontWeight: "bold",
   },
   buttonTextDelete: {
     color: "#DC2626",

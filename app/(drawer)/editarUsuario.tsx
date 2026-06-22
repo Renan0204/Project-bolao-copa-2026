@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { AlertHelper } from "../../utils/AlertHelper";
@@ -24,7 +25,6 @@ type Usuario = {
 export default function EditarUsuarioScreen() {
   const router = useRouter();
 
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -38,12 +38,9 @@ export default function EditarUsuarioScreen() {
   async function carregarUsuario() {
     try {
       setCarregando(true);
-
       const dados = await buscarUsuarioLogado();
-
       const usuarioRecebido = dados?.usuario ?? dados;
 
-      setUsuario(usuarioRecebido);
       setNome(usuarioRecebido?.nome ?? "");
       setEmail(usuarioRecebido?.email ?? "");
       setAvatarUrl(usuarioRecebido?.avatarUrl ?? "");
@@ -64,24 +61,13 @@ export default function EditarUsuarioScreen() {
 
     try {
       setSalvando(true);
-
-      await atualizarUsuarioLogado({
-        nome,
-        email,
-        avatarUrl,
-      });
+      await atualizarUsuarioLogado({ nome, email, avatarUrl });
 
       AlertHelper.success("Perfil atualizado com sucesso!");
-      router.back();
+      // Volta para a tela de Perfil já garantindo a navegação correta
+      router.replace("/(drawer)/usuario");
     } catch (error: any) {
-      console.error("Erro ao salvar perfil:", error);
-
-      const mensagem =
-        error?.response?.data?.erro ||
-        error?.response?.data?.mensagem ||
-        error?.response?.data ||
-        "Erro ao salvar alterações.";
-
+      const mensagem = error?.response?.data?.erro || error?.response?.data?.mensagem || "Erro ao salvar alterações.";
       AlertHelper.error(String(mensagem));
     } finally {
       setSalvando(false);
@@ -89,7 +75,7 @@ export default function EditarUsuarioScreen() {
   }
 
   function handleCancelar() {
-    router.back();
+    router.replace("/(drawer)/usuario");
   }
 
   if (carregando) {
@@ -102,7 +88,7 @@ export default function EditarUsuarioScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <Text style={styles.title}>Editar Perfil</Text>
 
       <View style={styles.form}>
@@ -143,22 +129,22 @@ export default function EditarUsuarioScreen() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.buttonSecondary}
-          onPress={handleCancelar}
-        >
+        <TouchableOpacity style={styles.buttonSecondary} onPress={handleCancelar}>
           <Text style={styles.buttonTextSecondary}>Cancelar</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#F8FAF7",
+  },
+  scrollContent: {
+    padding: 20,
+    flexGrow: 1,
   },
   loadingContainer: {
     flex: 1,
