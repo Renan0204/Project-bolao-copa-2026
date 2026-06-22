@@ -46,6 +46,7 @@ export default function HomeScreen() {
   const [partidas, setPartidas] = useState<Partida[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [atualizando, setAtualizando] = useState(false);
+  const [erroConexao, setErroConexao] = useState(false); // <-- NOVO ESTADO
 
   useFocusEffect(
     useCallback(() => {
@@ -56,6 +57,7 @@ export default function HomeScreen() {
   async function carregarDados(exibirLoading = true) {
     try {
       if (exibirLoading) setCarregando(true);
+      setErroConexao(false);
 
       const usuario = await buscarUsuarioLogado();
       const partidasApi = await buscarPartidas();
@@ -63,7 +65,7 @@ export default function HomeScreen() {
       setNomeUsuario(usuario?.nome ?? usuario?.usuario?.nome ?? "Usuário");
       setPartidas(partidasApi ?? []);
     } catch {
-      router.replace("/login");
+      setErroConexao(true);
     } finally {
       if (exibirLoading) setCarregando(false);
     }
@@ -186,6 +188,25 @@ export default function HomeScreen() {
     );
   }
 
+  if (erroConexao) {
+    return (
+      <ScrollView
+        contentContainerStyle={styles.errorContainer}
+        refreshControl={
+          <RefreshControl refreshing={atualizando} onRefresh={atualizarDados} colors={["#15803D"]} />
+        }
+      >
+        <Text style={styles.errorTitle}>Ops! Falha na conexão.</Text>
+        <Text style={styles.errorText}>Não foi possível carregar os jogos.</Text>
+        <Text style={styles.errorText}>Puxe a tela para baixo para tentar novamente.</Text>
+        
+        <TouchableOpacity style={styles.retryButton} onPress={() => carregarDados(true)}>
+          <Text style={styles.palpitarText}>Tentar Novamente</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  }
+
   return (
     <ScrollView
       style={styles.container}
@@ -253,6 +274,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#6B7280",
+  },
+
+  errorContainer: {
+    flex: 1,
+    backgroundColor: "#F8FAF7",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#DC2626",
+    marginBottom: 10,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#6B7280",
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  retryButton: {
+    backgroundColor: "#15803D",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 20,
   },
 
   greeting: {

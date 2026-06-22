@@ -50,11 +50,16 @@ export default function FazerPalpiteScreen() {
 
   useEffect(() => {
     carregarDados();
-  }, []);
+  }, [partidaId]);
 
   async function carregarDados() {
     try {
       setCarregando(true);
+      
+      setPartida(null);
+      setPalpiteExistente(null);
+      setGolsSelecaoA("");
+      setGolsSelecaoB("");
 
       if (!partidaId) {
         Alert.alert("Erro", "Partida não informada.");
@@ -202,7 +207,7 @@ export default function FazerPalpiteScreen() {
             style={styles.input}
             keyboardType="numeric"
             value={golsSelecaoA}
-            onChangeText={setGolsSelecaoA}
+            onChangeText={(texto) => setGolsSelecaoA(texto.replace(/[^0-9]/g, ""))}
             placeholder="0"
           />
         </View>
@@ -215,7 +220,7 @@ export default function FazerPalpiteScreen() {
             style={styles.input}
             keyboardType="numeric"
             value={golsSelecaoB}
-            onChangeText={setGolsSelecaoB}
+            onChangeText={(texto) => setGolsSelecaoB(texto.replace(/[^0-9]/g, ""))}
             placeholder="0"
           />
         </View>
