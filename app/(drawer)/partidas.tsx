@@ -62,46 +62,65 @@ export default function PartidasScreen() {
     }${url}`;
   };
 
+  function formatarData(dataHora: string) {
+  if (!dataHora) return "Data não informada";
+
+  const data = new Date(dataHora);
+
+  const dataFormatada = data.toLocaleDateString("pt-BR");
+
+  const horaFormatada = data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return `${dataFormatada} às ${horaFormatada}`;
+}
+
   const renderItem = ({ item }: { item: Partida }) => (
-    <View style={styles.card}>
-      <View style={styles.cardContent}>
-        <View style={styles.flagsRow}>
-          {item.selecaoABandeiraUrl ? (
-            <Image
-              source={{
-                uri: formatarUrlImagem(item.selecaoABandeiraUrl),
-              }}
-              style={styles.flag}
-            />
-          ) : (
-            <View style={styles.flagPlaceholder} />
-          )}
+  <View style={styles.card}>
+    <View style={styles.cardContent}>
+      <View style={styles.flagsRow}>
+        {item.selecaoABandeiraUrl ? (
+          <Image
+            source={{
+              uri: formatarUrlImagem(item.selecaoABandeiraUrl),
+            }}
+            style={styles.flag}
+          />
+        ) : (
+          <View style={styles.flagPlaceholder} />
+        )}
 
-          {item.selecaoBBandeiraUrl ? (
-            <Image
-              source={{
-                uri: formatarUrlImagem(item.selecaoBBandeiraUrl),
-              }}
-              style={styles.flag}
-            />
-          ) : (
-            <View style={styles.flagPlaceholder} />
-          )}
-        </View>
-
-        <Text style={styles.matchText}>
-          {item.selecaoA} x {item.selecaoB}
-        </Text>
+        {item.selecaoBBandeiraUrl ? (
+          <Image
+            source={{
+              uri: formatarUrlImagem(item.selecaoBBandeiraUrl),
+            }}
+            style={styles.flag}
+          />
+        ) : (
+          <View style={styles.flagPlaceholder} />
+        )}
       </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => abrirDetalhes(item.id)}
-      >
-        <Text style={styles.buttonText}>detalhes</Text>
-      </TouchableOpacity>
+      <Text style={styles.matchText}>
+        {item.selecaoA} x {item.selecaoB}
+      </Text>
+
+      <Text style={styles.dateText}>
+        {formatarData(item.dataHora)}
+      </Text>
     </View>
-  );
+
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => abrirDetalhes(item.id)}
+    >
+      <Text style={styles.buttonText}>detalhes</Text>
+    </TouchableOpacity>
+  </View>
+);
 
   if (carregando) {
     return (
@@ -241,6 +260,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111827',
   },
+
+  dateText: {
+  marginTop: 6,
+  fontSize: 12,
+  color: "#6B7280",
+  textAlign: "center",
+},
 
   button: {
     marginTop: 6,

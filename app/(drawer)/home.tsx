@@ -61,6 +61,19 @@ export default function HomeScreen() {
     }
   }
 
+  function formatarData(dataHora: string) {
+  if (!dataHora) return "Data não informada";
+
+  const data = new Date(dataHora);
+  const dataFormatada = data.toLocaleDateString("pt-BR");
+  const horaFormatada = data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return `${dataFormatada} às ${horaFormatada}`;
+}
+
   function abrirDetalhesPartida(partidaId: number) {
     router.push({
       pathname: "/(drawer)/detalhesPartida",
@@ -69,46 +82,54 @@ export default function HomeScreen() {
   }
 
   function renderizarCardPartida(partida: Partida, destaque = false) {
-    return (
-      <View
-        key={partida.id}
-        style={destaque ? styles.featuredContainer : styles.smallContainer}
-      >
-        <View style={destaque ? styles.featuredCard : styles.smallCard}>
-          <View style={styles.flagsRow}>
-            {partida.selecaoABandeiraUrl ? (
-              <Image
-                source={{ uri: formatarUrlImagem(partida.selecaoABandeiraUrl) }}
-                style={styles.flag}
-              />
-            ) : (
-              <View style={styles.flagPlaceholder} />
-            )}
+  return (
+    <View
+      key={partida.id}
+      style={destaque ? styles.featuredContainer : styles.smallContainer}
+    >
+      <View style={destaque ? styles.featuredCard : styles.smallCard}>
+        <View style={styles.flagsRow}>
+          {partida.selecaoABandeiraUrl ? (
+            <Image
+              source={{
+                uri: formatarUrlImagem(partida.selecaoABandeiraUrl),
+              }}
+              style={styles.flag}
+            />
+          ) : (
+            <View style={styles.flagPlaceholder} />
+          )}
 
-            {partida.selecaoBBandeiraUrl ? (
-              <Image
-                source={{ uri: formatarUrlImagem(partida.selecaoBBandeiraUrl) }}
-                style={styles.flag}
-              />
-            ) : (
-              <View style={styles.flagPlaceholder} />
-            )}
-          </View>
-
-          <Text style={destaque ? styles.matchText : styles.smallMatchText}>
-            {partida.selecaoA} x {partida.selecaoB}
-          </Text>
+          {partida.selecaoBBandeiraUrl ? (
+            <Image
+              source={{
+                uri: formatarUrlImagem(partida.selecaoBBandeiraUrl),
+              }}
+              style={styles.flag}
+            />
+          ) : (
+            <View style={styles.flagPlaceholder} />
+          )}
         </View>
 
-        <TouchableOpacity
-          style={styles.palpitarButton}
-          onPress={() => abrirDetalhesPartida(partida.id)}
-        >
-          <Text style={styles.palpitarText}>palpitar</Text>
-        </TouchableOpacity>
+        <Text style={destaque ? styles.matchText : styles.smallMatchText}>
+          {partida.selecaoA} x {partida.selecaoB}
+        </Text>
+
+        <Text style={styles.dateText}>
+          {formatarData(partida.dataHora)}
+        </Text>
       </View>
-    );
-  }
+
+      <TouchableOpacity
+        style={styles.palpitarButton}
+        onPress={() => abrirDetalhesPartida(partida.id)}
+      >
+        <Text style={styles.palpitarText}>palpitar</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
   if (carregando) {
     return (
@@ -131,7 +152,7 @@ export default function HomeScreen() {
           style={styles.tabButton}
           onPress={() => router.push("/(drawer)/partidas")}
         >
-          <Text style={styles.tabText}>Próximas {"\n"}partidas</Text>
+          <Text style={styles.tabText}>Partidas</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.tabButton}
@@ -210,14 +231,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   featuredCard: {
-    height: 140,
+    height: 125,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#D1D5DB",
     borderRadius: 12,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 10,
+    paddingVertical: 15,
     marginBottom: 6,
   },
   matchText: {
@@ -226,6 +247,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#111827",
   },
+
+  dateText: {
+  marginTop: 6,
+  fontSize: 12,
+  color: "#6B7280",
+  textAlign: "center",
+  fontWeight: "500",
+},
+
   gridRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -237,14 +267,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   smallCard: {
-    height: 110,
+     height: 140,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#D1D5DB",
     borderRadius: 12,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 10,
+    paddingVertical: 15,
     marginBottom: 6,
   },
   smallMatchText: {
