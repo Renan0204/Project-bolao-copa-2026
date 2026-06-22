@@ -7,11 +7,18 @@ export default function DrawerLayout() {
       screenOptions={{
         headerTitle: "Bolão Copa 2026",
         headerTitleAlign: 'center',
-        drawerActiveTintColor: '#007AFF',
+        headerStyle: {
+          backgroundColor: '#F8FAF7', // Fundo Claro
+        },
+        headerTintColor: '#111827', // Texto Principal
+        drawerActiveTintColor: '#15803D', // Verde Principal
+        drawerStyle: {
+          backgroundColor: '#FFFFFF', // Branco
+        },
       }}
     >
       <Drawer.Screen
-        name="home" // Tem que ser exatamente o nome do arquivo (home.tsx)
+        name="home"
         options={{
           drawerLabel: 'Início',
           title: 'Início',
@@ -55,7 +62,7 @@ export default function DrawerLayout() {
         name="fazerPalpite"
         options={{
           title: 'Fazer Palpite',
-          drawerItemStyle: { display: 'none' } // Isso esconde a tela do menu lateral
+          drawerItemStyle: { display: 'none' }
         }}
       />
       <Drawer.Screen
@@ -77,12 +84,6 @@ export default function DrawerLayout() {
         options={{
           title: 'Detalhes da Partida',
           drawerItemStyle: { display: 'none' }
-        }}
-      />
-      <Drawer.Screen
-        name="profile"
-        options={{
-          drawerItemStyle: { display: 'none' } // Ocultando o profile antigo caso ainda esteja lá
         }}
       />
     </Drawer>

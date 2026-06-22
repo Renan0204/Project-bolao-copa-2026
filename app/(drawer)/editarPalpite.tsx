@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function EditarPalpiteScreen() {
-  // Aqui você pode inicializar os valores com o palpite já existente
-  const [golsBrasil, setGolsBrasil] = useState('2'); // exemplo: já tinha 2 gols
-  const [golsHaiti, setGolsHaiti] = useState('1');  // exemplo: já tinha 1 gol
+  const [golsBrasil, setGolsBrasil] = useState('2');
+  const [golsHaiti, setGolsHaiti] = useState('1');
 
   const salvarAlteracoes = () => {
     console.log(`Novo palpite: Brasil ${golsBrasil} x Haiti ${golsHaiti}`);
-    // Futuramente: atualizar contexto ou enviar para API
   };
 
   return (
@@ -37,21 +35,55 @@ export default function EditarPalpiteScreen() {
         />
       </View>
 
-      <Button title="Salvar Alterações" onPress={salvarAlteracoes} />
+      <TouchableOpacity style={styles.button} onPress={salvarAlteracoes}>
+        <Text style={styles.buttonText}>Salvar Alterações</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  block: { marginBottom: 15 },
-  label: { fontSize: 16, marginBottom: 5 },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#F8FAF7',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#111827',
+    textAlign: 'center',
+  },
+  block: {
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6B7280',
+    marginBottom: 5,
+  },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    borderRadius: 5,
+    borderColor: '#D1D5DB',
+    padding: 12,
+    borderRadius: 8,
     textAlign: 'center',
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
+    color: '#111827',
+  },
+  button: {
+    backgroundColor: '#15803D',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

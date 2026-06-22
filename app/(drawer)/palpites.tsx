@@ -44,10 +44,7 @@ export default function PalpitesScreen() {
   async function carregarPalpites() {
     try {
       setCarregando(true);
-
       const dados = await listarMeusPalpites();
-
-      console.log("MEUS PALPITES:", dados);
 
       if (Array.isArray(dados)) {
         setPalpites(dados);
@@ -139,7 +136,7 @@ export default function PalpitesScreen() {
   if (carregando) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#15803D" />
         <Text style={styles.loadingText}>Carregando palpites...</Text>
       </View>
     );
@@ -178,47 +175,59 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     padding: 20, 
-    backgroundColor: "#fff" 
+    backgroundColor: "#F8FAF7"
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
     alignItems: "center",
     justifyContent: "center",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#6B7280",
   },
   title: { 
     fontSize: 24, 
     fontWeight: "bold", 
-    marginBottom: 20 
+    marginBottom: 20,
+    color: "#111827"
   },
   section: { 
     fontSize: 18, 
     fontWeight: "600", 
     marginTop: 15, 
-    marginBottom: 10 
+    marginBottom: 10,
+    color: "#111827"
   },
   card: {
-    backgroundColor: "#f2f2f2",
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderRadius: 12,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   match: { 
     fontSize: 16, 
     fontWeight: "600", 
-    marginBottom: 5 
+    marginBottom: 5,
+    color: "#111827"
   },
   palpite: { 
     fontSize: 16, 
-    marginBottom: 5 
+    marginBottom: 5,
+    color: "#6B7280"
   },
   status: {
     fontSize: 14,
-    color: "#555",
+    color: "#6B7280",
     marginBottom: 5,
   },
   result: { 
@@ -226,32 +235,33 @@ const styles = StyleSheet.create({
   },
   placar: { 
     fontSize: 14, 
-    color: "#555" 
+    color: "#6B7280"
   },
   pontos: { 
     fontSize: 14, 
     fontWeight: "bold", 
-    color: "#2e7d32" 
+    color: "#16A34A"
   },
   criterio: {
     fontSize: 13,
-    color: "#555",
+    color: "#6B7280",
     marginTop: 3,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     padding: 10,
     borderRadius: 6,
     alignItems: "center",
     marginTop: 8,
   },
   buttonText: { 
-    color: "#fff", 
+    color: "#FFFFFF",
     fontWeight: "bold" 
   },
   emptyText: {
-    color: "#666",
+    color: "#6B7280",
     fontSize: 14,
     marginBottom: 10,
+    textAlign: "center"
   },
 });

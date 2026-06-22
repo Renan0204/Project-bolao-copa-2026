@@ -43,9 +43,6 @@ export default function RankingScreen() {
       const rankingGeral = await buscarRankingGeral();
       const minhaPosicao = await buscarMinhaPosicaoRanking();
 
-      console.log("RANKING GERAL:", rankingGeral);
-      console.log("MINHA POSIÇÃO:", minhaPosicao);
-
       if (rankingGeral?.ranking) {
         setRanking(rankingGeral.ranking);
       }
@@ -94,7 +91,7 @@ export default function RankingScreen() {
   if (carregando) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#15803D" />
         <Text style={styles.loadingText}>Carregando ranking...</Text>
       </View>
     );
@@ -140,72 +137,88 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
   },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#6B7280",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#111827",
   },
   myRankingCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   myRankingTitle: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 5,
+    color: "#111827",
   },
   myRankingText: {
     fontSize: 16,
     fontWeight: "500",
+    color: "#111827",
   },
   myRankingSubText: {
     fontSize: 13,
-    color: "#666",
+    color: "#6B7280",
     marginTop: 4,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   name: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#111827",
   },
   exatos: {
     fontSize: 12,
-    color: "#666",
+    color: "#6B7280",
     marginTop: 4,
   },
   points: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "#16A34A",
   },
   emptyText: {
     textAlign: "center",
-    color: "#666",
+    color: "#6B7280",
     marginTop: 20,
   },
 });

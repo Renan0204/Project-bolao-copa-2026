@@ -63,50 +63,50 @@ export default function PartidasScreen() {
   };
 
   const renderItem = ({ item }: { item: Partida }) => (
- <View style={styles.card}>
-  <View style={styles.cardContent}>
-    <View style={styles.flagsRow}>
-      {item.selecaoABandeiraUrl ? (
-        <Image
-          source={{
-            uri: formatarUrlImagem(item.selecaoABandeiraUrl),
-          }}
-          style={styles.flag}
-        />
-      ) : (
-        <View style={styles.flagPlaceholder} />
-      )}
+    <View style={styles.card}>
+      <View style={styles.cardContent}>
+        <View style={styles.flagsRow}>
+          {item.selecaoABandeiraUrl ? (
+            <Image
+              source={{
+                uri: formatarUrlImagem(item.selecaoABandeiraUrl),
+              }}
+              style={styles.flag}
+            />
+          ) : (
+            <View style={styles.flagPlaceholder} />
+          )}
 
-      {item.selecaoBBandeiraUrl ? (
-        <Image
-          source={{
-            uri: formatarUrlImagem(item.selecaoBBandeiraUrl),
-          }}
-          style={styles.flag}
-        />
-      ) : (
-        <View style={styles.flagPlaceholder} />
-      )}
+          {item.selecaoBBandeiraUrl ? (
+            <Image
+              source={{
+                uri: formatarUrlImagem(item.selecaoBBandeiraUrl),
+              }}
+              style={styles.flag}
+            />
+          ) : (
+            <View style={styles.flagPlaceholder} />
+          )}
+        </View>
+
+        <Text style={styles.matchText}>
+          {item.selecaoA} x {item.selecaoB}
+        </Text>
+      </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => abrirDetalhes(item.id)}
+      >
+        <Text style={styles.buttonText}>detalhes</Text>
+      </TouchableOpacity>
     </View>
-
-    <Text style={styles.matchText}>
-      {item.selecaoA} x {item.selecaoB}
-    </Text>
-  </View>
-
-  <TouchableOpacity
-    style={styles.button}
-    onPress={() => abrirDetalhes(item.id)}
-  >
-    <Text style={styles.buttonText}>detalhes</Text>
-  </TouchableOpacity>
-</View>
   );
 
   if (carregando) {
     return (
       <View style={styles.containerCenter}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color="#15803D" />
       </View>
     );
   }
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#F8FAF7',
   },
 
   containerCenter: {
@@ -167,20 +167,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 25,
+    color: '#111827',
   },
 
   filter: {
     borderWidth: 1,
-    borderColor: '#D9D9D9',
+    borderColor: '#D1D5DB',
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
     marginBottom: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
 
   filterText: {
-    color: '#555',
+    color: '#6B7280',
   },
 
   section: {
@@ -188,6 +189,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 15,
     marginBottom: 15,
+    color: '#111827',
   },
 
   row: {
@@ -202,9 +204,9 @@ const styles = StyleSheet.create({
   cardContent: {
     height: 140,
     borderWidth: 1,
-    borderColor: '#D9D9D9',
+    borderColor: '#D1D5DB',
     borderRadius: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
   flagPlaceholder: {
     width: 50,
     height: 35,
-    backgroundColor: '#eee',
+    backgroundColor: '#D1D5DB',
     borderRadius: 4,
     marginHorizontal: 5,
   },
@@ -237,19 +239,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontWeight: '600',
-    color: '#333',
+    color: '#111827',
   },
 
   button: {
     marginTop: 6,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#15803D',
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: 'center',
   },
 
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -257,6 +259,6 @@ const styles = StyleSheet.create({
   empty: {
     textAlign: 'center',
     marginTop: 20,
-    color: '#777',
+    color: '#6B7280',
   },
 });

@@ -194,14 +194,14 @@ function renderizarCardPartida(partida: Partida, destaque = false) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: "#F8FAF7",
     paddingTop: 20,
     paddingHorizontal: 20,
   },
 
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: "#F8FAF7",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -209,13 +209,14 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#6B7280",
   },
 
   greeting: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#333",
+    color: "#111827",
     textAlign: "center",
   },
 
@@ -226,11 +227,11 @@ const styles = StyleSheet.create({
   },
 
   tabButton: {
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFFFFF",
     padding: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#D1D5DB",
     width: "48%",
     alignItems: "center",
     justifyContent: "center",
@@ -240,6 +241,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     textAlign: "center",
+    color: "#111827",
   },
 
   featuredContainer: {
@@ -248,9 +250,9 @@ const styles = StyleSheet.create({
 
   featuredCard: {
     height: 140,
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#D1D5DB",
     borderRadius: 12,
     justifyContent: "flex-end",
     alignItems: "center",
@@ -262,13 +264,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
+    color: "#111827",
   },
 
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#111827",
     textAlign: "center",
   },
 
@@ -286,9 +289,9 @@ const styles = StyleSheet.create({
 
   smallCard: {
     height: 110,
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#D1D5DB",
     borderRadius: 12,
     justifyContent: "flex-end",
     alignItems: "center",
@@ -301,19 +304,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     paddingHorizontal: 5,
+    color: "#111827",
   },
 
   palpitarButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     borderRadius: 8,
     paddingVertical: 8,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#007AFF",
+    borderColor: "#15803D",
   },
 
   palpitarText: {
-    color: "#FFF",
+    color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 14,
   },
@@ -335,14 +339,14 @@ const styles = StyleSheet.create({
   flagPlaceholder: {
     width: 40,
     height: 28,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "#D1D5DB",
     borderRadius: 4,
     marginHorizontal: 5,
   },
 
   emptyText: {
     textAlign: "center",
-    color: "#666",
+    color: "#6B7280",
     width: "100%",
     marginTop: 10,
   },

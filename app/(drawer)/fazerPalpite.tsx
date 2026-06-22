@@ -85,7 +85,6 @@ export default function FazerPalpiteScreen() {
         setGolsSelecaoB(String(palpiteDaPartida.golsSelecaoB));
       }
     } catch (error) {
-      console.error("Erro ao carregar dados do palpite:", error);
       Alert.alert("Erro", "Não foi possível carregar os dados do palpite.");
     } finally {
       setCarregando(false);
@@ -119,9 +118,7 @@ export default function FazerPalpiteScreen() {
     try {
       setSalvando(true);
 
-      const resposta = await registrarPalpite(partida.id, golsA, golsB);
-
-      console.log("PALPITE SALVO:", resposta);
+      await registrarPalpite(partida.id, golsA, golsB);
 
       if (palpiteExistente) {
         Alert.alert("Sucesso", "Palpite atualizado com sucesso!");
@@ -131,8 +128,6 @@ export default function FazerPalpiteScreen() {
 
       router.replace("/(drawer)/palpites");
     } catch (error: any) {
-      console.error("Erro ao salvar palpite:", error);
-
       const mensagem =
         error?.response?.data?.erro ||
         error?.response?.data?.mensagem ||
@@ -148,9 +143,7 @@ export default function FazerPalpiteScreen() {
     if (!dataHora) {
       return "Data não informada";
     }
-
     const data = new Date(dataHora);
-
     return data.toLocaleString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
@@ -163,7 +156,7 @@ export default function FazerPalpiteScreen() {
   if (carregando) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#15803D" />
         <Text style={styles.loadingText}>Carregando palpite...</Text>
       </View>
     );
@@ -187,7 +180,6 @@ export default function FazerPalpiteScreen() {
         <Text style={styles.matchTitle}>
           {partida.selecaoA} x {partida.selecaoB}
         </Text>
-
         <Text style={styles.infoText}>{partida.fase}</Text>
         <Text style={styles.infoText}>{partida.grupo}</Text>
         <Text style={styles.infoText}>{partida.estadio}</Text>
@@ -238,8 +230,8 @@ export default function FazerPalpiteScreen() {
           {salvando
             ? "Salvando..."
             : palpiteExistente
-              ? "Atualizar Palpite"
-              : "Registrar Palpite"}
+            ? "Atualizar Palpite"
+            : "Registrar Palpite"}
         </Text>
       </TouchableOpacity>
     </View>
@@ -250,31 +242,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
     alignItems: "center",
     justifyContent: "center",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#6B7280",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: "#111827",
   },
   card: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#FFFFFF",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
     alignItems: "center",
   },
   matchTitle: {
@@ -282,30 +276,31 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+    color: "#111827",
   },
   infoText: {
     fontSize: 14,
-    color: "#555",
+    color: "#6B7280",
     marginTop: 2,
     textAlign: "center",
   },
   statusText: {
     fontSize: 14,
-    color: "#333",
+    color: "#111827",
     fontWeight: "bold",
     marginTop: 8,
     textAlign: "center",
   },
   noticeCard: {
-    backgroundColor: "#FFF8E1",
+    backgroundColor: "#FFFBEB",
     borderWidth: 1,
-    borderColor: "#F0D98C",
+    borderColor: "#F59E0B",
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
   },
   noticeText: {
-    color: "#6D5600",
+    color: "#991B1B",
     fontSize: 14,
     textAlign: "center",
   },
@@ -324,29 +319,32 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center",
+    color: "#111827",
   },
   input: {
     width: "100%",
     height: 50,
     borderWidth: 1,
-    borderColor: "#999",
+    borderColor: "#D1D5DB",
     borderRadius: 8,
     textAlign: "center",
     fontSize: 20,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#FFFFFF",
+    color: "#111827",
   },
   xText: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#6B7280",
   },
   buttonPrimary: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },

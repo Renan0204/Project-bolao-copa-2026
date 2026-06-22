@@ -95,7 +95,7 @@ export default function EditarUsuarioScreen() {
   if (carregando) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#15803D" />
         <Text style={styles.loadingText}>Carregando perfil...</Text>
       </View>
     );
@@ -158,23 +158,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
     alignItems: "center",
     justifyContent: "center",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#6B7280",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 30,
     textAlign: "center",
+    color: "#111827",
   },
   form: {
     flex: 1,
@@ -183,27 +185,28 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#555",
+    color: "#6B7280",
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#D1D5DB",
     borderRadius: 8,
     padding: 12,
     marginBottom: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     fontSize: 16,
+    color: "#111827",
   },
   buttonPrimary: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -214,10 +217,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 15,
     borderWidth: 1,
-    borderColor: "#666",
+    borderColor: "#D1D5DB",
   },
   buttonTextSecondary: {
-    color: "#666",
+    color: "#6B7280",
     fontSize: 16,
     fontWeight: "bold",
   },

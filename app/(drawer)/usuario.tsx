@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -135,7 +136,7 @@ export default function UsuarioScreen() {
   if (carregando) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#15803D" />
         <Text style={styles.loadingText}>Carregando conta...</Text>
       </View>
     );
@@ -147,7 +148,11 @@ export default function UsuarioScreen() {
 
       <View style={styles.profileHeader}>
         <View style={styles.photoContainer}>
-          <Ionicons name="person" size={60} color="#8e8e93" />
+          {usuario?.avatarUrl ? (
+            <Image source={{ uri: usuario.avatarUrl }} style={styles.profileImage} />
+          ) : (
+            <Ionicons name="person" size={60} color="#6B7280" />
+          )}
         </View>
 
         <TouchableOpacity onPress={handleAlterarFoto}>
@@ -192,17 +197,22 @@ export default function UsuarioScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  container: { 
+    flex: 1, 
+    padding: 20, 
+    backgroundColor: "#F8FAF7"
+  },
 
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
     justifyContent: "center",
     alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: "#6B7280",
   },
 
   title: {
@@ -210,30 +220,36 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: "#111827",
   },
 
   profileHeader: {
     alignItems: "center",
     marginBottom: 30,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#FFFFFF",
     padding: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: "#D1D5DB",
   },
   photoContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#D1D5DB",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
     borderWidth: 2,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
+    overflow: "hidden",
+  },
+  profileImage: {
+    width: "100%",
+    height: "100%",
   },
   editPhotoText: {
-    color: "#007AFF",
+    color: "#15803D",
     fontSize: 14,
     fontWeight: "500",
     marginBottom: 15,
@@ -241,12 +257,12 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
+    color: "#111827",
     marginBottom: 3,
   },
   userEmail: {
     fontSize: 16,
-    color: "#666",
+    color: "#6B7280",
     marginBottom: 15,
   },
   buttonEditProfile: {
@@ -255,29 +271,38 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#007AFF",
+    borderColor: "#15803D",
   },
   buttonTextEdit: {
-    color: "#007AFF",
+    color: "#15803D",
     fontSize: 14,
     fontWeight: "600",
   },
 
   infoBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     padding: 15,
     borderRadius: 8,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  label: { fontSize: 16, fontWeight: "600", color: "#555" },
-  value: { fontSize: 16, fontWeight: "bold", color: "#007AFF" },
+  label: { 
+    fontSize: 16, 
+    fontWeight: "600", 
+    color: "#6B7280"
+  },
+  value: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    color: "#15803D"
+  },
+  
   buttonExit: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: "#15803D",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -290,11 +315,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 15,
     borderWidth: 1,
-    borderColor: "#FF3B30",
+    borderColor: "#DC2626",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  buttonText: { 
+    color: "#FFFFFF",
+    fontSize: 16, 
+    fontWeight: "bold" 
+  },
   buttonTextDelete: {
-    color: "#FF3B30",
+    color: "#DC2626",
     fontSize: 16,
     fontWeight: "bold",
   },
