@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -62,52 +63,57 @@ export default function LoginScreen() {
         <Ionicons name="arrow-back" size={28} color="#15803D" />
       </TouchableOpacity>
 
-      <View style={styles.innerContainer}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.innerContainer}>
+          <Image
+            source={require("../assets/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-        <Text style={styles.title}>Login</Text>
+          <Text style={styles.title}>Login</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#6B7280"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="#6B7280"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#6B7280"
-          secureTextEntry
-          value={senha}
-          onChangeText={setSenha}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#6B7280"
+            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+          />
 
-        <TouchableOpacity style={styles.buttonPrimary} onPress={clicouEmLogar}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonPrimary} onPress={clicouEmLogar}>
+            <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => router.push("/cadastro")}
-        >
-          <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => router.push("/cadastro")}
+          >
+            <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => router.push("/recuperarConta")}
-        >
-          <Text style={styles.linkText}>Esqueceu a senha?</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => router.push("/recuperarConta")}
+          >
+            <Text style={styles.linkText}>Esqueceu a senha?</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -116,10 +122,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8FAF7",
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
     padding: 15,
   },
-
   backButton: {
     position: "absolute",
     top: 45,
