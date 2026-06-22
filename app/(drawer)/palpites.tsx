@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { listarMeusPalpites } from "../../services/palpiteService";
 
 type Palpite = {
@@ -36,14 +37,17 @@ export default function PalpitesScreen() {
 
   const [palpites, setPalpites] = useState<Palpite[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
 
-  useEffect(() => {
-    carregarPalpites();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarPalpites();
+    }, [])
+  );
 
-  async function carregarPalpites() {
+  async function carregarPalpites(exibirLoading = true) {
     try {
-      setCarregando(true);
+      if (exibirLoading) setCarregando(true);
       const dados = await listarMeusPalpites();
 
       if (Array.isArray(dados)) {
@@ -60,13 +64,22 @@ export default function PalpitesScreen() {
     } catch (error) {
       console.error("Erro ao carregar meus palpites:", error);
     } finally {
-      setCarregando(false);
+      if (exibirLoading) setCarregando(false);
     }
   }
 
-function partidaDisputada(item: Palpite) {
+  async function atualizarDados() {
+    try {
+      setAtualizando(true);
+      await carregarPalpites(false);
+    } finally {
+      setAtualizando(false);
+    }
+  }
+
+  function partidaDisputada(item: Palpite) {
     if (!item.partida?.dataHora) {
-      return true; 
+      return true;
     }
 
     const dataPartida = new Date(item.partida.dataHora).getTime();
@@ -101,8 +114,8 @@ function partidaDisputada(item: Palpite) {
     });
   }
 
-  const renderPalpite = ({ item }: { item: Palpite }) => (
-    <View style={styles.card}>
+  const renderPalpite = (item: Palpite) => (
+    <View style={styles.card} key={item.id}>
       <Text style={styles.match}>{obterNomePartida(item)}</Text>
 
       <Text style={styles.palpite}>
@@ -120,9 +133,7 @@ function partidaDisputada(item: Palpite) {
             {item.partida?.golsSelecaoB ?? "-"}
           </Text>
 
-          <Text style={styles.pontos}>
-            +{item.pontos ?? 0} pontos
-          </Text>
+          <Text style={styles.pontos}>+{item.pontos ?? 0} pontos</Text>
 
           {item.criterioPontuacao && (
             <Text style={styles.criterio}>{item.criterioPontuacao}</Text>
@@ -154,39 +165,43 @@ function partidaDisputada(item: Palpite) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={atualizando}
+          onRefresh={atualizarDados}
+          colors={["#15803D"]}
+        />
+      }
+    >
       <Text style={styles.title}>Meus Palpites</Text>
 
       <Text style={styles.section}>A disputar</Text>
-
-      <FlatList
-        data={palpitesADisputar}
-        renderItem={renderPalpite}
-        keyExtractor={(item) => String(item.id)}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhum palpite a disputar.</Text>
-        }
-      />
+      {palpitesADisputar.length > 0 ? (
+        palpitesADisputar.map(renderPalpite)
+      ) : (
+        <Text style={styles.emptyText}>Nenhum palpite a disputar.</Text>
+      )}
 
       <Text style={styles.section}>Disputado</Text>
-
-      <FlatList
-        data={palpitesDisputados}
-        renderItem={renderPalpite}
-        keyExtractor={(item) => String(item.id)}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhum palpite disputado.</Text>
-        }
-      />
-    </View>
+      {palpitesDisputados.length > 0 ? (
+        palpitesDisputados.map(renderPalpite)
+      ) : (
+        <Text style={styles.emptyText}>Nenhum palpite disputado.</Text>
+      )}
+      
+      <View style={{ height: 40 }} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20, 
-    backgroundColor: "#F8FAF7"
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#F8FAF7",
   },
   loadingContainer: {
     flex: 1,
@@ -199,18 +214,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#6B7280",
   },
-  title: { 
-    fontSize: 24, 
-    fontWeight: "bold", 
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
     marginBottom: 20,
-    color: "#111827"
+    color: "#111827",
   },
-  section: { 
-    fontSize: 18, 
-    fontWeight: "600", 
-    marginTop: 15, 
+  section: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 15,
     marginBottom: 10,
-    color: "#111827"
+    color: "#111827",
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -225,33 +240,33 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  match: { 
-    fontSize: 16, 
-    fontWeight: "600", 
+  match: {
+    fontSize: 16,
+    fontWeight: "600",
     marginBottom: 5,
-    color: "#111827"
+    color: "#111827",
   },
-  palpite: { 
-    fontSize: 16, 
+  palpite: {
+    fontSize: 16,
     marginBottom: 5,
-    color: "#6B7280"
+    color: "#6B7280",
   },
   status: {
     fontSize: 14,
     color: "#6B7280",
     marginBottom: 5,
   },
-  result: { 
-    marginTop: 5 
+  result: {
+    marginTop: 5,
   },
-  placar: { 
-    fontSize: 14, 
-    color: "#6B7280"
+  placar: {
+    fontSize: 14,
+    color: "#6B7280",
   },
-  pontos: { 
-    fontSize: 14, 
-    fontWeight: "bold", 
-    color: "#16A34A"
+  pontos: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#16A34A",
   },
   criterio: {
     fontSize: 13,
@@ -265,14 +280,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  buttonText: { 
+  buttonText: {
     color: "#FFFFFF",
-    fontWeight: "bold" 
+    fontWeight: "bold",
   },
   emptyText: {
     color: "#6B7280",
     fontSize: 14,
     marginBottom: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
 });
