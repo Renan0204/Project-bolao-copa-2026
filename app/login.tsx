@@ -36,7 +36,6 @@ export default function LoginScreen() {
         return;
       }
 
-      // sucesso no login
       AlertHelper.success("Login realizado com sucesso!");
       router.replace("/(drawer)/home");
     } catch (error) {
@@ -54,12 +53,13 @@ export default function LoginScreen() {
         <Text style={styles.title}>Login</Text>
 
         <View style={styles.uploadBox}>
-          <Text style={styles.uploadText}> Logo / Upload</Text>
+          <Text style={styles.uploadText}>Logo</Text>
         </View>
 
         <TextInput
           style={styles.input}
           placeholder="E-mail"
+          placeholderTextColor="#6B7280"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -69,6 +69,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder="Senha"
+          placeholderTextColor="#6B7280"
           secureTextEntry
           value={senha}
           onChangeText={setSenha}
@@ -99,57 +100,57 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "#F8FAF7",
     justifyContent: "center",
     padding: 15,
   },
   innerContainer: {
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 20,
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#B0B0B0",
-    elevation: 5,
+    borderColor: "#D1D5DB",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
+    elevation: 5,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
+    color: "#111827",
     marginBottom: 20,
     textAlign: "center",
   },
   uploadBox: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#F3F4F6",
     padding: 20,
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
   },
   uploadText: {
     fontSize: 16,
-    color: "#555",
+    color: "#6B7280",
   },
   input: {
     width: "100%",
     height: 45,
     borderWidth: 1,
-    borderColor: "#8e8e93",
+    borderColor: "#D1D5DB",
     borderRadius: 8,
     paddingHorizontal: 12,
     fontSize: 16,
-    color: "#1c1c1e",
-    backgroundColor: "#F2F2F2",
+    color: "#111827",
+    backgroundColor: "#FFFFFF",
     marginBottom: 15,
   },
   buttonPrimary: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     width: "100%",
     height: 45,
     borderRadius: 8,
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: "#FFF",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -168,7 +169,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   linkText: {
-    color: "#007AFF",
+    color: "#15803D",
     fontSize: 14,
+    fontWeight: "600",
   },
 });

@@ -39,8 +39,6 @@ export default function RegisterScreen() {
       AlertHelper.success("Conta criada com sucesso!");
       router.replace("/login");
     } catch (error: any) {
-      console.error("Erro ao cadastrar usuário:", error);
-
       const mensagem =
         error?.response?.data?.erro ||
         error?.response?.data?.mensagem ||
@@ -64,6 +62,7 @@ export default function RegisterScreen() {
         <TextInput
           style={styles.input}
           placeholder="Nome"
+          placeholderTextColor="#6B7280"
           value={name}
           onChangeText={setName}
         />
@@ -71,6 +70,7 @@ export default function RegisterScreen() {
         <TextInput
           style={styles.input}
           placeholder="E-mail"
+          placeholderTextColor="#6B7280"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -80,6 +80,7 @@ export default function RegisterScreen() {
         <TextInput
           style={styles.input}
           placeholder="Senha"
+          placeholderTextColor="#6B7280"
           secureTextEntry
           value={senha}
           onChangeText={setSenha}
@@ -88,6 +89,7 @@ export default function RegisterScreen() {
         <TextInput
           style={styles.input}
           placeholder="Confirmar Senha"
+          placeholderTextColor="#6B7280"
           secureTextEntry
           value={confirmSenha}
           onChangeText={setConfirmSenha}
@@ -114,55 +116,58 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "#F8FAF7",
     justifyContent: "center",
-    padding: 10,
+    padding: 20,
   },
   innerContainer: {
-    backgroundColor: "#FFF",
-    borderRadius: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
     padding: 20,
-    justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#B0B0B0",
-    elevation: 5,
+    borderColor: "#D1D5DB",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
+    color: "#111827",
     marginBottom: 30,
-    alignSelf: "center",
+    textAlign: "center",
   },
   input: {
     width: "100%",
-    height: 40,
+    height: 50,
     borderWidth: 1,
-    borderColor: "#8e8e93",
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    borderColor: "#D1D5DB",
+    borderRadius: 8,
+    paddingHorizontal: 12,
     fontSize: 16,
-    color: "#1c1c1e",
-    backgroundColor: "#F2F2F2",
-    marginBottom: 10,
+    color: "#111827",
+    backgroundColor: "#FFFFFF",
+    marginBottom: 15,
   },
   button: {
     width: "100%",
-    height: 40,
-    borderRadius: 5,
+    height: 50,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     marginTop: 10,
     marginBottom: 15,
   },
   buttonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFF",
+    color: "#FFFFFF",
   },
   linkText: {
-    color: "#007AFF",
+    color: "#15803D",
     fontWeight: "600",
     fontSize: 14,
     textAlign: "center",

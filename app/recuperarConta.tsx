@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { AlertHelper } from "../utils/AlertHelper"; // importa o helper
+import { AlertHelper } from "../utils/AlertHelper";
 
 export default function RecuperarContaScreen() {
   const router = useRouter();
@@ -20,8 +20,7 @@ export default function RecuperarContaScreen() {
     }
 
     try {
-      // aqui você chamaria seu serviço de recuperação, ex: await recuperarConta(email)
-      const enviado = true; // simulação
+      const enviado = true;
 
       if (!enviado) {
         AlertHelper.error("E-mail inválido, tente novamente.");
@@ -37,37 +36,41 @@ export default function RecuperarContaScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recuperação</Text>
+      <View style={styles.innerContainer}>
+        <Text style={styles.title}>Recuperação</Text>
 
-      <View style={styles.uploadBox}>
-        <Text style={styles.uploadText}>📤 Upload</Text>
+        <View style={styles.uploadBox}>
+          <Text style={styles.uploadText}>📤 Upload</Text>
+        </View>
+
+        <TextInput
+          style={styles.input}
+          placeholder="E-mail"
+          placeholderTextColor="#6B7280"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
+
+        <TouchableOpacity style={styles.buttonPrimary} onPress={enviarCodigo}>
+          <Text style={styles.buttonText}>Enviar código</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => router.push("/register")}
+        >
+          <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => router.push("/login")}
+        >
+          <Text style={styles.linkText}>Já possui conta? Entrar</Text>
+        </TouchableOpacity>
       </View>
-
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-
-      <TouchableOpacity style={styles.buttonPrimary} onPress={enviarCodigo}>
-        <Text style={styles.buttonText}>Enviar código</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.link}
-        onPress={() => router.push("/register")}
-      >
-        <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.link}
-        onPress={() => router.push("/login")}
-      >
-        <Text style={styles.linkText}>Já possui conta? Entrar</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -77,37 +80,52 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#F8FAF7",
+  },
+  innerContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: "#111827",
   },
   uploadBox: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#F3F4F6",
     padding: 20,
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
   },
   uploadText: {
     fontSize: 16,
-    color: "#555",
+    color: "#6B7280",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#D1D5DB",
     borderRadius: 8,
     padding: 12,
     marginBottom: 15,
     fontSize: 16,
+    backgroundColor: "#FFFFFF",
+    color: "#111827",
   },
   buttonPrimary: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#15803D",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -115,7 +133,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -124,8 +142,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   linkText: {
-    color: "#007AFF",
+    color: "#15803D",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
   },
 });
