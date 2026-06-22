@@ -52,9 +52,9 @@ export default function LoginScreen() {
     >
       <View style={styles.innerContainer}>
         <Image 
-           source={require("../assets/logo.png")} 
-            style={styles.logo} 
-           resizeMode="contain" 
+          source={require("../assets/logo.png")} 
+          style={styles.logo} 
+          resizeMode="contain" 
         />
         
         <Text style={styles.title}>Login</Text>
@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 180,
+    height: 180,
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,

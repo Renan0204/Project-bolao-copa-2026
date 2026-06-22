@@ -98,10 +98,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 180,
+    height: 180,
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,
