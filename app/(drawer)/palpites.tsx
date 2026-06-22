@@ -64,8 +64,19 @@ export default function PalpitesScreen() {
     }
   }
 
-  function partidaDisputada(item: Palpite) {
-    return item.partida?.status === "Finalizada";
+function partidaDisputada(item: Palpite) {
+    if (!item.partida?.dataHora) {
+      return true; 
+    }
+
+    const dataPartida = new Date(item.partida.dataHora).getTime();
+    const agora = new Date().getTime();
+
+    return (
+      agora >= dataPartida ||
+      item.partida.status === "Finalizada" ||
+      item.partida.status === "Em Andamento"
+    );
   }
 
   function obterNomePartida(item: Palpite) {
