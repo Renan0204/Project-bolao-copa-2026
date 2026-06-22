@@ -4,11 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   ActivityIndicator,
   Image,
   Modal,
   RefreshControl,
+  ScrollView,
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { buscarPartidas } from '../../services/partidaService';
@@ -39,6 +39,12 @@ export default function PartidasScreen() {
   const [modalAberto, setModalAberto] = useState(false);
   const [tipoFiltro, setTipoFiltro] = useState<TipoFiltro>('fase');
 
+  useFocusEffect(
+    useCallback(() => {
+      carregarPartidas();
+    }, [])
+  );
+
   async function carregarPartidas(exibirLoading = true) {
     try {
       if (exibirLoading) setCarregando(true);
@@ -50,12 +56,6 @@ export default function PartidasScreen() {
       if (exibirLoading) setCarregando(false);
     }
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      carregarPartidas();
-    }, [])
-  );
 
   async function atualizarPartidas() {
     try {
@@ -78,6 +78,12 @@ export default function PartidasScreen() {
     return `http://10.0.2.2:8080${url.startsWith('/') ? '' : '/'}${url}`;
   }
 
+  function statusContem(statusReal: string, palavraBuscada: string) {
+    if (!statusReal) return false;
+    const limpo = statusReal.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    return limpo.includes(palavraBuscada);
+  }
+
   const opcoesModal = useMemo(() => ({
     fase: ['', ...new Set(partidas.map((p) => p.fase).filter(Boolean))],
     data: ['', ...new Set(partidas.map((p) => formatarData(p.dataHora)).filter(Boolean))],
@@ -93,49 +99,60 @@ export default function PartidasScreen() {
     });
   }, [partidas, filtros]);
 
+  const partidasEmAndamento = partidasFiltradas.filter((p) => statusContem(p.status, 'andamento'));
+  const partidasAgendadas = partidasFiltradas.filter((p) => statusContem(p.status, 'agend'));
+  const nenhumaPartida = partidasEmAndamento.length === 0 && partidasAgendadas.length === 0;
+
   function abrirModal(tipo: TipoFiltro) {
     setTipoFiltro(tipo);
     setModalAberto(true);
   }
 
   function selecionarOpcao(valor: string) {
-    setFiltros((prev) => ({ ...prev, [tipoFiltro]: valor }));
+    setFiltros({ ...filtros, [tipoFiltro]: valor });
     setModalAberto(false);
   }
 
-  function abrirDetalhesPartida(partidaId: number) {
-    router.push({
-      pathname: '/(drawer)/detalhesPartida',
-      params: { partidaId: String(partidaId) },
-    });
-  }
+  function renderizarCardPartida(item: Partida) {
+    return (
+      <View key={item.id} style={styles.card}>
+        <View style={styles.cardContent}>
+          <View style={styles.flagsRow}>
+            {item.selecaoABandeiraUrl ? (
+              <Image source={{ uri: formatarUrlImagem(item.selecaoABandeiraUrl) }} style={styles.flag} />
+            ) : (
+              <View style={styles.flagPlaceholder} />
+            )}
 
-  const renderItem = ({ item }: { item: Partida }) => (
-    <View style={styles.card}>
-      <View style={styles.cardContent}>
-        <View style={styles.flagsRow}>
-          {item.selecaoABandeiraUrl ? (
-            <Image source={{ uri: formatarUrlImagem(item.selecaoABandeiraUrl) }} style={styles.flag} />
-          ) : (
-            <View style={styles.flagPlaceholder} />
-          )}
+            {item.selecaoBBandeiraUrl ? (
+              <Image source={{ uri: formatarUrlImagem(item.selecaoBBandeiraUrl) }} style={styles.flag} />
+            ) : (
+              <View style={styles.flagPlaceholder} />
+            )}
+          </View>
 
-          {item.selecaoBBandeiraUrl ? (
-            <Image source={{ uri: formatarUrlImagem(item.selecaoBBandeiraUrl) }} style={styles.flag} />
-          ) : (
-            <View style={styles.flagPlaceholder} />
-          )}
+          <Text style={styles.matchText}>{item.selecaoA} x {item.selecaoB}</Text>
+          <Text style={styles.dateText}>{formatarData(item.dataHora)}</Text>
         </View>
 
-        <Text style={styles.matchText}>{item.selecaoA} x {item.selecaoB}</Text>
-        <Text style={styles.dateText}>{formatarData(item.dataHora)}</Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push({ pathname: '/(drawer)/detalhesPartida', params: { partidaId: String(item.id) } })}>
+          <Text style={styles.buttonText}>detalhes</Text>
+        </TouchableOpacity>
       </View>
+    );
+  }
 
-      <TouchableOpacity style={styles.button} onPress={() => abrirDetalhesPartida(item.id)}>
-        <Text style={styles.buttonText}>detalhes</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  function renderizarGrupo(titulo: string, lista: Partida[]) {
+    if (lista.length === 0) return null;
+    return (
+      <View style={styles.groupContainer}>
+        <Text style={styles.section}>{titulo}</Text>
+        <View style={styles.cardsGrid}>
+          {lista.map(renderizarCardPartida)}
+        </View>
+      </View>
+    );
+  }
 
   if (carregando) {
     return (
@@ -148,36 +165,32 @@ export default function PartidasScreen() {
   const filtrosBotoes: { key: TipoFiltro; label: string }[] = [
     { key: 'fase', label: 'Fase' },
     { key: 'data', label: 'Data' },
-    { key: 'status', label: 'Status' }
+    { key: 'status', label: 'Status' },
   ];
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={partidasFiltradas}
-        renderItem={renderItem}
-        keyExtractor={(item) => String(item.id)}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
+      <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={atualizando} onRefresh={atualizarPartidas} colors={['#15803D']} />}
-        ListHeaderComponent={
-          <>
-            <Text style={styles.title}>Partidas</Text>
-            <View style={styles.filtersContainer}>
-              {filtrosBotoes.map(({ key, label }) => (
-                <TouchableOpacity key={key} style={styles.filterBtn} onPress={() => abrirModal(key)}>
-                  <Text style={styles.filterText} numberOfLines={1}>
-                    {filtros[key] || label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <Text style={styles.section}>Listagem Geral</Text>
-          </>
-        }
-        ListEmptyComponent={<Text style={styles.empty}>Nenhuma partida encontrada.</Text>}
-      />
+      >
+        <Text style={styles.title}>Partidas</Text>
+
+        <View style={styles.filtersContainer}>
+          {filtrosBotoes.map(({ key, label }) => (
+            <TouchableOpacity key={key} style={styles.filterBtn} onPress={() => abrirModal(key)}>
+              <Text style={styles.filterText} numberOfLines={1}>{filtros[key] || label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {renderizarGrupo('Em Andamento', partidasEmAndamento)}
+        {renderizarGrupo('Agendados', partidasAgendadas)}
+
+        {nenhumaPartida && <Text style={styles.empty}>Nenhuma partida encontrada.</Text>}
+
+        <View style={{ height: 40 }} />
+      </ScrollView>
 
       <Modal visible={modalAberto} transparent animationType="fade" onRequestClose={() => setModalAberto(false)}>
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setModalAberto(false)}>
@@ -228,14 +241,19 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 14,
   },
+  groupContainer: {
+    marginTop: 8,
+  },
   section: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     marginTop: 10,
     marginBottom: 15,
     color: '#111827',
   },
-  row: {
+  cardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
   card: {
