@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
-  RefreshControl,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -35,26 +34,23 @@ export default function UsuarioScreen() {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [quantidadePalpites, setQuantidadePalpites] = useState(0);
   const [carregando, setCarregando] = useState(true);
-  const [atualizando, setAtualizando] = useState(false);
 
-  // Atualiza automaticamente ao entrar na tela ou voltar da edição
+  // Atualiza os dados sempre que a tela ganha foco
   useFocusEffect(
     useCallback(() => {
       carregarDados();
     }, [])
   );
 
-  async function carregarDados(exibirLoading = true) {
+  async function carregarDados() {
     try {
-      if (exibirLoading) setCarregando(true);
-
+      setCarregando(true);
       const dadosUsuario = await buscarUsuarioLogado();
       const usuarioRecebido = dadosUsuario?.usuario ?? dadosUsuario;
 
       setUsuario(usuarioRecebido);
 
       const dadosPalpites = await listarMeusPalpites();
-
       if (Array.isArray(dadosPalpites)) {
         setQuantidadePalpites(dadosPalpites.length);
       } else if (dadosPalpites?.palpites && Array.isArray(dadosPalpites.palpites)) {
@@ -66,14 +62,8 @@ export default function UsuarioScreen() {
       console.error("Erro ao carregar dados da conta:", error);
       router.replace("/login");
     } finally {
-      if (exibirLoading) setCarregando(false);
+      setCarregando(false);
     }
-  }
-
-  async function atualizarDados() {
-    setAtualizando(true);
-    await carregarDados(false);
-    setAtualizando(false);
   }
 
   function handleSair() {
@@ -106,6 +96,7 @@ export default function UsuarioScreen() {
   async function excluirConta() {
     try {
       await excluirUsuarioLogado();
+      Alert.alert("Sucesso", "A sua conta foi removida com sucesso.");
       router.replace("/login");
     } catch (error: any) {
       Alert.alert("Erro", "Não foi possível excluir a conta.");
@@ -122,16 +113,7 @@ export default function UsuarioScreen() {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={atualizando}
-          onRefresh={atualizarDados}
-          colors={["#15803D"]}
-        />
-      }
-    >
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <Text style={styles.title}>Minha Conta</Text>
 
       <View style={styles.profileHeader}>
@@ -176,8 +158,6 @@ export default function UsuarioScreen() {
       <TouchableOpacity style={styles.buttonDelete} onPress={handleExcluirConta}>
         <Text style={styles.buttonTextDelete}>Excluir conta</Text>
       </TouchableOpacity>
-      
-      <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
@@ -185,8 +165,11 @@ export default function UsuarioScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#F8FAF7",
+  },
+  scrollContent: {
+    padding: 20,
+    flexGrow: 1,
   },
   loadingContainer: {
     flex: 1,
@@ -230,12 +213,6 @@ const styles = StyleSheet.create({
   profileImage: {
     width: "100%",
     height: "100%",
-  },
-  editPhotoText: {
-    color: "#15803D",
-    fontSize: 14,
-    fontWeight: "500",
-    marginBottom: 15,
   },
   userName: {
     fontSize: 20,
