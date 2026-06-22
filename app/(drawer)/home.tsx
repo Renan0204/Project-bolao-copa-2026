@@ -97,6 +97,10 @@ export default function HomeScreen() {
     return normalizarStatus(partida.status).includes("andamento");
   }
 
+  function ehFinalizada(partida: Partida) {
+    return normalizarStatus(partida.status).includes("finalizad");
+  }
+
   function temPlacar(partida: Partida) {
     return partida.golsSelecaoA != null && partida.golsSelecaoB != null;
   }
@@ -150,7 +154,7 @@ export default function HomeScreen() {
           onPress={() => abrirDetalhesPartida(partida.id)}
         >
           <Text style={styles.palpitarText}>
-            {destaque && emAndamento ? "detalhes" : "palpitar"}
+            {emAndamento ? "detalhes" : "palpitar"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -158,13 +162,19 @@ export default function HomeScreen() {
   }
 
   const partidaDestaque = useMemo(() => {
-    return partidas.find(ehEmAndamento) ?? partidas[0];
+    const emAndamento = partidas.find(ehEmAndamento);
+    if (emAndamento) return emAndamento;
+
+    return partidas.find((p) => !ehEmAndamento(p) && !ehFinalizada(p));
   }, [partidas]);
 
   const demaisPartidas = useMemo(() => {
-    return partidaDestaque
-      ? partidas.filter((partida) => partida.id !== partidaDestaque.id)
-      : [];
+    return partidas.filter((partida) => {
+      const isDestaque = partidaDestaque && partida.id === partidaDestaque.id;
+      const isTerminada = ehFinalizada(partida);
+      
+      return !isDestaque && !isTerminada;
+    });
   }, [partidas, partidaDestaque]);
 
   if (carregando) {
@@ -204,7 +214,7 @@ export default function HomeScreen() {
       ) : (
         <View style={styles.featuredContainer}>
           <View style={styles.featuredCard}>
-            <Text style={styles.matchText}>Nenhuma partida cadastrada</Text>
+            <Text style={styles.matchText}>Nenhuma partida agendada</Text>
           </View>
         </View>
       )}
