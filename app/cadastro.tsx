@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ScrollView,
 } from "react-native";
 import { registrar } from "../services/cadastroService";
 import { AlertHelper } from "../utils/AlertHelper";
@@ -73,65 +74,70 @@ export default function CadastroScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <View style={styles.innerContainer}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.innerContainer}>
+          <Image
+            source={require("../assets/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-        <Text style={styles.title}>Cadastro</Text>
+          <Text style={styles.title}>Cadastro</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nome"
-          placeholderTextColor="#6B7280"
-          value={name}
-          onChangeText={setName}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Nome"
+            placeholderTextColor="#6B7280"
+            value={name}
+            onChangeText={setName}
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#6B7280"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="#6B7280"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#6B7280"
-          secureTextEntry
-          value={senha}
-          onChangeText={setSenha}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#6B7280"
+            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Confirmar Senha"
-          placeholderTextColor="#6B7280"
-          secureTextEntry
-          value={confirmSenha}
-          onChangeText={setConfirmSenha}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar Senha"
+            placeholderTextColor="#6B7280"
+            secureTextEntry
+            value={confirmSenha}
+            onChangeText={setConfirmSenha}
+          />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={clicouEmCadastrar}
-          disabled={carregando}
-        >
-          <Text style={styles.buttonText}>
-            {carregando ? "CADASTRANDO..." : "CADASTRAR"}
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={clicouEmCadastrar}
+            disabled={carregando}
+          >
+            <Text style={styles.buttonText}>
+              {carregando ? "CADASTRANDO..." : "CADASTRAR"}
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.linkText}>Já tem uma conta? Voltar</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={styles.linkText}>Já tem uma conta? Voltar</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -140,6 +146,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8FAF7",
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
     padding: 20,
   },
