@@ -6,6 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { AlertHelper } from "../utils/AlertHelper";
@@ -36,54 +39,65 @@ export default function RecuperarContaScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.innerContainer}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.innerContainer}>
+          <Image
+            source={require("../assets/logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-        <Text style={styles.title}>Recuperação</Text>
+          <Text style={styles.title}>Recuperação</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="#6B7280"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="#6B7280"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-        <TouchableOpacity style={styles.buttonPrimary} onPress={enviarCodigo}>
-          <Text style={styles.buttonText}>Enviar código</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonPrimary} onPress={enviarCodigo}>
+            <Text style={styles.buttonText}>Enviar código</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => router.push("/register")}
-        >
-          <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => router.replace("/cadastro")} 
+          >
+            <Text style={styles.linkText}>Não tem uma conta? Cadastrar</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => router.push("/login")}
-        >
-          <Text style={styles.linkText}>Já possui conta? Entrar</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <TouchableOpacity
+            style={styles.link}
+            onPress={() => router.replace("/login")}
+          >
+            <Text style={styles.linkText}>Já possui conta? Entrar</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "center",
     backgroundColor: "#F8FAF7",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 20,
   },
   innerContainer: {
     backgroundColor: "#FFFFFF",
