@@ -10,7 +10,7 @@ import {
   View,
   Image,
 } from "react-native";
-import { registrar } from "../services/registerService"; // Se desejar, depois pode renomear o serviço para cadastroService
+import { registrar } from "../services/cadastroService";
 import { AlertHelper } from "../utils/AlertHelper";
 
 export default function CadastroScreen() {
@@ -24,6 +24,22 @@ export default function CadastroScreen() {
   async function clicouEmCadastrar() {
     if (!name || !email || !senha || !confirmSenha) {
       AlertHelper.warning("Todos os campos são obrigatórios.");
+      return;
+    }
+
+    if (name.trim().length < 3) {
+      AlertHelper.warning("O nome deve ter pelo menos 3 letras.");
+      return;
+    }
+
+    const emailValido = /\S+@\S+\.\S+/;
+    if (!emailValido.test(email)) {
+      AlertHelper.warning("Por favor, insira um e-mail válido.");
+      return;
+    }
+
+    if (senha.length < 6) {
+      AlertHelper.warning("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
 
