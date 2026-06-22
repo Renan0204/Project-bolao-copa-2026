@@ -16,22 +16,27 @@ type Partida = {
   golsSelecaoB?: number | null;
 };
 
+function normalizarStatus(status: string) {
+  return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() || "";
+}
+
 export default function DetalhesPartidaScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const partidaId = Number(params.partidaId);
+const partidaId = Number(params.partidaId);
 
   const [partida, setPartida] = useState<Partida | null>(null);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     carregarPartida();
-  }, []);
+  }, [partidaId]); 
 
   async function carregarPartida() {
     try {
       setCarregando(true);
+      setPartida(null);
 
       if (!partidaId) {
         console.error("partidaId não informado.");
@@ -94,6 +99,13 @@ export default function DetalhesPartidaScreen() {
     );
   }
 
+  const statusNorm = normalizarStatus(partida.status);
+  const isFinalizada = statusNorm.includes("finalizad");
+  const isEmAndamento = statusNorm.includes("andamento");
+  const isAgendada = !isFinalizada && !isEmAndamento;
+
+  const permitePalpite = isAgendada;
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Detalhes da Partida</Text>
@@ -103,9 +115,15 @@ export default function DetalhesPartidaScreen() {
       </View>
 
       <View style={styles.matchCard}>
-        <Text style={styles.matchTitle}>
-          {partida.selecaoA} x {partida.selecaoB}
-        </Text>
+        {(isFinalizada || isEmAndamento) && partida.golsSelecaoA != null && partida.golsSelecaoB != null ? (
+           <Text style={styles.matchTitle}>
+             {partida.selecaoA}  <Text style={styles.scoreHighlight}>{partida.golsSelecaoA}</Text> x <Text style={styles.scoreHighlight}>{partida.golsSelecaoB}</Text>  {partida.selecaoB}
+           </Text>
+        ) : (
+          <Text style={styles.matchTitle}>
+            {partida.selecaoA} x {partida.selecaoB}
+          </Text>
+        )}
       </View>
 
       <View style={styles.infoCard}>
@@ -135,15 +153,25 @@ export default function DetalhesPartidaScreen() {
 
       <View style={styles.infoCard}>
         <Text style={styles.label}>Status:</Text>
-        <Text style={styles.value}>{partida.status}</Text>
+        <Text style={[styles.value, isFinalizada && styles.statusFinalizada, isEmAndamento && styles.statusAndamento]}>
+           {partida.status || "Desconhecido"}
+        </Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.buttonPrimary}
-        onPress={irParaFazerPalpite}
-      >
-        <Text style={styles.buttonText}>Fazer Palpite</Text>
-      </TouchableOpacity>
+      {permitePalpite ? (
+        <TouchableOpacity
+          style={styles.buttonPrimary}
+          onPress={irParaFazerPalpite}
+        >
+          <Text style={styles.buttonText}>Fazer Palpite</Text>
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.disabledButtonContainer}>
+          <Text style={styles.disabledButtonText}>
+            {isFinalizada ? "Partida Encerrada" : "Partida em Andamento"}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -200,6 +228,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#111827"
   },
+  scoreHighlight: {
+    color: "#15803D",
+    fontWeight: "900",
+  },
   infoCard: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -217,7 +249,16 @@ const styles = StyleSheet.create({
   },
   value: { 
     fontSize: 16, 
-    color: "#111827"
+    color: "#111827",
+    fontWeight: "500",
+  },
+  statusFinalizada: {
+    color: "#DC2626",
+    fontWeight: "bold",
+  },
+  statusAndamento: {
+    color: "#15803D",
+    fontWeight: "bold",
   },
   buttonPrimary: {
     backgroundColor: "#15803D",
@@ -227,8 +268,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   buttonText: { 
-    color: "#FFFFFF", // Branco
+    color: "#FFFFFF", 
     fontSize: 16, 
     fontWeight: "bold" 
   },
+  disabledButtonContainer: {
+    backgroundColor: "#E5E7EB",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+  },
+  disabledButtonText: {
+    color: "#6B7280",
+    fontSize: 16,
+    fontWeight: "bold",
+  }
 });
