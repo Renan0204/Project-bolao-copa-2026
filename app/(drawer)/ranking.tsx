@@ -48,14 +48,31 @@ export default function RankingScreen() {
       const rankingGeral = await buscarRankingGeral();
       const minhaPosicao = await buscarMinhaPosicaoRanking();
 
+      let listaRanking: JogadorRanking[] = [];
+
       if (rankingGeral?.ranking) {
-        setRanking(rankingGeral.ranking);
+        listaRanking = rankingGeral.ranking;
       } else if (Array.isArray(rankingGeral)) {
-        setRanking(rankingGeral); 
+        listaRanking = rankingGeral;
       }
 
+      setRanking(listaRanking);
+
       if (minhaPosicao) {
-        setMeuRanking(minhaPosicao);
+        const meuId = minhaPosicao.id ?? minhaPosicao.usuario?.id;
+        const meuNome = minhaPosicao.nome ?? minhaPosicao.usuario?.nome;
+
+        const encontradoNoRanking = listaRanking.find((item) => {
+          const itemId = item.id ?? item.usuario?.id;
+          const itemNome = item.nome ?? item.usuario?.nome;
+
+          return (
+            (meuId && itemId === meuId) ||
+            (meuNome && itemNome === meuNome)
+          );
+        });
+
+        setMeuRanking(encontradoNoRanking ?? minhaPosicao);
       }
     } catch (error) {
       console.error("Erro ao carregar ranking:", error);
@@ -74,7 +91,18 @@ export default function RankingScreen() {
   }
 
   function obterPosicao(item: JogadorRanking) {
-    return item.posicao ?? item.ranking ?? "-";
+    return item.posicao ?? item.ranking ?? null;
+  }
+
+  function formatarNomeComPosicao(item: JogadorRanking) {
+    const posicao = obterPosicao(item);
+    const nome = obterNome(item);
+
+    if (posicao === null || posicao === undefined) {
+      return nome;
+    }
+
+    return `${posicao}º ${nome}`;
   }
 
   function obterNome(item: JogadorRanking) {
@@ -93,7 +121,7 @@ export default function RankingScreen() {
     <View style={styles.card}>
       <View>
         <Text style={styles.name}>
-          {obterPosicao(item)}º {obterNome(item)}
+          {formatarNomeComPosicao(item)}
         </Text>
         <Text style={styles.exatos}>
           Placares exatos: {obterPlacaresExatos(item)}
@@ -136,7 +164,7 @@ export default function RankingScreen() {
               {meuRanking ? (
                 <>
                   <Text style={styles.myRankingText}>
-                    {obterPosicao(meuRanking)}º {obterNome(meuRanking)} —{" "}
+                    {formatarNomeComPosicao(meuRanking)} —{" "}
                     {obterPontuacao(meuRanking)} pts
                   </Text>
                   <Text style={styles.myRankingSubText}>
