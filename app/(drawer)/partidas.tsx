@@ -19,6 +19,8 @@ type Partida = {
   selecaoABandeiraUrl?: string | null;
   selecaoB: string;
   selecaoBBandeiraUrl?: string | null;
+  golsSelecaoA?: number;
+  golsSelecaoB?: number;
   dataHora: string;
   fase: string;
   grupo: string;
@@ -114,6 +116,8 @@ export default function PartidasScreen() {
   }
 
   function renderizarCardPartida(item: Partida) {
+    const emAndamento = statusContem(item.status, 'andamento');
+
     return (
       <View key={item.id} style={styles.card}>
         <View style={styles.cardContent}>
@@ -131,7 +135,14 @@ export default function PartidasScreen() {
             )}
           </View>
 
-          <Text style={styles.matchText}>{item.selecaoA} x {item.selecaoB}</Text>
+          {emAndamento ? (
+            <Text style={styles.matchTextScore}>
+              {item.selecaoA}  <Text style={styles.scoreText}>{item.golsSelecaoA ?? 0}</Text> x <Text style={styles.scoreText}>{item.golsSelecaoB ?? 0}</Text>  {item.selecaoB}
+            </Text>
+          ) : (
+             <Text style={styles.matchText}>{item.selecaoA} x {item.selecaoB}</Text>
+          )}
+          
           <Text style={styles.dateText}>{formatarData(item.dataHora)}</Text>
         </View>
 
@@ -295,6 +306,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#111827',
+  },
+  matchTextScore: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  scoreText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#15803D',
   },
   dateText: {
     marginTop: 6,
