@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
+  RefreshControl,
 } from "react-native";
 import { buscarUsuarioLogado } from "../../services/usuarioService";
 import { buscarPartidas } from "../../services/partidaService";
@@ -36,14 +37,19 @@ export default function HomeScreen() {
   const [nomeUsuario, setNomeUsuario] = useState("Usuário");
   const [partidas, setPartidas] = useState<Partida[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
 
-  useEffect(() => {
-    carregarDados();
-  }, []);
+  // Alterado para carregar toda vez que a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      carregarDados();
+    }, [])
+  );
 
-  async function carregarDados() {
+  async function carregarDados(exibirLoading = true) {
     try {
-      setCarregando(true);
+      if (exibirLoading) setCarregando(true);
+      
       const usuario = await buscarUsuarioLogado();
       const partidasApi = await buscarPartidas();
 
@@ -57,22 +63,32 @@ export default function HomeScreen() {
     } catch (error) {
       router.replace("/login");
     } finally {
-      setCarregando(false);
+      if (exibirLoading) setCarregando(false);
+    }
+  }
+
+  // Função para o gesto de arrastar para baixo
+  async function atualizarDados() {
+    try {
+      setAtualizando(true);
+      await carregarDados(false); // Passa false para não piscar a tela inteira
+    } finally {
+      setAtualizando(false);
     }
   }
 
   function formatarData(dataHora: string) {
-  if (!dataHora) return "Data não informada";
+    if (!dataHora) return "Data não informada";
 
-  const data = new Date(dataHora);
-  const dataFormatada = data.toLocaleDateString("pt-BR");
-  const horaFormatada = data.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+    const data = new Date(dataHora);
+    const dataFormatada = data.toLocaleDateString("pt-BR");
+    const horaFormatada = data.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-  return `${dataFormatada} às ${horaFormatada}`;
-}
+    return `${dataFormatada} às ${horaFormatada}`;
+  }
 
   function abrirDetalhesPartida(partidaId: number) {
     router.push({
@@ -82,54 +98,54 @@ export default function HomeScreen() {
   }
 
   function renderizarCardPartida(partida: Partida, destaque = false) {
-  return (
-    <View
-      key={partida.id}
-      style={destaque ? styles.featuredContainer : styles.smallContainer}
-    >
-      <View style={destaque ? styles.featuredCard : styles.smallCard}>
-        <View style={styles.flagsRow}>
-          {partida.selecaoABandeiraUrl ? (
-            <Image
-              source={{
-                uri: formatarUrlImagem(partida.selecaoABandeiraUrl),
-              }}
-              style={styles.flag}
-            />
-          ) : (
-            <View style={styles.flagPlaceholder} />
-          )}
+    return (
+      <View
+        key={partida.id}
+        style={destaque ? styles.featuredContainer : styles.smallContainer}
+      >
+        <View style={destaque ? styles.featuredCard : styles.smallCard}>
+          <View style={styles.flagsRow}>
+            {partida.selecaoABandeiraUrl ? (
+              <Image
+                source={{
+                  uri: formatarUrlImagem(partida.selecaoABandeiraUrl),
+                }}
+                style={styles.flag}
+              />
+            ) : (
+              <View style={styles.flagPlaceholder} />
+            )}
 
-          {partida.selecaoBBandeiraUrl ? (
-            <Image
-              source={{
-                uri: formatarUrlImagem(partida.selecaoBBandeiraUrl),
-              }}
-              style={styles.flag}
-            />
-          ) : (
-            <View style={styles.flagPlaceholder} />
-          )}
+            {partida.selecaoBBandeiraUrl ? (
+              <Image
+                source={{
+                  uri: formatarUrlImagem(partida.selecaoBBandeiraUrl),
+                }}
+                style={styles.flag}
+              />
+            ) : (
+              <View style={styles.flagPlaceholder} />
+            )}
+          </View>
+
+          <Text style={destaque ? styles.matchText : styles.smallMatchText}>
+            {partida.selecaoA} x {partida.selecaoB}
+          </Text>
+
+          <Text style={styles.dateText}>
+            {formatarData(partida.dataHora)}
+          </Text>
         </View>
 
-        <Text style={destaque ? styles.matchText : styles.smallMatchText}>
-          {partida.selecaoA} x {partida.selecaoB}
-        </Text>
-
-        <Text style={styles.dateText}>
-          {formatarData(partida.dataHora)}
-        </Text>
+        <TouchableOpacity
+          style={styles.palpitarButton}
+          onPress={() => abrirDetalhesPartida(partida.id)}
+        >
+          <Text style={styles.palpitarText}>palpitar</Text>
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        style={styles.palpitarButton}
-        onPress={() => abrirDetalhesPartida(partida.id)}
-      >
-        <Text style={styles.palpitarText}>palpitar</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
+    );
+  }
 
   if (carregando) {
     return (
@@ -144,7 +160,16 @@ export default function HomeScreen() {
   const demaisPartidas = partidas.slice(1);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={atualizando}
+          onRefresh={atualizarDados}
+          colors={['#15803D']} // Cor oficial
+        />
+      }
+    >
       <Text style={styles.greeting}>Olá, {nomeUsuario}</Text>
 
       <View style={styles.drawnRow}>
@@ -247,15 +272,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#111827",
   },
-
   dateText: {
-  marginTop: 6,
-  fontSize: 12,
-  color: "#6B7280",
-  textAlign: "center",
-  fontWeight: "500",
-},
-
+    marginTop: 6,
+    fontSize: 12,
+    color: "#6B7280",
+    textAlign: "center",
+    fontWeight: "500",
+  },
   gridRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -267,7 +290,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   smallCard: {
-     height: 140,
+    height: 140,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#D1D5DB",
