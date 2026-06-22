@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Partidas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-header :: header('partidas')}"></div>
+
+<main class="container admin-pagina">
+
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
+
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Calendário e resultados
+            </span>
+
+            <h2>
+                Partidas
+            </h2>
+
+            <p>
+                Cadastre jogos, acompanhe status, filtre partidas e controle resultados da competição.
+            </p>
+        </div>
+
+        <a href="/partidas/novo" class="btn btn-novo">
+            Nova Partida
+        </a>
+    </section>
+
+    <section class="painel-bloco mb-4">
+
+        <div class="painel-bloco-cabecalho">
+            <h3>Filtros</h3>
+            <p>
+                Refine a listagem por fase, status ou data da partida.
+            </p>
+        </div>
+
+        <form th:action="@{/partidas}" method="get" class="row align-items-end">
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Fase</label>
+                <select name="fase" class="form-control">
+                    <option value="">Todas as fases</option>
+
+                    <option th:each="fase : ${fases}"
+                            th:value="${fase}"
+                            th:text="${fase}"
+                            th:selected="${faseFiltro != null && faseFiltro == fase}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-control">
+                    <option value="">Todos os status</option>
+
+                    <option th:each="status : ${statusList}"
+                            th:value="${status}"
+                            th:text="${status}"
+                            th:selected="${statusFiltro != null && statusFiltro == status}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Data</label>
+                <input type="date"
+                       name="data"
+                       class="form-control"
+                       th:value="${dataFiltro}">
+            </div>
+
+            <div class="col-md-2 mb-3">
+                <button type="submit" class="btn btn-salvar w-100">
+                    Filtrar
+                </button>
+            </div>
+
+        </form>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <small class="text-muted">
+                <span th:text="${totalFiltrado}"></span>
+                <span> partida(s) encontrada(s)</span>
+            </small>
+
+            <a href="/partidas" class="btn btn-secondary btn-sm">
+                Limpar filtros
+            </a>
+        </div>
+
+    </section>
+
+    <section th:if="${#maps.isEmpty(partidasAgrupadas)}" class="painel-bloco">
+        <div class="text-center text-muted py-4">
+            Nenhuma partida encontrada para os filtros informados.
+        </div>
+    </section>
+
+    <section th:each="grupoFase : ${partidasAgrupadas}" class="painel-bloco mb-4">
+
+        <div class="painel-bloco-cabecalho">
+            <h3 th:text="${grupoFase.key}">Fase</h3>
+            <p>
+                Partidas agrupadas por data dentro desta fase.
+            </p>
+        </div>
+
+        <div th:each="grupoData : ${grupoFase.value}" class="mb-4">
+
+            <div class="alert alert-info mb-3">
+                <strong>Data:</strong>
+                <span th:text="${grupoData.key}"></span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Partida</th>
+                        <th>Horário</th>
+                        <th>Grupo</th>
+                        <th>Estádio</th>
+                        <th>Placar</th>
+                        <th>Status</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="partida, item : ${grupoData.value}">
+                        <td th:text="${item.count}"></td>
+
+                        <td>
+                            <strong th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}"></strong>
+                            <span> x </span>
+                            <strong th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}"></strong>
+                        </td>
+
+                        <td th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'HH:mm') : '-'}"></td>
+
+                        <td th:text="${partida.grupo != null ? partida.grupo : '-'}"></td>
+
+                        <td th:text="${partida.estadio != null ? partida.estadio.nome : '-'}"></td>
+
+                        <td class="placar">
+                            <span th:text="${partida.golsSelecaoA != null ? partida.golsSelecaoA : '-'}"></span>
+                            <span> x </span>
+                            <span th:text="${partida.golsSelecaoB != null ? partida.golsSelecaoB : '-'}"></span>
+                        </td>
+
+                        <td>
+                            <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
+                                  class="badge-status"
+                                  th:text="${partida.status}">
+                            </span>
+                        </td>
+
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end flex-wrap">
+
+                                <a th:if="${partida.status == 'Agendada'}"
+                                   th:href="@{/partidas/iniciar/{id}(id=${partida.id})}"
+                                   class="btn btn-success btn-sm"
+                                   data-confirmacao="true"
+                                   data-confirmacao-titulo="Iniciar partida"
+                                   data-confirmacao-mensagem="Deseja iniciar esta partida? Após iniciar, os usuários não poderão mais registrar ou editar palpites."
+                                   data-confirmacao-botao="Iniciar"
+                                   data-confirmacao-tipo="sucesso">
+                                    Iniciar
+                                </a>
+
+                                <a th:if="${partida.status == 'Em andamento'}"
+                                   th:href="@{/resultados/lancar/{id}(id=${partida.id})}"
+                                   class="btn btn-success btn-sm">
+                                    Lançar Gols
+                                </a>
+
+                                <a th:if="${partida.status == 'Em andamento'}"
+                                   th:href="@{/partidas/finalizar/{id}(id=${partida.id})}"
+                                   class="btn btn-novo btn-sm"
+                                   data-confirmacao="true"
+                                   data-confirmacao-titulo="Finalizar partida"
+                                   data-confirmacao-mensagem="Deseja finalizar esta partida? A pontuação dos usuários será calculada automaticamente."
+                                   data-confirmacao-botao="Finalizar"
+                                   data-confirmacao-tipo="sucesso">
+                                    Finalizar
+                                </a>
+
+                                <a th:if="${partida.status == 'Finalizada'}"
+                                   th:href="@{/resultados/editar/{id}(id=${partida.id})}"
+                                   class="btn btn-warning btn-sm">
+                                    Corrigir Resultado
+                                </a>
+
+                                <a th:if="${partida.status == 'Agendada'}"
+                                   th:href="@{/partidas/editar/{id}(id=${partida.id})}"
+                                   class="btn btn-warning btn-sm">
+                                    Editar
+                                </a>
+
+                                <a th:if="${partida.status == 'Agendada'}"
+                                   th:href="@{/partidas/excluir/{id}(id=${partida.id})}"
+                                   class="btn btn-danger btn-sm"
+                                   data-confirmacao="true"
+                                   data-confirmacao-titulo="Excluir partida"
+                                   data-confirmacao-mensagem="Tem certeza que deseja excluir esta partida? Essa ação não poderá ser desfeita."
+                                   data-confirmacao-botao="Excluir"
+                                   data-confirmacao-tipo="perigo">
+                                    Excluir
+                                </a>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/admin-confirm-modal :: modal}"></div>
+
+</body>
+</html>

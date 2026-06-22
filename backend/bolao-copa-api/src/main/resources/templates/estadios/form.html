@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Estádio</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-header :: header('estadios')}"></div>
+
+<main class="container admin-pagina">
+
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
+
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Cadastro base
+            </span>
+
+            <h2 th:text="${estadio.id != null ? 'Editar Estádio' : 'Novo Estádio'}">
+                Cadastro de Estádio
+            </h2>
+
+            <p>
+                Cadastre ou atualize os estádios que serão utilizados nas partidas da competição.
+            </p>
+        </div>
+
+        <a href="/estadios" class="btn btn-voltar">
+            Voltar
+        </a>
+    </section>
+
+    <section class="painel-bloco">
+
+        <div class="painel-bloco-cabecalho">
+            <h3>Dados do estádio</h3>
+            <p>
+                O nome cadastrado será exibido na listagem e nos detalhes das partidas.
+            </p>
+        </div>
+
+        <form th:action="@{/estadios/salvar}" th:object="${estadio}" method="post">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="mb-4">
+                <label class="form-label">Nome do Estádio</label>
+                <input type="text"
+                       th:field="*{nome}"
+                       class="form-control"
+                       placeholder="Ex: Estádio de Toronto"
+                       required>
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end flex-wrap">
+                <a href="/estadios" class="btn btn-voltar">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-salvar">
+                    Salvar Estádio
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Administrativo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-header :: header('dashboard')}"></div>
+
+<main class="container admin-pagina">
+
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
+
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Visão geral
+            </span>
+
+            <h2>
+                Dashboard administrativo
+            </h2>
+
+            <p>
+                Resumo operacional do bolão com indicadores de usuários, palpites,
+                partidas pendentes e atividade recente.
+            </p>
+        </div>
+
+        <div class="painel-dashboard-status">
+            <span class="status-ponto"></span>
+            Sistema em acompanhamento
+        </div>
+    </section>
+
+    <section class="painel-dashboard-indicadores mb-4">
+
+        <article class="painel-indicador-card">
+            <div class="painel-indicador-topo">
+                <span>Total de usuários</span>
+                <div class="painel-indicador-marcador marcador-verde"></div>
+            </div>
+
+            <strong th:text="${totalUsuarios}">0</strong>
+
+            <small>
+                Participantes cadastrados na plataforma.
+            </small>
+        </article>
+
+        <article class="painel-indicador-card">
+            <div class="painel-indicador-topo">
+                <span>Total de palpites</span>
+                <div class="painel-indicador-marcador marcador-azul"></div>
+            </div>
+
+            <strong th:text="${totalPalpites}">0</strong>
+
+            <small>
+                Palpites registrados para as partidas.
+            </small>
+        </article>
+
+        <article class="painel-indicador-card destaque-pendente">
+            <div class="painel-indicador-topo">
+                <span>Partidas pendentes</span>
+                <div class="painel-indicador-marcador marcador-laranja"></div>
+            </div>
+
+            <strong th:text="${partidasPendentesResultado}">0</strong>
+
+            <small>
+                Partidas aguardando resultado ou conferência.
+            </small>
+        </article>
+
+        <article class="painel-indicador-card">
+            <div class="painel-indicador-topo">
+                <span>Ativos nas últimas 24h</span>
+                <div class="painel-indicador-marcador marcador-roxo"></div>
+            </div>
+
+            <strong th:text="${usuariosAtivosUltimas24h}">0</strong>
+
+            <small>
+                Usuários com acesso recente ao sistema.
+            </small>
+        </article>
+
+    </section>
+
+    <section class="row g-4">
+
+        <div class="col-lg-7">
+            <div class="painel-bloco h-100">
+
+                <div class="painel-bloco-cabecalho">
+                    <div>
+                        <h3>Atalhos administrativos</h3>
+                        <p>
+                            Acesse rapidamente as rotinas principais do painel.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="painel-atalhos-lista">
+
+                    <a href="/selecoes" class="painel-atalho-item">
+                        <div>
+                            <strong>Seleções</strong>
+                            <span>Cadastro, edição e organização por grupo.</span>
+                        </div>
+
+                        <span class="painel-atalho-seta">→</span>
+                    </a>
+
+                    <a href="/estadios" class="painel-atalho-item">
+                        <div>
+                            <strong>Estádios</strong>
+                            <span>Manutenção dos locais das partidas.</span>
+                        </div>
+
+                        <span class="painel-atalho-seta">→</span>
+                    </a>
+
+                    <a href="/partidas" class="painel-atalho-item">
+                        <div>
+                            <strong>Partidas</strong>
+                            <span>Cadastro, filtros, início, finalização e correção.</span>
+                        </div>
+
+                        <span class="painel-atalho-seta">→</span>
+                    </a>
+
+                    <a href="/usuarios-admin" class="painel-atalho-item">
+                        <div>
+                            <strong>Usuários</strong>
+                            <span>Consulta de participantes e controle de bloqueios.</span>
+                        </div>
+
+                        <span class="painel-atalho-seta">→</span>
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="painel-bloco h-100">
+
+                <div class="painel-bloco-cabecalho">
+                    <div>
+                        <h3>Controle operacional</h3>
+                        <p>
+                            Pontos de atenção para a administração do bolão.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="painel-operacional">
+
+                    <div class="painel-operacional-item">
+                        <div class="painel-operacional-linha">
+                            <strong>Resultados</strong>
+
+                            <span th:classappend="${partidasPendentesResultado > 0 ? ' situacao-atencao' : ' situacao-ok'}"
+                                  class="painel-situacao"
+                                  th:text="${partidasPendentesResultado > 0 ? 'Atenção' : 'Em dia'}">
+                                Em dia
+                            </span>
+                        </div>
+
+                        <p>
+                            Verifique partidas que já ocorreram e ainda precisam de resultado.
+                        </p>
+                    </div>
+
+                    <div class="painel-operacional-item">
+                        <div class="painel-operacional-linha">
+                            <strong>Usuários</strong>
+
+                            <span class="painel-situacao situacao-ok">
+                                Monitorado
+                            </span>
+                        </div>
+
+                        <p>
+                            Acompanhe participantes bloqueados, ativos e dados cadastrais.
+                        </p>
+                    </div>
+
+                    <div class="painel-operacional-item">
+                        <div class="painel-operacional-linha">
+                            <strong>Palpites</strong>
+
+                            <span class="painel-situacao situacao-ok">
+                                Registrado
+                            </span>
+                        </div>
+
+                        <p>
+                            A pontuação é recalculada automaticamente ao finalizar ou corrigir resultados.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="painel-resumo-final">
+                    <span>Resumo</span>
+
+                    <p>
+                        Este painel centraliza os indicadores solicitados no projeto e direciona
+                        o administrador para as rotinas essenciais do sistema.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

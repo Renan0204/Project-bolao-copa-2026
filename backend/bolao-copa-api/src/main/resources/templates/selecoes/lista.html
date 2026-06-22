@@ -5,41 +5,126 @@
     <title>Seleções</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
 
-<div class="container mt-4">
+<div th:replace="~{fragments/admin-header :: header('selecoes')}"></div>
 
-    <h1>Lista de Seleções</h1>
+<main class="container admin-pagina">
 
-    <table class="table table-striped">
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
 
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Código FIFA</th>
-            <th>Grupo</th>
-        </tr>
-        </thead>
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Cadastro base
+            </span>
 
-        <tbody>
+            <h2>
+                Seleções
+            </h2>
 
-        <tr th:each="selecao : ${selecoes}"> <!-- Significa que para cada seleção da lista vamos criar uma linha na tabela -->
-            <td th:text="${selecao.id}"></td>
-            <td th:text="${selecao.nome}"></td>
-            <td th:text="${selecao.codigoFifa}"></td>
-            <td th:text="${selecao.grupo}"></td> <!-- Estamos mostrando os valores dos atributos -->
-        </tr>
+            <p>
+                Mantenha as seleções cadastradas, seus códigos FIFA, grupos e bandeiras utilizadas no sistema.
+            </p>
+        </div>
 
-        </tbody>
+        <a href="/selecoes/novo" class="btn btn-novo">
+            Nova Seleção
+        </a>
+    </section>
 
-    </table>
+    <section class="painel-bloco">
 
-</div>
+        <div class="painel-bloco-cabecalho">
+            <h3>Seleções cadastradas</h3>
+            <p>
+                Lista das seleções disponíveis para criação de partidas e organização dos grupos.
+            </p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+
+                <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Bandeira</th>
+                    <th>Nome</th>
+                    <th>Código FIFA</th>
+                    <th>Grupo</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="selecao, item : ${selecoes}">
+                    <td th:text="${item.count}"></td>
+
+                    <td>
+                        <img th:if="${selecao.bandeiraUrl != null && !#strings.isEmpty(selecao.bandeiraUrl)}"
+                             th:src="${selecao.bandeiraUrl}"
+                             alt="Bandeira"
+                             class="bandeira">
+
+                        <span th:if="${selecao.bandeiraUrl == null || #strings.isEmpty(selecao.bandeiraUrl)}"
+                              class="text-muted">
+                            -
+                        </span>
+                    </td>
+
+                    <td>
+                        <strong th:text="${selecao.nome}"></strong>
+                    </td>
+
+                    <td>
+                        <span class="badge-grupo" th:text="${selecao.codigoFifa}"></span>
+                    </td>
+
+                    <td>
+                        <span class="badge-grupo" th:text="${selecao.grupo}"></span>
+                    </td>
+
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end flex-wrap">
+
+                            <a th:href="@{/selecoes/editar/{id}(id=${selecao.id})}"
+                               class="btn btn-warning btn-sm">
+                                Editar
+                            </a>
+
+                            <a th:href="@{/selecoes/excluir/{id}(id=${selecao.id})}"
+                               class="btn btn-danger btn-sm"
+                               data-confirmacao="true"
+                               data-confirmacao-titulo="Excluir seleção"
+                               data-confirmacao-mensagem="Tem certeza que deseja excluir esta seleção? Essa ação não poderá ser desfeita."
+                               data-confirmacao-botao="Excluir"
+                               data-confirmacao-tipo="perigo">
+                                Excluir
+                            </a>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(selecoes)}">
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Nenhuma seleção cadastrada ainda.
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/admin-confirm-modal :: modal}"></div>
 
 </body>
 </html>
-
-Quando acessarmos /selecoes o Spring vai fazer esse caminho: Controller -> listarTodas() -> Repository -> Banco -> lista.html
-e preencher a tabela, mas vai dar erro porque não temos o banco ainda...

@@ -1,114 +1,82 @@
 # Bolão Copa do Mundo 2026
 
-Projeto Hackathon - 5º Período  
-Tecnologias: Java, Spring Boot, React Native
+Projeto desenvolvido para o Hackathon do 5º Período.
 
-## Integrantes
-- Backend: Renan Oliveira & Guilherme Vitor
-- Mobile: ...
-- Banco: ...
-- UI/docs: Adrian Souza Santos
+## Tecnologias
 
-## Como acessar o projeto
+* Java
+* Spring Boot
+* MySQL
+* Thymeleaf
+* Bootstrap
+* React Native
 
-- Baixe e instale:
-https://git-scm.com/downloads/win
+## Estrutura do projeto
 
-- Verifique a instalação:
-git --version
+```txt
+backend/
+mobile/
+database/
+docs/
+```
 
-## Clonar o repositório
-- git clone https://github.com/Renan0204/Project-bolao-copa-2026.git
+## Como clonar o projeto
 
-### Entrar na pasta:
-- cd Project-bolao-copa-2026
+```bash
+git clone https://github.com/Renan0204/Project-bolao-copa-2026.git
+cd Project-bolao-copa-2026
+```
 
-## Branches do Projeto
-- main               -> versão principal
-- develop            -> desenvolvimento geral
+## Branches principais
 
-- feature/backend    -> API Spring Boot
-- feature/mobile     -> React Native
-- feature/database   -> Banco de Dados
-- feature/docs       -> Documentação
-- Como começar a trabalhar
-- Atualizar o projeto
-
-### Sempre execute antes de iniciar:
-
-- git checkout develop
-- git pull origin develop
-- Entrar na sua branch
-
-### Backend:
-
-git checkout feature/backend
-
-### Mobile:
-
-git checkout feature/mobile
-
-### Banco:
-
-git checkout feature/database
-
-### Documentação:
-
-git checkout feature/docs
+```txt
+main              versão final
+develop           desenvolvimento geral
+feature/backend   backend Spring Boot
+feature/mobile    aplicativo React Native
+feature/database  banco de dados
+feature/docs      documentação
+```
 
 ## Como salvar alterações
 
-Verificar alterações:
+```bash
+git status
+git add .
+git commit -m "Mensagem do commit"
+git push origin nome-da-branch
+```
 
-- git status
+## Como rodar o backend
 
-Adicionar arquivos:
+Entre na pasta do backend:
 
-- git add .
+```bash
+cd backend/bolao-copa-api
+```
 
-Criar commit:
+Crie o banco de dados MySQL:
 
-- git commit -m "Descrição da alteração"
+```txt
+bolao_copa
+```
 
-Exemplos:
+Rode o projeto:
 
-git commit -m "Cria entidade Usuario"
-git commit -m "Implementa login JWT"
-git commit -m "Cria tela de login"
+```bash
+.\mvnw.cmd spring-boot:run
+```
 
-## Enviar para o GitHub:
+Acesse:
 
-- git push
+```txt
+http://localhost:8080
+```
 
-Caso necessário:
+## Documentação
 
-- git push origin nome-da-branch
+A documentação do backend está em:
 
-Exemplo:
-
-git push origin feature/mobile
-
-## Atualizar sua branch
-
-Quando alguém enviar alterações:
-
-- git checkout develop
-- git pull origin develop
-- git checkout sua-branch
-- git merge develop
-
-Exemplo:
-
-- git checkout develop
-- git pull origin develop
-- git checkout feature/backend
-- git merge develop
-- Regras da Equipe
-- Não realizar alterações diretamente na branch main.
-- Cada integrante deve trabalhar apenas na sua branch.
-- Realizar commits pequenos e frequentes.
-- Sempre atualizar a branch antes de iniciar o desenvolvimento.
-- Utilizar mensagens de commit descritivas.
-
-## Como rodar o projeto
-- Em desenvolvimento...
+```txt
+docs/backend.md
+```

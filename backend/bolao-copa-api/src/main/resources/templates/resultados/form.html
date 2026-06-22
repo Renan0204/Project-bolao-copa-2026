@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado da Partida</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/admin-header :: header('partidas')}"></div>
+
+<main class="container admin-pagina">
+
+    <div th:replace="~{fragments/admin-flash :: mensagens}"></div>
+
+    <section class="painel-dashboard-cabecalho mb-4">
+        <div>
+            <span class="painel-dashboard-etiqueta">
+                Resultado
+            </span>
+
+            <h2 th:text="${modoEdicao == true ? 'Corrigir Resultado' : 'Lançar Resultado'}">
+                Resultado da Partida
+            </h2>
+
+            <p th:if="${modoEdicao == true}">
+                Corrija o placar final da partida. Após confirmar, a pontuação dos usuários será recalculada automaticamente.
+            </p>
+
+            <p th:if="${modoEdicao != true}">
+                Informe o placar da partida em andamento. Depois disso, a partida poderá ser finalizada na listagem.
+            </p>
+        </div>
+
+        <a href="/partidas" class="btn btn-voltar">
+            Voltar
+        </a>
+    </section>
+
+    <section class="painel-bloco mb-4">
+
+        <div class="painel-bloco-cabecalho">
+            <h3>Dados da partida</h3>
+            <p>
+                Confira as informações da partida antes de lançar ou corrigir o resultado.
+            </p>
+        </div>
+
+        <div class="row align-items-center text-center mb-4">
+
+            <div class="col-md-5 mb-3 mb-md-0">
+                <div class="p-3 rounded bg-light">
+                    <strong class="d-block fs-5"
+                            th:text="${partida.selecaoA != null ? partida.selecaoA.nome : '-'}">
+                        Seleção A
+                    </strong>
+
+                    <small class="text-muted"
+                           th:text="${partida.selecaoA != null ? partida.selecaoA.codigoFifa : '-'}">
+                        Código
+                    </small>
+                </div>
+            </div>
+
+            <div class="col-md-2 mb-3 mb-md-0">
+                <strong class="fs-4 text-muted">X</strong>
+            </div>
+
+            <div class="col-md-5">
+                <div class="p-3 rounded bg-light">
+                    <strong class="d-block fs-5"
+                            th:text="${partida.selecaoB != null ? partida.selecaoB.nome : '-'}">
+                        Seleção B
+                    </strong>
+
+                    <small class="text-muted"
+                           th:text="${partida.selecaoB != null ? partida.selecaoB.codigoFifa : '-'}">
+                        Código
+                    </small>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Fase</label>
+                <div class="form-control bg-light"
+                     th:text="${partida.fase != null ? partida.fase : '-'}">
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Grupo</label>
+                <div class="form-control bg-light"
+                     th:text="${partida.grupo != null ? partida.grupo : '-'}">
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Data e hora</label>
+                <div class="form-control bg-light"
+                     th:text="${partida.dataHora != null ? #temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm') : '-'}">
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Estádio</label>
+                <div class="form-control bg-light"
+                     th:text="${partida.estadio != null ? partida.estadio.nome : '-'}">
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label">Status</label>
+                <div>
+                    <span th:classappend="${partida.status == 'Agendada' ? ' status-agendada' : (partida.status == 'Em andamento' ? ' status-em-andamento' : ' status-finalizada')}"
+                          class="badge-status"
+                          th:text="${partida.status}">
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="painel-bloco">
+
+        <div class="painel-bloco-cabecalho">
+            <h3>Placar</h3>
+            <p>
+                Informe os gols de cada seleção para salvar o resultado.
+            </p>
+        </div>
+
+        <form id="formResultado"
+              th:action="${modoEdicao == true} ? @{/resultados/corrigir} : @{/resultados/salvar}"
+              method="post">
+
+            <input type="hidden" name="id" th:value="${partida.id}">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        Gols -
+                        <span th:text="${partida.selecaoA != null ? partida.selecaoA.nome : 'Seleção A'}"></span>
+                    </label>
+
+                    <input type="number"
+                           name="golsSelecaoA"
+                           class="form-control"
+                           min="0"
+                           th:value="${partida.golsSelecaoA}"
+                           required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        Gols -
+                        <span th:text="${partida.selecaoB != null ? partida.selecaoB.nome : 'Seleção B'}"></span>
+                    </label>
+
+                    <input type="number"
+                           name="golsSelecaoB"
+                           class="form-control"
+                           min="0"
+                           th:value="${partida.golsSelecaoB}"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="alert alert-warning mt-3"
+                 th:if="${modoEdicao == true}">
+                <strong>Atenção:</strong>
+                ao corrigir este resultado, a pontuação dos usuários será recalculada automaticamente.
+            </div>
+
+            <div class="alert alert-info mt-3"
+                 th:if="${modoEdicao != true}">
+                <strong>Informação:</strong>
+                os gols serão salvos. Para calcular a pontuação, finalize a partida na tela de partidas.
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end flex-wrap mt-4">
+
+                <a href="/partidas" class="btn btn-voltar">
+                    Cancelar
+                </a>
+
+                <button type="button"
+                        class="btn btn-salvar"
+                        data-confirmacao="true"
+                        data-confirmacao-form-id="formResultado"
+                        th:attr="data-confirmacao-titulo=${modoEdicao == true ? 'Corrigir resultado' : 'Salvar gols'},
+                                 data-confirmacao-mensagem=${modoEdicao == true ? 'Deseja corrigir este resultado? A pontuação dos usuários será recalculada automaticamente.' : 'Deseja salvar os gols desta partida?'},
+                                 data-confirmacao-botao=${modoEdicao == true ? 'Corrigir e recalcular' : 'Salvar gols'},
+                                 data-confirmacao-tipo=${modoEdicao == true ? 'aviso' : 'sucesso'}"
+                        th:text="${modoEdicao == true ? 'Corrigir e recalcular' : 'Salvar gols'}">
+                    Salvar
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/admin-confirm-modal :: modal}"></div>
+
+</body>
+</html>

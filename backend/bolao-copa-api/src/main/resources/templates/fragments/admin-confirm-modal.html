@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="modal">
+  <div id="modalConfirmacaoBackdrop" class="modal-confirmacao-backdrop d-none">
+    <div class="modal-confirmacao-card">
+
+      <div class="modal-confirmacao-icone">
+        !
+      </div>
+
+      <h3 id="modalConfirmacaoTitulo">
+        Confirmar ação
+      </h3>
+
+      <p id="modalConfirmacaoMensagem">
+        Tem certeza que deseja continuar?
+      </p>
+
+      <div class="modal-confirmacao-acoes">
+        <button type="button"
+                id="modalConfirmacaoCancelar"
+                class="btn btn-secondary">
+          Cancelar
+        </button>
+
+        <button type="button"
+                id="modalConfirmacaoConfirmar"
+                class="btn btn-danger">
+          Confirmar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalBackdrop = document.getElementById("modalConfirmacaoBackdrop");
+        const modalTitulo = document.getElementById("modalConfirmacaoTitulo");
+        const modalMensagem = document.getElementById("modalConfirmacaoMensagem");
+        const modalCancelar = document.getElementById("modalConfirmacaoCancelar");
+        const modalConfirmar = document.getElementById("modalConfirmacaoConfirmar");
+
+        let acaoConfirmada = null;
+
+        function aplicarTipoBotao(tipo) {
+            modalConfirmar.className = "btn";
+
+            if (tipo === "sucesso") {
+                modalConfirmar.classList.add("btn-success");
+            } else if (tipo === "aviso") {
+                modalConfirmar.classList.add("btn-warning");
+            } else {
+                modalConfirmar.classList.add("btn-danger");
+            }
+        }
+
+        function abrirModalConfirmacao(elemento) {
+            const titulo = elemento.getAttribute("data-confirmacao-titulo") || "Confirmar ação";
+            const mensagem = elemento.getAttribute("data-confirmacao-mensagem") || "Tem certeza que deseja continuar?";
+            const textoBotao = elemento.getAttribute("data-confirmacao-botao") || "Confirmar";
+            const tipo = elemento.getAttribute("data-confirmacao-tipo") || "perigo";
+            const formId = elemento.getAttribute("data-confirmacao-form-id");
+
+            modalTitulo.textContent = titulo;
+            modalMensagem.textContent = mensagem;
+            modalConfirmar.textContent = textoBotao;
+
+            aplicarTipoBotao(tipo);
+
+            if (formId) {
+                acaoConfirmada = function () {
+                    const formulario = document.getElementById(formId);
+
+                    if (formulario) {
+                        formulario.submit();
+                    }
+                };
+            } else if (elemento.tagName.toLowerCase() === "a") {
+                acaoConfirmada = function () {
+                    window.location.href = elemento.href;
+                };
+            } else {
+                acaoConfirmada = null;
+            }
+
+            modalBackdrop.classList.remove("d-none");
+        }
+
+        function fecharModalConfirmacao() {
+            modalBackdrop.classList.add("d-none");
+            acaoConfirmada = null;
+        }
+
+        document.querySelectorAll("[data-confirmacao='true']").forEach(function (elemento) {
+            elemento.addEventListener("click", function (evento) {
+                evento.preventDefault();
+                abrirModalConfirmacao(elemento);
+            });
+        });
+
+        modalConfirmar.addEventListener("click", function () {
+            if (acaoConfirmada) {
+                acaoConfirmada();
+            }
+        });
+
+        modalCancelar.addEventListener("click", fecharModalConfirmacao);
+
+        modalBackdrop.addEventListener("click", function (evento) {
+            if (evento.target === modalBackdrop) {
+                fecharModalConfirmacao();
+            }
+        });
+
+        document.addEventListener("keydown", function (evento) {
+            if (evento.key === "Escape") {
+                fecharModalConfirmacao();
+            }
+        });
+    });
+  </script>
+</div>
+
+</body>
+</html>

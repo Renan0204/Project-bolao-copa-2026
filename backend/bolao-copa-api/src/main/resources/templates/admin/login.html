@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Administrativo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="login-admin-body">
+
+<div th:replace="~{fragments/admin-flash :: mensagens}"></div>
+
+<main class="login-admin-page">
+
+    <section class="login-admin-container">
+
+        <div class="login-admin-brand">
+
+            <div class="login-admin-logo-area">
+                <img th:src="@{/images/logo-bolao.png}"
+                     alt="Logo Bolão Copa 2026"
+                     class="login-admin-logo">
+            </div>
+
+            <h1>Bolão Copa 2026</h1>
+
+            <p>
+                Painel administrativo para gerenciamento de seleções, estádios,
+                partidas, resultados, usuários e indicadores do bolão.
+            </p>
+
+            <div class="login-admin-info-grid">
+
+                <div class="login-admin-info-card">
+                    <strong>Administração</strong>
+                    <span>Cadastros e controle do sistema</span>
+                </div>
+
+                <div class="login-admin-info-card">
+                    <strong>Resultados</strong>
+                    <span>Lançamento e correção de placares</span>
+                </div>
+
+                <div class="login-admin-info-card">
+                    <strong>Ranking</strong>
+                    <span>Pontuação automática dos participantes</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="login-admin-card">
+
+            <div class="login-admin-card-header">
+                <h2>Acesso Administrativo</h2>
+                <p>Informe suas credenciais para acessar o painel.</p>
+            </div>
+
+            <form th:action="@{/admin/login}" method="post">
+
+                <div class="mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           placeholder="admin@exemplo.com"
+                           autocomplete="email"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Senha</label>
+                    <input type="password"
+                           name="senha"
+                           class="form-control"
+                           placeholder="Digite sua senha"
+                           autocomplete="current-password"
+                           required>
+                </div>
+
+                <button type="submit" class="btn btn-salvar w-100 mt-2">
+                    Entrar no painel
+                </button>
+
+            </form>
+
+            <div class="login-admin-links">
+                <a th:href="@{/admin/recuperar-senha}">
+                    Esqueci minha senha
+                </a>
+            </div>
+
+            <div class="login-admin-footer">
+                <small>
+                    Acesso restrito aos administradores do Bolão Copa 2026.
+                </small>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
