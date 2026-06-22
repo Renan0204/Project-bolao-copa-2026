@@ -101,9 +101,12 @@ export default function PartidasScreen() {
     });
   }, [partidas, filtros]);
 
+  // Separando em três categorias agora
   const partidasEmAndamento = partidasFiltradas.filter((p) => statusContem(p.status, 'andamento'));
   const partidasAgendadas = partidasFiltradas.filter((p) => statusContem(p.status, 'agend'));
-  const nenhumaPartida = partidasEmAndamento.length === 0 && partidasAgendadas.length === 0;
+  const partidasFinalizadas = partidasFiltradas.filter((p) => statusContem(p.status, 'finalizad')); // Pega 'finalizada' ou 'finalizadas'
+  
+  const nenhumaPartida = partidasEmAndamento.length === 0 && partidasAgendadas.length === 0 && partidasFinalizadas.length === 0;
 
   function abrirModal(tipo: TipoFiltro) {
     setTipoFiltro(tipo);
@@ -116,7 +119,10 @@ export default function PartidasScreen() {
   }
 
   function renderizarCardPartida(item: Partida) {
-    const emAndamento = statusContem(item.status, 'andamento');
+    // Se está em andamento OU finalizada, nós mostramos o placar (se existir)
+    const mostrarPlacar = (statusContem(item.status, 'andamento') || statusContem(item.status, 'finalizad')) && 
+                          item.golsSelecaoA !== undefined && item.golsSelecaoB !== undefined &&
+                          item.golsSelecaoA !== null && item.golsSelecaoB !== null;
 
     return (
       <View key={item.id} style={styles.card}>
@@ -135,7 +141,7 @@ export default function PartidasScreen() {
             )}
           </View>
 
-          {emAndamento ? (
+          {mostrarPlacar ? (
             <Text style={styles.matchTextScore}>
               {item.selecaoA}  <Text style={styles.scoreText}>{item.golsSelecaoA ?? 0}</Text> x <Text style={styles.scoreText}>{item.golsSelecaoB ?? 0}</Text>  {item.selecaoB}
             </Text>
@@ -190,13 +196,17 @@ export default function PartidasScreen() {
         <View style={styles.filtersContainer}>
           {filtrosBotoes.map(({ key, label }) => (
             <TouchableOpacity key={key} style={styles.filterBtn} onPress={() => abrirModal(key)}>
-              <Text style={styles.filterText} numberOfLines={1}>{filtros[key] || label}</Text>
+              <Text style={styles.filterText} numberOfLines={1}>
+                {filtros[key] || label}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
+        {/* Agora renderizamos as três categorias */}
         {renderizarGrupo('Em Andamento', partidasEmAndamento)}
         {renderizarGrupo('Agendados', partidasAgendadas)}
+        {renderizarGrupo('Finalizadas', partidasFinalizadas)}
 
         {nenhumaPartida && <Text style={styles.empty}>Nenhuma partida encontrada.</Text>}
 
