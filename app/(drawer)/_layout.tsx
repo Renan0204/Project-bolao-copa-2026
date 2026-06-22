@@ -1,19 +1,29 @@
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons } from '@expo/vector-icons';
+import { Image, View, Text, StyleSheet } from 'react-native';
 
 export default function DrawerLayout() {
   return (
     <Drawer
       screenOptions={{
-        headerTitle: "Bolão Copa 2026",
+        headerTitle: () => (
+          <View style={styles.headerContainer}>
+            <Image 
+              source={require("../../assets/logo.png")} 
+              style={styles.headerLogo} 
+              resizeMode="contain" 
+            />
+            <Text style={styles.headerText}>Bolão Copa 2026</Text>
+          </View>
+        ),
         headerTitleAlign: 'center',
         headerStyle: {
-          backgroundColor: '#F8FAF7', // Fundo Claro
+          backgroundColor: '#F8FAF7',
         },
-        headerTintColor: '#111827', // Texto Principal
-        drawerActiveTintColor: '#15803D', // Verde Principal
+        headerTintColor: '#111827',
+        drawerActiveTintColor: '#15803D',
         drawerStyle: {
-          backgroundColor: '#FFFFFF', // Branco
+          backgroundColor: '#FFFFFF',
         },
       }}
     >
@@ -57,7 +67,6 @@ export default function DrawerLayout() {
           drawerIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
         }}
       />
-
       <Drawer.Screen
         name="fazerPalpite"
         options={{
@@ -89,3 +98,20 @@ export default function DrawerLayout() {
     </Drawer>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerLogo: {
+    width: 65,
+    height: 65,
+    marginRight: 12,
+  },
+  headerText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#087a38',
+  },
+});
