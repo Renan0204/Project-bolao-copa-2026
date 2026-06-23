@@ -11,19 +11,7 @@ type PartidaCardProps = {
 };
 
 function normalizarStatus(status: string) {
-  return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-}
-
-function ehEmAndamento(partida: Partida) {
-  return normalizarStatus(partida.status).includes("andamento");
-}
-
-function ehFinalizada(partida: Partida) {
-  return normalizarStatus(partida.status).includes("finalizad");
-}
-
-function temPlacar(partida: Partida) {
-  return partida.golsSelecaoA != null && partida.golsSelecaoB != null;
+  return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() || "";
 }
 
 function formatarData(dataHora: string) {
@@ -36,10 +24,21 @@ function formatarData(dataHora: string) {
 }
 
 export default function PartidaCard({ partida, destaque = false, onPress }: PartidaCardProps) {
-  const emAndamento = ehEmAndamento(partida);
-  const finalizada = ehFinalizada(partida);
+  const statusNormalizado = normalizarStatus(partida.status);
+  const emAndamento = statusNormalizado.includes("andamento");
+  const finalizada = statusNormalizado.includes("finalizad");
 
-  const mostrarPlacar = temPlacar(partida) && (emAndamento || finalizada);
+  const mostrarPlacar = emAndamento || finalizada;
+
+  const golsA = partida.golsSelecaoA ?? "-";
+  const golsB = partida.golsSelecaoB ?? "-";
+
+  let textoBotao = "palpitar";
+  if (finalizada) {
+    textoBotao = "encerrado";
+  } else if (emAndamento) {
+    textoBotao = "detalhes";
+  }
 
   const renderBandeiras = () => (
     <View style={styles.flagsRow}>
@@ -68,7 +67,7 @@ export default function PartidaCard({ partida, destaque = false, onPress }: Part
 
         {mostrarPlacar ? (
           <Text style={destaque ? styles.matchText : styles.smallMatchText}>
-            {partida.selecaoA}  <Text style={styles.scoreText}>{partida.golsSelecaoA}</Text> x <Text style={styles.scoreText}>{partida.golsSelecaoB}</Text>  {partida.selecaoB}
+            {partida.selecaoA}  <Text style={styles.scoreText}>{golsA}</Text> x <Text style={styles.scoreText}>{golsB}</Text>  {partida.selecaoB}
           </Text>
         ) : (
           <Text style={destaque ? styles.matchText : styles.smallMatchText}>
@@ -80,11 +79,12 @@ export default function PartidaCard({ partida, destaque = false, onPress }: Part
       </View>
 
       <TouchableOpacity
-        style={styles.palpitarButton}
+        style={[styles.palpitarButton, finalizada && styles.palpitarButtonDisabled]}
         onPress={onPress}
+        disabled={finalizada}
       >
-        <Text style={styles.palpitarText}>
-          {emAndamento || finalizada ? "detalhes" : "palpitar"}
+        <Text style={[styles.palpitarText, finalizada && styles.palpitarTextDisabled]}>
+          {textoBotao}
         </Text>
       </TouchableOpacity>
     </View>
@@ -161,10 +161,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#15803D",
   },
+  palpitarButtonDisabled: {
+    backgroundColor: "#E5E7EB",
+    borderColor: "#D1D5DB",
+  },
   palpitarText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 14,
+  },
+  palpitarTextDisabled: {
+    color: "#9CA3AF",
   },
   flagsRow: {
     flexDirection: "row",
