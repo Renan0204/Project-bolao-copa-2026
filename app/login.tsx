@@ -46,9 +46,14 @@ export default function LoginScreen() {
 
       AlertHelper.success("Login realizado com sucesso!");
       router.replace("/(drawer)/home");
-    } catch (error) {
-      AlertHelper.error("Ocorreu um erro ao tentar logar.");
-      console.error(error);
+    } catch (error: any) {
+      const mensagem =
+        error?.response?.data?.erro ||
+        error?.response?.data?.mensagem ||
+        error?.response?.data ||
+        "Credenciais inválidas. Verifique o seu e-mail e senha.";
+
+      AlertHelper.error(String(mensagem));
     } finally {
       setCarregando(false);
     }

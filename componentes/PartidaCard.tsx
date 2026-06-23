@@ -1,7 +1,8 @@
+// componentes/PartidaCard.tsx
+
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Partida } from '../types/partida';
-import { BASE_URL } from '../services/api';
 
 type PartidaCardProps = {
   partida: Partida;
@@ -9,18 +10,16 @@ type PartidaCardProps = {
   onPress: () => void;
 };
 
-// Funções utilitárias movidas para dentro do componente
-function formatarUrlImagem(url?: string | null) {
-  if (!url) return undefined;
-  return url.startsWith("http") ? url : `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
-}
-
 function normalizarStatus(status: string) {
   return status?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
 function ehEmAndamento(partida: Partida) {
   return normalizarStatus(partida.status).includes("andamento");
+}
+
+function ehFinalizada(partida: Partida) {
+  return normalizarStatus(partida.status).includes("finalizad");
 }
 
 function temPlacar(partida: Partida) {
@@ -38,18 +37,20 @@ function formatarData(dataHora: string) {
 
 export default function PartidaCard({ partida, destaque = false, onPress }: PartidaCardProps) {
   const emAndamento = ehEmAndamento(partida);
-  const mostrarPlacar = destaque && emAndamento && temPlacar(partida);
+  const finalizada = ehFinalizada(partida);
+
+  const mostrarPlacar = temPlacar(partida) && (emAndamento || finalizada);
 
   const renderBandeiras = () => (
     <View style={styles.flagsRow}>
       {partida.selecaoABandeiraUrl ? (
-        <Image source={{ uri: formatarUrlImagem(partida.selecaoABandeiraUrl) }} style={styles.flag} />
+        <Image source={{ uri: partida.selecaoABandeiraUrl }} style={styles.flag} />
       ) : (
         <View style={styles.flagPlaceholder} />
       )}
 
       {partida.selecaoBBandeiraUrl ? (
-        <Image source={{ uri: formatarUrlImagem(partida.selecaoBBandeiraUrl) }} style={styles.flag} />
+        <Image source={{ uri: partida.selecaoBBandeiraUrl }} style={styles.flag} />
       ) : (
         <View style={styles.flagPlaceholder} />
       )}
@@ -83,7 +84,7 @@ export default function PartidaCard({ partida, destaque = false, onPress }: Part
         onPress={onPress}
       >
         <Text style={styles.palpitarText}>
-          {emAndamento ? "detalhes" : "palpitar"}
+          {emAndamento || finalizada ? "detalhes" : "palpitar"}
         </Text>
       </TouchableOpacity>
     </View>
